@@ -62,6 +62,12 @@ namespace(this, "automata.model", function (exports, globals) {
             return this;
         },
         
+        getTransitionsToState: function (state) {
+            return this.outgoingTransitions.filter(function (transition) {
+                return transition.targetState === state;
+            });
+        },
+        
         getMooreActions: function () {
             if (this.outgoingTransitions.length) {
                 return this.stateMachine.world.actuators.filter(function (q, index) {

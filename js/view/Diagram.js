@@ -132,9 +132,13 @@ namespace(this, "automata.view", function (exports, globals) {
             state.incomingTransitions.forEach(this.updateTransitionView, this);
         },
 
+        getViewIdByStates: function (transition) {
+            return transition.sourceState.id + "-" + transition.targetState.id;
+        },
+        
         createTransition: function (model, transition) {
             transition.addListener("changed", this.updateTransition, this)
-            var viewIdByStates = transition.sourceState.id + "-" + transition.targetState.id;
+            var viewIdByStates = this.getViewIdByStates(transition);
             if (viewIdByStates in this.transitionViewsByStates) {
                 this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates];
             }
@@ -155,7 +159,7 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         updateTransition: function (transition) {
-            var viewIdByStates = transition.sourceState.id + "-" + transition.targetState.id;
+            var viewIdByStates = this.getViewIdByStates(transition);
             var viewByStates = this.transitionViewsByStates[viewIdByStates];
             var viewByTransition = this.transitionViews[transition.id];
             
@@ -344,12 +348,14 @@ namespace(this, "automata.view", function (exports, globals) {
         createTransitionView: function (transition) {
             var circle = svg.create("circle", {r: this.TRANSITION_RADIUS});
             var path = svg.create("path", {"marker-end": "url(#arrow-head)"});
+            var text = svg.create("text");
             var g = svg.create("g", {"class": "transition"});
             g.appendChild(path);
+            g.appendChild(text);
             g.appendChild(circle);
             this.root.appendChild(g);
 
-            var viewIdByStates = transition.sourceState.id + "-" + transition.targetState.id;
+            var viewIdByStates = this.getViewIdByStates(transition);
             this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates] = g;
             
             this.updateTransitionMark(transition);
@@ -379,6 +385,7 @@ namespace(this, "automata.view", function (exports, globals) {
                 });
                 prev = current;
                 self.updateTransitionPath(transition);
+                self.updateTransitionCondition(transition);
             }
             
             function onMouseUp(evt) {
@@ -397,6 +404,7 @@ namespace(this, "automata.view", function (exports, globals) {
         
         updateTransitionView: function (transition) {
             this.updateTransitionPath(transition);
+            this.updateTransitionCondition(transition);
             if (transition.sourceState === transition.targetState) {
                 this.updateTransitionMark(transition);
             }
@@ -409,24 +417,76 @@ namespace(this, "automata.view", function (exports, globals) {
             var sourceBBox = this.stateViews[transition.sourceState.id].getBBox();
             var targetBBox = this.stateViews[transition.targetState.id].getBBox();
             
+            var cx, cy;
             if (transition.sourceState === transition.targetState) {
-                svg.attr(circle, {
-                    cx: sourceBBox.x - 4 * this.TRANSITION_RADIUS,
-                    cy: sourceBBox.y + sourceBBox.height / 2
-                });
+                cx = sourceBBox.x - 4 * this.TRANSITION_RADIUS;
+                cy = sourceBBox.y + sourceBBox.height / 2;
             }
             else {
-                svg.attr(circle, {
-                    cx: (sourceBBox.x + sourceBBox.width  / 2 + targetBBox.x + targetBBox.width  / 2) / 2,
-                    cy: (sourceBBox.y + sourceBBox.height / 2 + targetBBox.y + targetBBox.height / 2) / 2
-                });
+                cx = (sourceBBox.x + sourceBBox.width  / 2 + targetBBox.x + targetBBox.width  / 2) / 2;
+                cy = (sourceBBox.y + sourceBBox.height / 2 + targetBBox.y + targetBBox.height / 2) / 2;
             }
+
+            svg.attr(circle, {cx: cx, cy: cy});
+        },
+        
+        updateTransitionCondition: function (transition) {
+            var g = this.transitionViews[transition.id];
+            var circle = svg.byTag(g, "circle")[0];
+            var text = svg.byTag(g, "text")[0];
+
+            svg.clear(text);
+            
+            var sensors = transition.sourceState.stateMachine.world.sensors;
+            var transitions = transition.sourceState.getTransitionsToState(transition.targetState);
+            var start = true;
+            var maxLength = 0;
+            var tspans = [];
+            for (var t = 0; t < transitions.length; t ++) {
+                var term = "";
+                for (var i = 0; i < transitions[t].inputs.length; i ++) {
+                    var value = transitions[t].inputs[i];
+                    if (value !== "-") {
+                        if (term.length) {
+                            term += ".";
+                        }
+                        if (value === "0") {
+                            term += "~";
+                        }
+                        term += sensors[i];
+                    }
+                }
+                if (term.length) {
+                    if (!start) {
+                        term = "+" + term;
+                    }
+                    start = false;
+                    var tspan = svg.create("tspan", term);
+                    tspans.push(tspan);
+                    text.appendChild(tspan);
+                    var tlen = tspan.getComputedTextLength();
+                    if (tlen > maxLength) {
+                        maxLength = tlen;
+                    }
+                    svg.attr(tspan, {dy: "1em"});
+                }
+            }
+            
+            // FIXME Better location for transition text
+            var textBBox = text.getBBox();
+            var cx = Number(svg.attr(circle, "cx"));
+            var cy = Number(svg.attr(circle, "cy"));
+            tspans.forEach(function (t) {
+                svg.attr(t, {x: cx - maxLength - this.TRANSITION_RADIUS});
+            }, this);
+            svg.attr(text, {y: cy});
         },
         
         updateTransitionPath: function (transition) {
             var g = this.transitionViews[transition.id];
             var circle = svg.byTag(g, "circle")[0];
             var path = svg.byTag(g, "path")[0];
+            var text = svg.byTag(g, "text")[0];
             
             var sourceBBox = this.stateViews[transition.sourceState.id].getBBox();
             var targetBBox = this.stateViews[transition.targetState.id].getBBox();

@@ -6,9 +6,11 @@
     stroke: none;
 }
 
-.automata-Diagram .state text {
+.automata-Diagram text {
     font-family: Iwona;
     fill: black;
+}
+.automata-Diagram .state text {
     text-anchor: middle;
 }
 
