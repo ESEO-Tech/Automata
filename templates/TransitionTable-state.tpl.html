@@ -1,0 +1,21 @@
+<tr class="state-<%= state.id %>">
+    <td class="remove-state"><input type="button" value="-" title="Remove this state"></td>
+    <td class="source-state-name">
+        <input type="text" value="<%= state.name %>">
+        <table class="state-encoding">
+            <tr>
+                <% _.each(model.stateVars, function (name) { %>
+                    <th>s<sub><%= name %></sub></th>
+                <% }); %>
+            </tr>
+            <tr>
+                <% _.each(model.stateVars, function (name, index) { %>
+                    <td><input type="button" class="automata-bool" value="<%= state.encoding[index] %>"></td>
+                <% }); %>
+            </tr>
+        </table>
+    </td>
+    <td class="create-transition" colspan="<%= model.world.sensors.length + model.world.actuators.length + 3 %>">
+        <input type="button" value="+" title="Create a transition">
+    </td>
+</tr>

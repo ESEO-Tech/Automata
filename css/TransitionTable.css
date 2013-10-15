@@ -1,0 +1,102 @@
+
+/* ---------------------------------------------------------------------- *
+ * Table layout
+ * ---------------------------------------------------------------------- */
+
+.automata-TransitionTable {
+    font-family: Iwona;
+    font-size: large;
+}
+
+
+.automata-TransitionTable tr {
+    border-bottom: 1px solid rgb(240, 240, 240);
+}
+
+.automata-TransitionTable th,
+.automata-TransitionTable td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.3em 0.3em;
+}
+
+.automata-TransitionTable td.create-state,
+.automata-TransitionTable td.remove-state,
+.automata-TransitionTable td.create-transition,
+.automata-TransitionTable td.remove-transition {
+    text-align: left;
+}
+
+
+/* ---------------------------------------------------------------------- *
+ * State encoding table
+ * ---------------------------------------------------------------------- */
+
+.automata-TransitionTable .state-encoding {
+    margin: 0.5em auto 0 auto;
+    background: rgb(240, 240, 240);
+}
+
+.automata-TransitionTable .state-encoding th,
+.automata-TransitionTable .state-encoding td {
+    color: black;
+    background: transparent;
+    border: none;
+}
+
+/* ---------------------------------------------------------------------- *
+ * Buttons
+ * ---------------------------------------------------------------------- */
+
+.automata-TransitionTable .create-state input,
+.automata-TransitionTable .create-transition input,
+.automata-TransitionTable .remove-state input,
+.automata-TransitionTable .remove-transition input {
+    font-family: "Heydings Icons";
+    background: none;
+    border: none;
+}
+
+/* ---------------------------------------------------------------------- *
+ * State names
+ * ---------------------------------------------------------------------- */
+
+.automata-TransitionTable .source-state-name input[type=text],
+.automata-TransitionTable .target-state-name select {
+    display: block;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    background: rgb(255, 230, 128);
+    border-radius: 1em;
+    text-align: center;
+    border: none;
+    box-shadow: 0 2px 2px 0 rgb(128, 128, 128);
+}
+
+.automata-TransitionTable .source-state-name input[type=text],
+.automata-TransitionTable .target-state-name option {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+/* ---------------------------------------------------------------------- *
+ * Boolean values
+ * ---------------------------------------------------------------------- */
+
+.automata-TransitionTable .automata-bool {
+    border: none;
+    border-radius: 30%;
+}
+
+.automata-TransitionTable .automata-bool[value='-'] {
+    background: rgb(192, 192, 192);
+}
+
+.automata-TransitionTable .automata-bool[value='0'] {
+    background: rgb(192, 220, 255);
+}
+
+.automata-TransitionTable .automata-bool[value='1'] {
+    background: rgb(255, 192, 192);
+}
+

@@ -1,0 +1,20 @@
+<table class="automata-TransitionTable">
+    <tr>
+        <th></th>
+        <th>Source state</th>
+        <th></th>
+        <% _.each(world.sensors, function(name) { %>
+            <th>i<sub><%= name %></sub></th>
+        <% }); %>
+        <th>&rarr;</th>
+        <% _.each(world.actuators, function(name) { %>
+            <th>q<sub><%= name %></sub></th>
+        <% }); %>
+        <th>Target state</th>
+    </tr>
+    <tr>
+        <td class="create-state" colspan="<%= world.sensors.length + world.actuators.length + 5 %>">
+            <input type="button" value="+" title="Create a state">
+        </td>
+    </tr>
+</table>

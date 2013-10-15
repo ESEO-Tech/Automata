@@ -1,0 +1,20 @@
+.automata-Diagram {
+}
+
+.automata-Diagram .state rect {
+    fill: rgb(255, 230, 128);
+    stroke: none;
+}
+
+.automata-Diagram .state text {
+    font-family: Iwona;
+    fill: black;
+    text-anchor: middle;
+}
+
+.automata-Diagram .state line,
+.automata-Diagram .transition path {
+    stroke: black;
+    stroke-width: 1px;
+    fill: none;
+}

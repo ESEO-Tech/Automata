@@ -1,0 +1,18 @@
+<td class="remove-transition"><input type="button" value="-" title="Remove this transition"></td>
+<% _.each(model.world.sensors, function (name, index) { %>
+    <td class="transition-input"><input type="button" class="automata-bool" value="<%= transition.inputs[index] %>"></td>
+<% }); %>
+<td>&rarr;</td>
+    <% _.each(model.world.actuators, function (name, index) { %>
+        <td class="transition-output"><input type="button" class="automata-bool" value="<%= transition.outputs[index] %>"></td>
+    <% }); %>
+    <td class="target-state-name">
+        <select>
+            <% _.each(model.states, function (targetState) { %>
+                <option value="<%= targetState.id %>"
+                    <% if (targetState.id === transition.targetState.id) { %> selected <% } %> >
+                        <%= targetState.name %>
+                </option>
+            <% }); %>
+        </select>
+</td>
