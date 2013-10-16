@@ -73,7 +73,12 @@ namespace(this, "automata.model", function (exports, globals) {
                 return this.stateMachine.world.actuators.filter(function (q, index) {
                     return this.outgoingTransitions.every(function (transition) {
                         return transition.outputs[index] === "1";
-                    }, this);
+                    }) ||  this.outgoingTransitions.some(function (transition) {
+                        return transition.outputs[index] === "1" &&
+                            transition.inputs.every(function (value) {
+                                return value === "-";
+                            });
+                    });
                 }, this);
             }
             else {

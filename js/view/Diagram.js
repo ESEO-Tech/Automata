@@ -99,7 +99,7 @@ namespace(this, "automata.view", function (exports, globals) {
             // Update outgoing transition conditions if conditions have changed.
             transition.sourceState.outgoingTransitions.forEach(function (ot) {
                 this.updateTransitionPath(ot);
-                this.updateTransitionCondition(ot);
+                this.updateTransitionText(ot);
             }, this);
             transition.sourceState.incomingTransitions.forEach(this.updateTransitionPath, this);
         },
@@ -327,7 +327,7 @@ namespace(this, "automata.view", function (exports, globals) {
             svg.attr(circle, {cx: cx, cy: cy});
             
             this.updateTransitionPath(transition);
-            this.moveTransitionCondition(transition);
+            this.moveTransitionText(transition);
         },
         
         updateTransitionMark: function (transition) {
@@ -349,10 +349,10 @@ namespace(this, "automata.view", function (exports, globals) {
             }
 
             svg.attr(circle, {cx: cx, cy: cy});
-            this.moveTransitionCondition(transition);
+            this.moveTransitionText(transition);
         },
         
-        updateTransitionCondition: function (transition) {
+        updateTransitionText: function (transition) {
             var g = this.transitionViews[transition.id];
             var circle = svg.byTag(g, "circle")[0];
             var text = svg.byTag(g, "text")[0];
@@ -363,7 +363,10 @@ namespace(this, "automata.view", function (exports, globals) {
             svg.clear(text);
             
             var sensors = transition.sourceState.stateMachine.world.sensors;
+            var actuators = transition.sourceState.stateMachine.world.actuators;
             var transitions = transition.sourceState.getTransitionsToState(transition.targetState);
+            
+            var mooreActions = transition.sourceState.getMooreActions();
             
             var hasTerms = false;
             transitions.forEach(function (tr) {
@@ -386,16 +389,30 @@ namespace(this, "automata.view", function (exports, globals) {
                     }
                 }, this);
                 
-                if (hasInputs) {
+                var hasActions = false;
+                tr.outputs.forEach(function (value, index) {
+                    if (value === "1" && mooreActions.indexOf(actuators[index]) === -1) {
+                        if (hasActions) {
+                            termSpan.appendChild(svg.createText(", "));
+                        }
+                        else {
+                            termSpan.appendChild(svg.createText(" / "));
+                            hasActions = true;
+                        }
+                        termSpan.appendChild(svg.createText(actuators[index]));
+                    }
+                }, this);
+                
+                if (hasInputs || hasActions) {
                     hasTerms = true;
                     text.appendChild(termSpan);
                 }
             }, this);
             
-            this.moveTransitionCondition(transition);
+            this.moveTransitionText(transition);
         },
         
-        moveTransitionCondition: function (transition) {
+        moveTransitionText: function (transition) {
             var g = this.transitionViews[transition.id];
             var circle = svg.byTag(g, "circle")[0];
             var text = svg.byTag(g, "text")[0];
