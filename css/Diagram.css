@@ -20,3 +20,12 @@
     stroke-width: 1px;
     fill: none;
 }
+
+.automata-Diagram .automata-bool-0 {
+    text-decoration: overline;
+    fill: blue;
+}
+
+.automata-Diagram .automata-bool-1 {
+    fill: red;
+}

@@ -1,46 +1,6 @@
 namespace(this, "automata.view", function (exports, globals) {
     "use strict";
 
-    var svg = {
-        SVG_NS: "http://www.w3.org/2000/svg",
-
-        create: function (tag, attrs) {
-            var elt = document.createElementNS(this.SVG_NS, tag);
-            switch (typeof attrs) {
-                case "string": this.text(elt, attrs); break;
-                case "object": this.attr(elt,  attrs); break;
-            }
-            return elt;
-        },
-
-        attr: function (elt, attrs) {
-            if (typeof attrs === "string") {
-                return elt.getAttribute(attrs);
-            }
-            else if (typeof attrs === "object") {
-                for (var name in attrs) {
-                    elt.setAttribute(name, attrs[name]);
-                }
-                return this;
-            }
-        },
-        
-        clear: function (elt) {
-            while (elt.firstChild) {
-                elt.firstChild.remove();
-            }
-        },
-        
-        text: function (elt, text) {
-            this.clear(elt);
-            elt.appendChild(document.createTextNode(text));
-        },
-        
-        byTag: function (elt, tag) {
-            return elt.getElementsByTagNameNS(this.SVG_NS, tag);
-        }
-    };
-    
     exports.Diagram = {
         VIEWBOX_WIDTH: 400,
         VIEWBOX_HEIGHT: 600,
@@ -187,13 +147,6 @@ namespace(this, "automata.view", function (exports, globals) {
             // TODO handle transition text
         },
         
-        getPoint: function (evt) {
-            var p = this.root.createSVGPoint();
-            p.x = evt.clientX;
-            p.y = evt.clientY;
-            return p.matrixTransform(this.root.getScreenCTM().inverse());
-        },
-        
         createStateView: function (state) {
             var rect = svg.create("rect", {x: 0, y: 0, rx: this.STATE_RADIUS, ry: this.STATE_RADIUS});
             var nameText = svg.create("text", "Qq");
@@ -234,64 +187,36 @@ namespace(this, "automata.view", function (exports, globals) {
             var gy = this.VIEWBOX_HEIGHT * Math.random();
             svg.attr(g, {transform: "translate(" + gx + "," + gy + ")"});
             
-            var self = this;
-            var prev;
-            
-            function onMouseDown(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                if (evt.button === 0) {
-                    prev = self.getPoint(evt);
-                    document.documentElement.addEventListener("mouseup",   onMouseUp,   false);
-                    document.documentElement.addEventListener("mousemove", onMouseMove, false);
-                }
-            }
-            
-            function onMouseMove(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                
-                var bbox = w.getBBox();
-                var current = self.getPoint(evt);
-                
-                var x = bbox.x + current.x - prev.x;
-                if (x < 0) {
-                    x = 0;
-                }
-                else if (x + bbox.width > self.VIEWBOX_WIDTH) {
-                    x = self.VIEWBOX_WIDTH - bbox.width;
-                }
-                
-                var y = bbox.y + current.y - prev.y;
-                if (y < 0) {
-                    y = 0;
-                }
-                else if (y + bbox.height > self.VIEWBOX_HEIGHT) {
-                    y = self.VIEWBOX_HEIGHT - bbox.height;
-                }
-                
-                svg.attr(g, {"transform": "translate(" + x + "," + y + ")"})
-                
-                prev = current;
-                
-                state.outgoingTransitions.forEach(self.updateTransitionView, self);
-                state.incomingTransitions.forEach(self.updateTransitionView, self);
-                
-                if (state === self.model.states[0]) {
-                    self.updateResetView();
-                }
-            }
-            
-            function onMouseUp(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                if (evt.button === 0) {
-                    document.documentElement.removeEventListener("mouseup", onMouseUp, false);
-                    document.documentElement.removeEventListener("mousemove", onMouseMove, false);
-                }
-            }
-            
-            w.addEventListener("mousedown", onMouseDown, false);
+            svg.setDraggable(w, {
+                onDrag: function (dx, dy) {
+                    var bbox = w.getBBox();
+                    var x = bbox.x + dx;
+                    if (x < 0) {
+                        x = 0;
+                    }
+                    else if (x + bbox.width > self.VIEWBOX_WIDTH) {
+                        x = this.VIEWBOX_WIDTH - bbox.width;
+                    }
+                    
+                    var y = bbox.y + dy;
+                    if (y < 0) {
+                        y = 0;
+                    }
+                    else if (y + bbox.height > self.VIEWBOX_HEIGHT) {
+                        y = this.VIEWBOX_HEIGHT - bbox.height;
+                    }
+                    
+                    svg.attr(g, {"transform": "translate(" + x + "," + y + ")"})
+
+                    state.outgoingTransitions.forEach(this.updateTransitionView, this);
+                    state.incomingTransitions.forEach(this.updateTransitionView, this);
+                    
+                    if (state === this.model.states[0]) {
+                        this.updateResetView();
+                    }
+                },
+                context: this
+            });
                 
             return w;
         },
@@ -362,44 +287,43 @@ namespace(this, "automata.view", function (exports, globals) {
             this.updateTransitionPath(transition);
             
             // Setup event handlers for transition
-            var self = this;
-            var prev;
-            
-            function onMouseDown(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                if (evt.button === 0 && transition.sourceState !== transition.targetState) {
-                    prev = self.getPoint(evt);
-                    document.documentElement.addEventListener("mouseup",   onMouseUp,   false);
-                    document.documentElement.addEventListener("mousemove", onMouseMove, false);
-                }
-            }
-            
-            function onMouseMove(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                var current = self.getPoint(evt);
-                svg.attr(circle, {
-                    cx: Number(svg.attr(circle, "cx")) + current.x - prev.x,
-                    cy: Number(svg.attr(circle, "cy")) + current.y - prev.y
-                });
-                prev = current;
-                self.updateTransitionPath(transition);
-                self.updateTransitionCondition(transition);
-            }
-            
-            function onMouseUp(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                if (evt.button === 0) {
-                    document.documentElement.removeEventListener("mouseup",   onMouseUp,   false);
-                    document.documentElement.removeEventListener("mousemove", onMouseMove, false);
-                }
-            }
-            
-            g.addEventListener("mousedown", onMouseDown, false);
+            svg.setDraggable(g, {
+                canDrag: function () {
+                    return transition.sourceState !== transition.targetState;
+                },
+                
+                onDrag: function (dx, dy) {
+                    this.moveTransitionMark(transition, dx, dy);
+                },
+                
+                context: this
+            });
 
             return g;
+        },
+        
+        moveTransitionMark: function (transition, dx, dy) {
+            var g = this.transitionViews[transition.id];
+            var circle = svg.byTag(g, "circle")[0];
+            var text = svg.byTag(g, "text")[0];
+            
+            svg.attr(circle, {
+                cx: Number(svg.attr(circle, "cx")) + dx,
+                cy: Number(svg.attr(circle, "cy")) + dy
+            });
+            
+            this.updateTransitionPath(transition);
+            
+            svg.attr(text, {
+                y: Number(svg.attr(text, "y")) + dy
+            });
+            
+            var tspans = text.childNodes;
+            for (var t = 0; t < tspans.length; t ++) {
+                svg.attr(tspans[t], {
+                    x: Number(svg.attr(tspans[t], "x")) + dx
+                });
+            }
         },
         
         updateTransitionView: function (transition) {
@@ -419,7 +343,7 @@ namespace(this, "automata.view", function (exports, globals) {
             
             var cx, cy;
             if (transition.sourceState === transition.targetState) {
-                cx = sourceBBox.x - 4 * this.TRANSITION_RADIUS;
+                cx = sourceBBox.x + sourceBBox.width + 4 * this.TRANSITION_RADIUS;
                 cy = sourceBBox.y + sourceBBox.height / 2;
             }
             else {
@@ -435,51 +359,44 @@ namespace(this, "automata.view", function (exports, globals) {
             var circle = svg.byTag(g, "circle")[0];
             var text = svg.byTag(g, "text")[0];
 
+            var cx = Number(svg.attr(circle, "cx"));
+            var cy = Number(svg.attr(circle, "cy"));
+
             svg.clear(text);
+            svg.attr(text, {y: cy});
             
             var sensors = transition.sourceState.stateMachine.world.sensors;
             var transitions = transition.sourceState.getTransitionsToState(transition.targetState);
-            var start = true;
-            var maxLength = 0;
-            var tspans = [];
-            for (var t = 0; t < transitions.length; t ++) {
-                var term = "";
-                for (var i = 0; i < transitions[t].inputs.length; i ++) {
-                    var value = transitions[t].inputs[i];
-                    if (value !== "-") {
-                        if (term.length) {
-                            term += ".";
-                        }
-                        if (value === "0") {
-                            term += "~";
-                        }
-                        term += sensors[i];
-                    }
-                }
-                if (term.length) {
-                    if (!start) {
-                        term = "+" + term;
-                    }
-                    start = false;
-                    var tspan = svg.create("tspan", term);
-                    tspans.push(tspan);
-                    text.appendChild(tspan);
-                    var tlen = tspan.getComputedTextLength();
-                    if (tlen > maxLength) {
-                        maxLength = tlen;
-                    }
-                    svg.attr(tspan, {dy: "1em"});
-                }
-            }
             
-            // FIXME Better location for transition text
-            var textBBox = text.getBBox();
-            var cx = Number(svg.attr(circle, "cx"));
-            var cy = Number(svg.attr(circle, "cy"));
-            tspans.forEach(function (t) {
-                svg.attr(t, {x: cx - maxLength - this.TRANSITION_RADIUS});
+            var hasTerms = false;
+            transitions.forEach(function (tr) {
+                var termSpan = svg.create("tspan", {
+                    x: cx + 2 * this.TRANSITION_RADIUS,
+                    dy: "1em"
+                });
+                
+                if (hasTerms) {
+                    svg.text(termSpan, "+");
+                }
+
+                var hasInputs = false;
+                tr.inputs.forEach(function (value, index) {
+                    if (value !== "-") {
+                        var inputSpan = svg.create("tspan", sensors[index]);
+                        svg.attr(inputSpan, {"class": "automata-bool-" + value});
+                        if (hasInputs) {
+                            termSpan.appendChild(svg.createText("."));
+                        }
+                        hasInputs = true;
+                        termSpan.appendChild(inputSpan);
+                    }
+                }, this);
+                
+                if (hasInputs) {
+                    hasTerms = true;
+                    text.appendChild(termSpan);
+                }
             }, this);
-            svg.attr(text, {y: cy});
         },
         
         updateTransitionPath: function (transition) {
