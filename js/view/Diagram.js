@@ -1,15 +1,16 @@
 namespace(this, "automata.view", function (exports, globals) {
     "use strict";
 
+    var VIEWBOX_WIDTH = 400;
+    var VIEWBOX_HEIGHT = 600;
+    var STATE_RADIUS = 20;
+    var STATE_LR_PADDING = 6;
+    var STATE_TB_PADDING = 3;
+    var TRANSITION_RADIUS = 6;
+    var TRANSITION_END_FACTOR = 3;
+    var TRANSITION_MARK_FACTOR = 6;
+
     exports.Diagram = {
-        VIEWBOX_WIDTH: 400,
-        VIEWBOX_HEIGHT: 600,
-        STATE_RADIUS: 20,
-        STATE_LR_PADDING: 6,
-        STATE_TB_PADDING: 3,
-        TRANSITION_RADIUS: 6,
-        TRANSITION_END_FACTOR: 3,
-        TRANSITION_MARK_FACTOR: 6,
         
         init: function (model, container) {
             this.model = model;
@@ -33,7 +34,7 @@ namespace(this, "automata.view", function (exports, globals) {
         },
 
         afterRemoveState: function (model, state) {
-            this.root.removeChild(this.stateViews[state.id]);
+            this.root.removeChild(this.stateViews[state.id].wrapper);
             delete this.stateViews[state.id];
             this.updateResetView();
         },
@@ -134,17 +135,17 @@ namespace(this, "automata.view", function (exports, globals) {
 
             // Create dummy transition view for initial state
             var circle = svg.create("circle", {
-                cx: this.TRANSITION_RADIUS,
-                cy: this.TRANSITION_RADIUS,
-                r: this.TRANSITION_RADIUS
+                cx: TRANSITION_RADIUS,
+                cy: TRANSITION_RADIUS,
+                r:  TRANSITION_RADIUS
             });
             
             var path = svg.create("path", {
                 "marker-end": "url(#arrow-head)",
-                d: "M" + this.TRANSITION_RADIUS + "," + this.TRANSITION_RADIUS +
-                   "c" +      this.TRANSITION_RADIUS  + "," + 0 + "," +
-                         (3 * this.TRANSITION_RADIUS) + "," +      this.TRANSITION_RADIUS  + "," +
-                         (3 * this.TRANSITION_RADIUS) + "," + (3 * this.TRANSITION_RADIUS)
+                d: "M" + TRANSITION_RADIUS + "," + TRANSITION_RADIUS +
+                   "c" +      TRANSITION_RADIUS  + "," + 0                       + "," +
+                         (3 * TRANSITION_RADIUS) + "," +      TRANSITION_RADIUS  + "," +
+                         (3 * TRANSITION_RADIUS) + "," + (3 * TRANSITION_RADIUS)
             });
 
             this.resetView = svg.create("g", {"class": "reset transition"});
@@ -153,7 +154,7 @@ namespace(this, "automata.view", function (exports, globals) {
             
             this.root = svg.create("svg", {
                 "class": "automata-Diagram",
-                viewBox: "0 0 " + this.VIEWBOX_WIDTH + " " + this.VIEWBOX_HEIGHT,
+                viewBox: "0 0 " + VIEWBOX_WIDTH + " " + VIEWBOX_HEIGHT,
                 preserveAspectRatio: "xMidYMid meet"
             });
             
@@ -163,65 +164,64 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         createStateView: function (state) {
-            var rect = svg.create("rect", {x: 0, y: 0, rx: this.STATE_RADIUS, ry: this.STATE_RADIUS});
-            var nameText = svg.create("text", "Qq");
-            var actionsText = svg.create("text", "Qq");
-            var line = svg.create("line");
-            var g = svg.create("g");
-            g.appendChild(rect);
-            g.appendChild(nameText);
-            g.appendChild(actionsText);
-            g.appendChild(line);
-            
-            // Create wrapper group to correctly compute bounding box
-            var w = this.stateViews[state.id] = svg.create("g", {"class": "state"});
-            w.appendChild(g);
+            var view = this.stateViews[state.id] = {
+                rect:      svg.create("rect", {x: 0, y: 0, rx: STATE_RADIUS, ry: STATE_RADIUS}),
+                name:      svg.create("text", "Qq"),
+                actions:   svg.create("text", "Qq"),
+                separator: svg.create("line", {x1: 0}),
+                group:     svg.create("g"),
+                wrapper:   svg.create("g", {"class": "state"})
+            };
 
-            this.root.appendChild(w);
+            view.group.appendChild(view.rect);
+            view.group.appendChild(view.name);
+            view.group.appendChild(view.actions);
+            view.group.appendChild(view.separator);
+            view.wrapper.appendChild(view.group);
+            this.root.appendChild(view.wrapper);
 
             // Set vertical position of State name
-            var nameBBox = nameText.getBBox();
-            svg.attr(nameText, {y: -nameBBox.y + this.STATE_TB_PADDING});
+            var nameBBox = view.name.getBBox();
+            svg.attr(view.name, {y: -nameBBox.y + STATE_TB_PADDING});
 
             // Set vertical position of State actions
-            var actionsBBox = nameText.getBBox();
-            svg.attr(actionsText, {y: nameBBox.height + actionsBBox.height - actionsBBox.y + 2 * this.STATE_TB_PADDING});
+            var actionsBBox = view.actions.getBBox();
+            svg.attr(view.actions, {y: -nameBBox.y - actionsBBox.y + 3 * STATE_TB_PADDING});
 
             // Setup transition for initial state
             
-            svg.attr(line, {
-                x1: 0,
-                y1: nameBBox.height + 2 * this.STATE_TB_PADDING,
-                y2: nameBBox.height + 2 * this.STATE_TB_PADDING
+            svg.attr(view.separator, {
+                y1: nameBBox.height + 2 * STATE_TB_PADDING,
+                y2: nameBBox.height + 2 * STATE_TB_PADDING
             });
             
-            svg.attr(rect, {height: nameBBox.height + actionsBBox.height + 4 * this.STATE_TB_PADDING});
+            svg.attr(view.rect, {height: nameBBox.height + actionsBBox.height + 4 * STATE_TB_PADDING});
 
             // Move state group to a random location
-            var gx = this.VIEWBOX_WIDTH  * Math.random();
-            var gy = this.VIEWBOX_HEIGHT * Math.random();
-            svg.attr(g, {transform: "translate(" + gx + "," + gy + ")"});
+            var gx = VIEWBOX_WIDTH  * Math.random();
+            var gy = VIEWBOX_HEIGHT * Math.random();
+            svg.attr(view.group, {transform: "translate(" + gx + "," + gy + ")"});
             
-            svg.setDraggable(w, {
+            svg.setDraggable(view.wrapper, {
                 onDrag: function (dx, dy) {
-                    var bbox = w.getBBox();
+                    var bbox = view.wrapper.getBBox();
                     var x = bbox.x + dx;
                     if (x < 0) {
                         x = 0;
                     }
-                    else if (x + bbox.width > self.VIEWBOX_WIDTH) {
-                        x = this.VIEWBOX_WIDTH - bbox.width;
+                    else if (x + bbox.width > VIEWBOX_WIDTH) {
+                        x = VIEWBOX_WIDTH - bbox.width;
                     }
                     
                     var y = bbox.y + dy;
                     if (y < 0) {
                         y = 0;
                     }
-                    else if (y + bbox.height > self.VIEWBOX_HEIGHT) {
-                        y = this.VIEWBOX_HEIGHT - bbox.height;
+                    else if (y + bbox.height > VIEWBOX_HEIGHT) {
+                        y = VIEWBOX_HEIGHT - bbox.height;
                     }
                     
-                    svg.attr(g, {"transform": "translate(" + x + "," + y + ")"})
+                    svg.attr(view.group, {"transform": "translate(" + x + "," + y + ")"})
 
                     state.outgoingTransitions.forEach(this.updateTransitionPath, this);
                     state.incomingTransitions.forEach(this.updateTransitionPath, this);
@@ -238,109 +238,103 @@ namespace(this, "automata.view", function (exports, globals) {
         
         updateStateView: function (state) {
             var view = this.stateViews[state.id];
-            var rect = svg.byTag(view, "rect")[0];
-            var texts = svg.byTag(view, "text");
-            var nameText = texts[0];
-            var actionsText = texts[1];
-            var line = svg.byTag(view, "line")[0];
-            var g    = svg.byTag(view, "g")[0];
             
-            svg.text(nameText, state.name);
-            svg.text(actionsText, state.getMooreActions().join(", "));
+            svg.text(view.name,    state.name);
+            svg.text(view.actions, state.getMooreActions().join(", "));
 
-            var nameBBox = nameText.getBBox();
-            var actionsBBox = actionsText.getBBox();
-            var maxWidth = Math.max(nameBBox.width, actionsBBox.width);
-            svg.attr(nameText,    {x:     maxWidth / 2 +     this.STATE_LR_PADDING});
-            svg.attr(actionsText, {x:     maxWidth / 2 +     this.STATE_LR_PADDING});
-            svg.attr(rect,        {width: maxWidth     + 2 * this.STATE_LR_PADDING});
-            svg.attr(line,        {x2:    maxWidth     + 2 * this.STATE_LR_PADDING});
+            var maxWidth = Math.max(view.name.getComputedTextLength(), view.actions.getComputedTextLength());
+            svg.attr(view.name,      {x:     maxWidth / 2 +     STATE_LR_PADDING});
+            svg.attr(view.actions,   {x:     maxWidth / 2 +     STATE_LR_PADDING});
+            svg.attr(view.rect,      {width: maxWidth     + 2 * STATE_LR_PADDING});
+            svg.attr(view.separator, {x2:    maxWidth     + 2 * STATE_LR_PADDING});
             
-            var viewBBox = view.getBBox();
-            var x = this.VIEWBOX_WIDTH - viewBBox.width;
+            var viewBBox = view.wrapper.getBBox();
+            var x = VIEWBOX_WIDTH - viewBBox.width;
             if (viewBBox.x < x) {
                 x = viewBBox.x;
             }
             
-            var y = this.VIEWBOX_HEIGHT - viewBBox.height;
+            var y = VIEWBOX_HEIGHT - viewBBox.height;
             if (viewBBox.y < y) {
                 y = viewBBox.y;
             }
             
-            svg.attr(g, {transform: "translate(" + x + "," + y + ")"});
+            svg.attr(view.group, {transform: "translate(" + x + "," + y + ")"});
             
             if (state === this.model.states[0]) {
                 this.updateResetView();
             }
         },
         
+        getStateBBox: function (state) {
+            return this.stateViews[state.id].wrapper.getBBox();
+        },
+        
         updateResetView: function () {
             var state = this.model.states[0];
             if (state) {
-                var bbox = this.stateViews[state.id].getBBox();
+                var bbox = this.getStateBBox(state);
                 svg.attr(this.resetView, {
-                    "transform": "translate(" + (bbox.x + bbox.width / 2 - 4 * this.TRANSITION_RADIUS) + ","
-                                              + (bbox.y                  - 4 * this.TRANSITION_RADIUS) + ")"
+                    "transform": "translate(" + (bbox.x + bbox.width / 2 - 4 * TRANSITION_RADIUS) + ","
+                                              + (bbox.y                  - 4 * TRANSITION_RADIUS) + ")"
                 });
             }
         },
         
         createTransitionView: function (transition) {
-            var circle = svg.create("circle", {r: this.TRANSITION_RADIUS});
-            var path = svg.create("path", {"marker-end": "url(#arrow-head)"});
-            var text = svg.create("text");
-            var g = svg.create("g", {"class": "transition"});
-            g.appendChild(path);
-            g.appendChild(text);
-            g.appendChild(circle);
-            this.root.appendChild(g);
-
             var viewIdByStates = this.getViewIdByStates(transition);
-            this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates] = g;
-            
-            this.updateTransitionMark(transition);
+
+            var view = this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates] = {
+                handle: svg.create("circle", {r: TRANSITION_RADIUS}),
+                path:   svg.create("path", {"marker-end": "url(#arrow-head)"}),
+                text:   svg.create("text"),
+                group:  svg.create("g", {"class": "transition"})
+            };
+
+            view.group.appendChild(view.path);
+            view.group.appendChild(view.text);
+            view.group.appendChild(view.handle);
+            this.root.appendChild(view.group);
+
+            this.updateTransitionHandle(transition);
             this.updateTransitionPath(transition);
             
             // Setup event handlers for transition
-            svg.setDraggable(g, {
+            svg.setDraggable(view.group, {
                 canDrag: function () {
                     return transition.sourceState !== transition.targetState;
                 },
                 
                 onDrag: function (dx, dy) {
-                    this.moveTransitionMark(transition, dx, dy);
+                    this.moveTransitionHandle(transition, dx, dy);
                 },
                 
                 context: this
             });
-
-            return g;
         },
         
-        moveTransitionMark: function (transition, dx, dy) {
-            var g = this.transitionViews[transition.id];
-            var circle = svg.byTag(g, "circle")[0];
+        moveTransitionHandle: function (transition, dx, dy) {
+            var view = this.transitionViews[transition.id];
+            var p = svg.center(view.handle);
             
-            var cx = Number(svg.attr(circle, "cx")) + dx;
-            var cy = Number(svg.attr(circle, "cy")) + dy;
-            
-            svg.attr(circle, {cx: cx, cy: cy});
+            svg.attr(view.handle, {
+                cx: p.cx + dx,
+                cy: p.cy + dy
+            });
             
             this.updateTransitionPath(transition);
             this.moveTransitionText(transition);
         },
         
-        updateTransitionMark: function (transition) {
-            var g = this.transitionViews[transition.id];
-            var circle = svg.byTag(g, "circle")[0];
-            var text = svg.byTag(g, "text")[0];
+        updateTransitionHandle: function (transition) {
+            var view = this.transitionViews[transition.id];
 
-            var sourceBBox = this.stateViews[transition.sourceState.id].getBBox();
-            var targetBBox = this.stateViews[transition.targetState.id].getBBox();
+            var sourceBBox = this.getStateBBox(transition.sourceState);
+            var targetBBox = this.getStateBBox(transition.targetState);
             
             var cx, cy;
             if (transition.sourceState === transition.targetState) {
-                cx = sourceBBox.x + sourceBBox.width + 4 * this.TRANSITION_RADIUS;
+                cx = sourceBBox.x + sourceBBox.width + 4 * TRANSITION_RADIUS;
                 cy = sourceBBox.y + sourceBBox.height / 2;
             }
             else {
@@ -348,24 +342,18 @@ namespace(this, "automata.view", function (exports, globals) {
                 cy = (sourceBBox.y + sourceBBox.height / 2 + targetBBox.y + targetBBox.height / 2) / 2;
             }
 
-            svg.attr(circle, {cx: cx, cy: cy});
+            svg.attr(view.handle, {cx: cx, cy: cy});
             this.moveTransitionText(transition);
         },
         
         updateTransitionText: function (transition) {
-            var g = this.transitionViews[transition.id];
-            var circle = svg.byTag(g, "circle")[0];
-            var text = svg.byTag(g, "text")[0];
+            var view = this.transitionViews[transition.id];
 
-            var cx = Number(svg.attr(circle, "cx"));
-            var cy = Number(svg.attr(circle, "cy"));
-
-            svg.clear(text);
+            svg.clear(view.text);
             
             var sensors = transition.sourceState.stateMachine.world.sensors;
             var actuators = transition.sourceState.stateMachine.world.actuators;
             var transitions = transition.sourceState.getTransitionsToState(transition.targetState);
-            
             var mooreActions = transition.sourceState.getMooreActions();
             
             var hasTerms = false;
@@ -405,7 +393,7 @@ namespace(this, "automata.view", function (exports, globals) {
                 
                 if (hasInputs || hasActions) {
                     hasTerms = true;
-                    text.appendChild(termSpan);
+                    view.text.appendChild(termSpan);
                 }
             }, this);
             
@@ -413,29 +401,25 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         moveTransitionText: function (transition) {
-            var g = this.transitionViews[transition.id];
-            var circle = svg.byTag(g, "circle")[0];
-            var text = svg.byTag(g, "text")[0];
+            var view = this.transitionViews[transition.id];
+            var p = svg.center(view.handle);
 
-            var x = Number(svg.attr(circle, "cx")) + 2 * this.TRANSITION_RADIUS;
-            var y = Number(svg.attr(circle, "cy")) - text.getBBox().height / 2;
+            var x = p.cx + 2 * TRANSITION_RADIUS;
+            var y = p.cy - view.text.getBBox().height / 2;
 
-            svg.attr(text, {y: y});
+            svg.attr(view.text, {y: y});
             
-            var tspans = text.childNodes;
+            var tspans = view.text.childNodes;
             for (var t = 0; t < tspans.length; t ++) {
                 svg.attr(tspans[t], {x: x});
             }
         },
         
         updateTransitionPath: function (transition) {
-            var g = this.transitionViews[transition.id];
-            var circle = svg.byTag(g, "circle")[0];
-            var path = svg.byTag(g, "path")[0];
-            var text = svg.byTag(g, "text")[0];
+            var view = this.transitionViews[transition.id];
             
-            var sourceBBox = this.stateViews[transition.sourceState.id].getBBox();
-            var targetBBox = this.stateViews[transition.targetState.id].getBBox();
+            var sourceBBox = this.getStateBBox(transition.sourceState);
+            var targetBBox = this.getStateBBox(transition.targetState);
 
             var scx = sourceBBox.x + sourceBBox.width  / 2;
             var scy = sourceBBox.y + sourceBBox.height / 1.5;
@@ -457,47 +441,46 @@ namespace(this, "automata.view", function (exports, globals) {
                 {x: targetBBox.x + targetBBox.width, y: tcy,                              dx:  1, dy:  0}
             ];
             
-            var cx = Number(svg.attr(circle, "cx"));
-            var cy = Number(svg.attr(circle, "cy"));
+            var p = svg.center(view.handle);
             
             function getBestPoint(arr) {
-                var dmin = -1, pmin = arr[0];
+                var dmin = -1, qmin = arr[0];
                 for (var i = 0; i < arr.length; i ++) {
-                    var p = arr[i];
-                    var dx = p.x + p.dx * Math.abs(cx - p.x) - cx;
-                    var dy = p.y + p.dy * Math.abs(cy - p.y) - cy;
+                    var q = arr[i];
+                    var dx = q.x + q.dx * Math.abs(p.cx - q.x) - p.cx;
+                    var dy = q.y + q.dy * Math.abs(p.cy - q.y) - p.cy;
                     var d = dx * dx + dy * dy;
                     if (dmin < 0 || d < dmin) {
                         dmin = d;
-                        pmin = p;
+                        qmin = q;
                     }
                 }
-                return pmin;
+                return qmin;
             }
             
             var snp = getBestPoint(sp);
             var tnp = getBestPoint(tp);
             
-            var vx = (tnp.x - snp.x) / this.TRANSITION_MARK_FACTOR;
-            var vy = (tnp.y - snp.y) / this.TRANSITION_MARK_FACTOR;
+            var vx = (tnp.x - snp.x) / TRANSITION_MARK_FACTOR;
+            var vy = (tnp.y - snp.y) / TRANSITION_MARK_FACTOR;
             
-            var scpx1 = snp.x + snp.dx * Math.abs(cx - snp.x) / this.TRANSITION_END_FACTOR;
-            var scpy1 = snp.y + snp.dy * Math.abs(cy - snp.y) / this.TRANSITION_END_FACTOR;
-            var scpx2 = cx - vx;
-            var scpy2 = cy - vy;
-            var tcpx1 = cx + vx;
-            var tcpy1 = cy + vy;
-            var tcpx2 = tnp.x + tnp.dx * Math.abs(cx - tnp.x) / this.TRANSITION_END_FACTOR;
-            var tcpy2 = tnp.y + tnp.dy * Math.abs(cy - tnp.y) / this.TRANSITION_END_FACTOR;
+            var scpx1 = snp.x + snp.dx * Math.abs(p.cx - snp.x) / TRANSITION_END_FACTOR;
+            var scpy1 = snp.y + snp.dy * Math.abs(p.cy - snp.y) / TRANSITION_END_FACTOR;
+            var scpx2 = p.cx - vx;
+            var scpy2 = p.cy - vy;
+            var tcpx1 = p.cx + vx;
+            var tcpy1 = p.cy + vy;
+            var tcpx2 = tnp.x + tnp.dx * Math.abs(p.cx - tnp.x) / TRANSITION_END_FACTOR;
+            var tcpy2 = tnp.y + tnp.dy * Math.abs(p.cy - tnp.y) / TRANSITION_END_FACTOR;
             
-            svg.attr(path, {
+            svg.attr(view.path, {
                 d: "M" + snp.x + "," + snp.y
-                 + "C" + scpx1 + "," + scpy1 + "," + scpx2 + "," + scpy2 + "," + cx    + "," + cy
+                 + "C" + scpx1 + "," + scpy1 + "," + scpx2 + "," + scpy2 + "," + p.cx  + "," + p.cy
                  + "C" + tcpx1 + "," + tcpy1 + "," + tcpx2 + "," + tcpy2 + "," + tnp.x + "," + tnp.y
             });
             
             if (transition.sourceState === transition.targetState) {
-                this.updateTransitionMark(transition);
+                this.updateTransitionHandle(transition);
             }
         },
         
@@ -516,7 +499,7 @@ namespace(this, "automata.view", function (exports, globals) {
             // If no other transition uses the current transition view,
             // remove it from the DOM and from the dictionary of transition by states
             if (obsolete) {
-                this.root.removeChild(viewByTransition);
+                this.root.removeChild(viewByTransition.group);
                 for (var id in this.transitionViewsByStates) {
                     if (this.transitionViewsByStates[id] === viewByTransition) {
                         delete this.transitionViewsByStates[id];

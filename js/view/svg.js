@@ -43,6 +43,12 @@ namespace(this, "svg", function (exports, globals) {
         return elt.getElementsByTagNameNS(SVG_NS, tag);
     };
 
+    exports.center = function (circle) {
+        return {
+            cx: Number(svg.attr(circle, "cx")),
+            cy: Number(svg.attr(circle, "cy"))
+        };
+    }
     
     // Drag and drop handlers
     
