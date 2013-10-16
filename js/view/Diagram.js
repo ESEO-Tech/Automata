@@ -17,46 +17,7 @@ namespace(this, "automata.view", function (exports, globals) {
             this.transitionViews = {};
             this.transitionViewsByStates = {};
 
-            // Create arrow head marker for transitions
-            var path = svg.create("path", {d: "M0,0 L10,5 L0,10 L2,5 z"});
-            var marker = svg.create("marker", {
-                id: "arrow-head",
-                viewBow: "0 0 10 10",
-                refX: 10,
-                refY: 5,
-                markerWidth: 10,
-                markerHeight: 10,
-                markerUnits: "strokeWidth",
-                orient: "auto"
-            });
-            marker.appendChild(path);
-            var defs = svg.create("defs");
-            defs.appendChild(marker);
-
-            // Create dummy transition view for initial state
-            var circle = svg.create("circle", {cx: this.TRANSITION_RADIUS, cy: this.TRANSITION_RADIUS, r: this.TRANSITION_RADIUS});
-            var path = svg.create("path", {
-                "marker-end": "url(#arrow-head)",
-                d: "M" + this.TRANSITION_RADIUS + "," + this.TRANSITION_RADIUS +
-                   "c" +      this.TRANSITION_RADIUS  + "," + 0 + "," +
-                         (3 * this.TRANSITION_RADIUS) + "," +      this.TRANSITION_RADIUS  + "," +
-                         (3 * this.TRANSITION_RADIUS) + "," + (3 * this.TRANSITION_RADIUS)
-            });
-
-            this.resetView = svg.create("g", {"class": "reset transition"});
-            this.resetView.appendChild(circle);
-            this.resetView.appendChild(path);
-            
-            this.root = svg.create("svg", {
-                "class": "automata-Diagram",
-                viewBox: "0 0 " + this.VIEWBOX_WIDTH + " " + this.VIEWBOX_HEIGHT,
-                preserveAspectRatio: "xMidYMid meet"
-            });
-            
-            this.root.appendChild(defs);
-            this.root.appendChild(this.resetView);
-
-            container.append(this.root);
+            container.append(this.createView());
 
             model.addListener("createState", this)
                  .addListener("afterRemoveState", this)
@@ -66,15 +27,9 @@ namespace(this, "automata.view", function (exports, globals) {
             return this;
         },
         
-        setSize: function (width, height) {
-            svg.attr(this.root, {width: width, height: height});
-            return this;
-        },
-        
         createState: function (model, state) {
             state.addListener("changed", this.updateState, this);
-            this.stateViews[state.id] = this.createStateView(state);
-            this.updateStateView(state);
+            this.createStateView(state);
         },
 
         afterRemoveState: function (model, state) {
@@ -88,14 +43,10 @@ namespace(this, "automata.view", function (exports, globals) {
 
             // If the size of the state view has changed,
             // we need to redraw all transition paths to/from the given state
-            state.outgoingTransitions.forEach(this.updateTransitionView, this);
-            state.incomingTransitions.forEach(this.updateTransitionView, this);
+            state.outgoingTransitions.forEach(this.updateTransitionPath, this);
+            state.incomingTransitions.forEach(this.updateTransitionPath, this);
         },
 
-        getViewIdByStates: function (transition) {
-            return transition.sourceState.id + "-" + transition.targetState.id;
-        },
-        
         createTransition: function (model, transition) {
             transition.addListener("changed", this.updateTransition, this)
             var viewIdByStates = this.getViewIdByStates(transition);
@@ -142,9 +93,73 @@ namespace(this, "automata.view", function (exports, globals) {
             }
             
             // Update source state view if Moore actions have changed
-            this.updateState(transition.sourceState);
+            this.updateStateView(transition.sourceState);
 
-            // TODO handle transition text
+            // Update incoming and outgoing transition paths if Moore actions have changed.
+            // Update outgoing transition conditions if conditions have changed.
+            transition.sourceState.outgoingTransitions.forEach(function (ot) {
+                this.updateTransitionPath(ot);
+                this.updateTransitionCondition(ot);
+            }, this);
+            transition.sourceState.incomingTransitions.forEach(this.updateTransitionPath, this);
+        },
+        
+        setSize: function (width, height) {
+            svg.attr(this.root, {width: width, height: height});
+            return this;
+        },
+        
+        getViewIdByStates: function (transition) {
+            return transition.sourceState.id + "-" + transition.targetState.id;
+        },
+        
+        createView: function () {
+            // Create arrow head marker for transitions
+            var path = svg.create("path", {d: "M0,0 L10,5 L0,10 L2,5 z"});
+            
+            var marker = svg.create("marker", {
+                id: "arrow-head",
+                viewBow: "0 0 10 10",
+                refX: 10,
+                refY: 5,
+                markerWidth: 10,
+                markerHeight: 10,
+                markerUnits: "strokeWidth",
+                orient: "auto"
+            });
+            marker.appendChild(path);
+            
+            var defs = svg.create("defs");
+            defs.appendChild(marker);
+
+            // Create dummy transition view for initial state
+            var circle = svg.create("circle", {
+                cx: this.TRANSITION_RADIUS,
+                cy: this.TRANSITION_RADIUS,
+                r: this.TRANSITION_RADIUS
+            });
+            
+            var path = svg.create("path", {
+                "marker-end": "url(#arrow-head)",
+                d: "M" + this.TRANSITION_RADIUS + "," + this.TRANSITION_RADIUS +
+                   "c" +      this.TRANSITION_RADIUS  + "," + 0 + "," +
+                         (3 * this.TRANSITION_RADIUS) + "," +      this.TRANSITION_RADIUS  + "," +
+                         (3 * this.TRANSITION_RADIUS) + "," + (3 * this.TRANSITION_RADIUS)
+            });
+
+            this.resetView = svg.create("g", {"class": "reset transition"});
+            this.resetView.appendChild(circle);
+            this.resetView.appendChild(path);
+            
+            this.root = svg.create("svg", {
+                "class": "automata-Diagram",
+                viewBox: "0 0 " + this.VIEWBOX_WIDTH + " " + this.VIEWBOX_HEIGHT,
+                preserveAspectRatio: "xMidYMid meet"
+            });
+            
+            this.root.appendChild(defs);
+            this.root.appendChild(this.resetView);
+            return this.root;
         },
         
         createStateView: function (state) {
@@ -159,7 +174,7 @@ namespace(this, "automata.view", function (exports, globals) {
             g.appendChild(line);
             
             // Create wrapper group to correctly compute bounding box
-            var w = svg.create("g", {"class": "state"});
+            var w = this.stateViews[state.id] = svg.create("g", {"class": "state"});
             w.appendChild(g);
 
             this.root.appendChild(w);
@@ -208,8 +223,8 @@ namespace(this, "automata.view", function (exports, globals) {
                     
                     svg.attr(g, {"transform": "translate(" + x + "," + y + ")"})
 
-                    state.outgoingTransitions.forEach(this.updateTransitionView, this);
-                    state.incomingTransitions.forEach(this.updateTransitionView, this);
+                    state.outgoingTransitions.forEach(this.updateTransitionPath, this);
+                    state.incomingTransitions.forEach(this.updateTransitionPath, this);
                     
                     if (state === this.model.states[0]) {
                         this.updateResetView();
@@ -218,7 +233,7 @@ namespace(this, "automata.view", function (exports, globals) {
                 context: this
             });
                 
-            return w;
+            this.updateStateView(state);
         },
         
         updateStateView: function (state) {
@@ -305,38 +320,20 @@ namespace(this, "automata.view", function (exports, globals) {
         moveTransitionMark: function (transition, dx, dy) {
             var g = this.transitionViews[transition.id];
             var circle = svg.byTag(g, "circle")[0];
-            var text = svg.byTag(g, "text")[0];
             
-            svg.attr(circle, {
-                cx: Number(svg.attr(circle, "cx")) + dx,
-                cy: Number(svg.attr(circle, "cy")) + dy
-            });
+            var cx = Number(svg.attr(circle, "cx")) + dx;
+            var cy = Number(svg.attr(circle, "cy")) + dy;
+            
+            svg.attr(circle, {cx: cx, cy: cy});
             
             this.updateTransitionPath(transition);
-            
-            svg.attr(text, {
-                y: Number(svg.attr(text, "y")) + dy
-            });
-            
-            var tspans = text.childNodes;
-            for (var t = 0; t < tspans.length; t ++) {
-                svg.attr(tspans[t], {
-                    x: Number(svg.attr(tspans[t], "x")) + dx
-                });
-            }
+            this.moveTransitionCondition(transition);
         },
         
-        updateTransitionView: function (transition) {
-            this.updateTransitionPath(transition);
-            this.updateTransitionCondition(transition);
-            if (transition.sourceState === transition.targetState) {
-                this.updateTransitionMark(transition);
-            }
-        },
-            
         updateTransitionMark: function (transition) {
             var g = this.transitionViews[transition.id];
             var circle = svg.byTag(g, "circle")[0];
+            var text = svg.byTag(g, "text")[0];
 
             var sourceBBox = this.stateViews[transition.sourceState.id].getBBox();
             var targetBBox = this.stateViews[transition.targetState.id].getBBox();
@@ -352,6 +349,7 @@ namespace(this, "automata.view", function (exports, globals) {
             }
 
             svg.attr(circle, {cx: cx, cy: cy});
+            this.moveTransitionCondition(transition);
         },
         
         updateTransitionCondition: function (transition) {
@@ -363,17 +361,13 @@ namespace(this, "automata.view", function (exports, globals) {
             var cy = Number(svg.attr(circle, "cy"));
 
             svg.clear(text);
-            svg.attr(text, {y: cy});
             
             var sensors = transition.sourceState.stateMachine.world.sensors;
             var transitions = transition.sourceState.getTransitionsToState(transition.targetState);
             
             var hasTerms = false;
             transitions.forEach(function (tr) {
-                var termSpan = svg.create("tspan", {
-                    x: cx + 2 * this.TRANSITION_RADIUS,
-                    dy: "1em"
-                });
+                var termSpan = svg.create("tspan", {dy: "1em"});
                 
                 if (hasTerms) {
                     svg.text(termSpan, "+");
@@ -397,6 +391,24 @@ namespace(this, "automata.view", function (exports, globals) {
                     text.appendChild(termSpan);
                 }
             }, this);
+            
+            this.moveTransitionCondition(transition);
+        },
+        
+        moveTransitionCondition: function (transition) {
+            var g = this.transitionViews[transition.id];
+            var circle = svg.byTag(g, "circle")[0];
+            var text = svg.byTag(g, "text")[0];
+
+            var x = Number(svg.attr(circle, "cx")) + 2 * this.TRANSITION_RADIUS;
+            var y = Number(svg.attr(circle, "cy")) - text.getBBox().height / 2;
+
+            svg.attr(text, {y: y});
+            
+            var tspans = text.childNodes;
+            for (var t = 0; t < tspans.length; t ++) {
+                svg.attr(tspans[t], {x: x});
+            }
         },
         
         updateTransitionPath: function (transition) {
@@ -466,6 +478,10 @@ namespace(this, "automata.view", function (exports, globals) {
                  + "C" + scpx1 + "," + scpy1 + "," + scpx2 + "," + scpy2 + "," + cx    + "," + cy
                  + "C" + tcpx1 + "," + tcpy1 + "," + tcpx2 + "," + tcpy2 + "," + tnp.x + "," + tnp.y
             });
+            
+            if (transition.sourceState === transition.targetState) {
+                this.updateTransitionMark(transition);
+            }
         },
         
         removeTransitionViewIfUnused: function (transition) {
