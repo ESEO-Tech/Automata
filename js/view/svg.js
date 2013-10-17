@@ -77,7 +77,7 @@ namespace(this, "svg", function (exports, globals) {
             evt.stopPropagation();
             var enable = !_.isFunction(settings.canDrag) || settings.canDrag.call(context);
             if (evt.button === 0 && enable) {
-                prev = getPoint(root, evt);
+                prev = evt;
                 document.documentElement.addEventListener("mousemove", onMouseMove, false);
                 document.documentElement.addEventListener("mouseup",   onMouseUp,   false);
             }
@@ -86,11 +86,15 @@ namespace(this, "svg", function (exports, globals) {
         function onMouseMove(evt) {
             evt.preventDefault();
             evt.stopPropagation();
-            var current = getPoint(root, evt);
+            
+            // The actual coordinates are computed each time the mouse moves
+            // in case the document has been tranformed in between.
+            var p = getPoint(root, prev);
+            var q = getPoint(root, evt);
             if (_.isFunction(settings.onDrag)) {
-                settings.onDrag.call(context, current.x - prev.x, current.y - prev.y);
+                settings.onDrag.call(context, q.x - p.x, q.y - p.y);
             }
-            prev = current;
+            prev = evt;
         }
         
         function onMouseUp(evt) {

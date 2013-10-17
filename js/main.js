@@ -10,12 +10,9 @@ $(function () {
     var diagramView = Object.create(automata.view.Diagram).init(fsm, $("#diagram-view"));
 
     function resize() {
-        diagramView.setSize(
-            $(window).width() - $("#table-view").width(),
-            $(window).height()
-        );
+        diagramView.setSize($(window).width() - $("#table-view").width(), $(window).height());
     }
-    
+
     window.setInterval(resize, 1000);
     $(window).resize(resize);
 });

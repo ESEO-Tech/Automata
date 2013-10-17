@@ -1,8 +1,6 @@
 namespace(this, "automata.view", function (exports, globals) {
     "use strict";
 
-    var VIEWBOX_WIDTH = 400;
-    var VIEWBOX_HEIGHT = 600;
     var STATE_RADIUS = 20;
     var STATE_LR_PADDING = 6;
     var STATE_TB_PADDING = 3;
@@ -18,6 +16,10 @@ namespace(this, "automata.view", function (exports, globals) {
             this.transitionViews = {};
             this.transitionViewsByStates = {};
 
+            this.x = 0;
+            this.y = 0;
+            this.zoom = 1;
+            
             container.append(this.createView());
 
             model.addListener("createState", this)
@@ -107,7 +109,22 @@ namespace(this, "automata.view", function (exports, globals) {
         
         setSize: function (width, height) {
             svg.attr(this.root, {width: width, height: height});
+            this.updateViewbox();
             return this;
+        },
+        
+        updateViewbox: function () {
+            svg.attr(this.root, {
+                viewBox: this.x + " " + this.y + " " + this.getViewboxWidth() + " " + this.getViewboxHeight()
+            })
+        },
+        
+        getViewboxWidth: function () {
+            return Number(svg.attr(this.root, "width")) / this.zoom;
+        },
+        
+        getViewboxHeight: function () {
+            return Number(svg.attr(this.root, "height")) / this.zoom;
         },
         
         getViewIdByStates: function (transition) {
@@ -154,10 +171,17 @@ namespace(this, "automata.view", function (exports, globals) {
             
             this.root = svg.create("svg", {
                 "class": "automata-Diagram",
-                viewBox: "0 0 " + VIEWBOX_WIDTH + " " + VIEWBOX_HEIGHT,
                 preserveAspectRatio: "xMidYMid meet"
             });
             
+            svg.setDraggable(this.root, {
+                onDrag: function (dx, dy) {
+                    this.x -= dx / this.zoom;
+                    this.y -= dy / this.zoom;
+                    this.updateViewbox();
+                },
+                context: this
+            });
             this.root.appendChild(defs);
             this.root.appendChild(this.resetView);
             return this.root;
@@ -198,30 +222,14 @@ namespace(this, "automata.view", function (exports, globals) {
             svg.attr(view.rect, {height: nameBBox.height + actionsBBox.height + 4 * STATE_TB_PADDING});
 
             // Move state group to a random location
-            var gx = VIEWBOX_WIDTH  * Math.random();
-            var gy = VIEWBOX_HEIGHT * Math.random();
+            var gx = this.x + this.getViewboxWidth()  * Math.random();
+            var gy = this.y + this.getViewboxHeight() * Math.random();
             svg.attr(view.group, {transform: "translate(" + gx + "," + gy + ")"});
             
             svg.setDraggable(view.wrapper, {
                 onDrag: function (dx, dy) {
                     var bbox = view.wrapper.getBBox();
-                    var x = bbox.x + dx;
-                    if (x < 0) {
-                        x = 0;
-                    }
-                    else if (x + bbox.width > VIEWBOX_WIDTH) {
-                        x = VIEWBOX_WIDTH - bbox.width;
-                    }
-                    
-                    var y = bbox.y + dy;
-                    if (y < 0) {
-                        y = 0;
-                    }
-                    else if (y + bbox.height > VIEWBOX_HEIGHT) {
-                        y = VIEWBOX_HEIGHT - bbox.height;
-                    }
-                    
-                    svg.attr(view.group, {"transform": "translate(" + x + "," + y + ")"})
+                    svg.attr(view.group, {"transform": "translate(" + (bbox.x + dx) + "," + (bbox.y + dy) + ")"})
 
                     state.outgoingTransitions.forEach(this.updateTransitionPath, this);
                     state.incomingTransitions.forEach(this.updateTransitionPath, this);
@@ -249,12 +257,12 @@ namespace(this, "automata.view", function (exports, globals) {
             svg.attr(view.separator, {x2:    maxWidth     + 2 * STATE_LR_PADDING});
             
             var viewBBox = view.wrapper.getBBox();
-            var x = VIEWBOX_WIDTH - viewBBox.width;
+            var x = this.getViewboxWidth() - viewBBox.width;
             if (viewBBox.x < x) {
                 x = viewBBox.x;
             }
             
-            var y = VIEWBOX_HEIGHT - viewBBox.height;
+            var y = this.getViewboxHeight() - viewBBox.height;
             if (viewBBox.y < y) {
                 y = viewBBox.y;
             }
