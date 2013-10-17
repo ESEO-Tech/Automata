@@ -30,7 +30,7 @@ namespace(this, "svg", function (exports, globals) {
         
     exports.clear = function (elt) {
         while (elt.firstChild) {
-            elt.firstChild.remove();
+            elt.removeChild(elt.firstChild);
         }
     };
         
