@@ -61,6 +61,10 @@
  * State names
  * ---------------------------------------------------------------------- */
 
+.automata-TransitionTable .target-state-name {
+    padding-right: 1em;
+}
+
 .automata-TransitionTable .source-state-name input[type=text],
 .automata-TransitionTable .target-state-name select {
     display: block;
