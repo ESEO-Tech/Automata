@@ -7,6 +7,7 @@ namespace(this, "automata.view", function (exports, globals) {
     var TRANSITION_RADIUS = 6;
     var TRANSITION_END_FACTOR = 3;
     var TRANSITION_MARK_FACTOR = 6;
+    var ZOOM_FACTOR = 1.05;
 
     exports.Diagram = {
         
@@ -182,6 +183,39 @@ namespace(this, "automata.view", function (exports, globals) {
                 },
                 context: this
             });
+            
+            var self = this;
+            function onWheel(evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+                if (!evt) {
+                    evt = window.event;
+                }
+
+                var delta = 0;
+                if (evt.wheelDelta) { // IE and Opera
+                    delta = evt.wheelDelta;
+                }
+                else if (evt.detail) { // Mozilla
+                    delta = -evt.detail;
+                }
+                
+                var f = 1;
+                if (delta > 0) {
+                    f = 1/ZOOM_FACTOR;
+                }
+                else if (delta < 0) {
+                    f = ZOOM_FACTOR;
+                }
+                self.zoom /= f;
+                self.x += self.getViewboxWidth()  * (1 - f) / 2;
+                self.y += self.getViewboxHeight() * (1 - f) / 2;
+                self.updateViewbox();
+            }
+            
+            this.root.addEventListener("DOMMouseScroll", onWheel, false); // Mozilla
+            this.root.onmousewheel = onWheel;
+
             this.root.appendChild(defs);
             this.root.appendChild(this.resetView);
             return this.root;
