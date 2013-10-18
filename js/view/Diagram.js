@@ -253,13 +253,17 @@ namespace(this, "automata.view", function (exports, globals) {
                 y2: nameBBox.height + 2 * STATE_TB_PADDING
             });
             
-            svg.attr(view.rect, {height: nameBBox.height + actionsBBox.height + 4 * STATE_TB_PADDING});
+            var rectHeight = nameBBox.height + actionsBBox.height + 4 * STATE_TB_PADDING;
+            svg.attr(view.rect, {height: rectHeight});
+
+            this.updateStateView(state);
 
             // Move state group to a random location
-            var gx = this.x + this.getViewboxWidth()  * Math.random();
-            var gy = this.y + this.getViewboxHeight() * Math.random();
+            var rectWidth = Number(svg.attr(view.rect, "width"));
+            var gx = this.x + (this.getViewboxWidth() - rectWidth)   * Math.random();
+            var gy = this.y + (this.getViewboxHeight() - rectHeight) * Math.random();
             svg.attr(view.group, {transform: "translate(" + gx + "," + gy + ")"});
-            
+
             svg.setDraggable(view.wrapper, {
                 onDrag: function (dx, dy) {
                     var bbox = view.wrapper.getBBox();
@@ -274,8 +278,6 @@ namespace(this, "automata.view", function (exports, globals) {
                 },
                 context: this
             });
-                
-            this.updateStateView(state);
         },
         
         updateStateView: function (state) {
@@ -289,19 +291,6 @@ namespace(this, "automata.view", function (exports, globals) {
             svg.attr(view.actions,   {x:     maxWidth / 2 +     STATE_LR_PADDING});
             svg.attr(view.rect,      {width: maxWidth     + 2 * STATE_LR_PADDING});
             svg.attr(view.separator, {x2:    maxWidth     + 2 * STATE_LR_PADDING});
-            
-            var viewBBox = view.wrapper.getBBox();
-            var x = this.getViewboxWidth() - viewBBox.width;
-            if (viewBBox.x < x) {
-                x = viewBBox.x;
-            }
-            
-            var y = this.getViewboxHeight() - viewBBox.height;
-            if (viewBBox.y < y) {
-                y = viewBBox.y;
-            }
-            
-            svg.attr(view.group, {transform: "translate(" + x + "," + y + ")"});
             
             if (state === this.model.states[0]) {
                 this.updateResetView();
