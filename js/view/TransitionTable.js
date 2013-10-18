@@ -57,7 +57,7 @@ namespace(this, "automata.view", function (exports, globals) {
             });
             
             $("td.create-transition input", row).click(function () {
-                model.createTransitionFromState(state);
+                model.createTransition(state, state);
             });
             
             $("table.state-encoding input", row).each(function (index) {

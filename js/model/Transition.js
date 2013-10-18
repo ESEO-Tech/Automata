@@ -19,6 +19,21 @@ namespace(this, "automata.model", function (exports, globals) {
             return this;
         },
         
+        toObject: function () {
+            return {
+                sourceStateId: this.sourceState.id,
+                targetStateId: this.targetState.id,
+                inputs: this.inputs,
+                outputs: this.outputs
+            };
+        },
+        
+        fromObject: function (obj) {
+            this.inputs = obj.inputs;
+            this.outputs = obj.outputs;
+            return this;
+        },
+        
         destroy: function () {
             this.sourceState.removeOutgoingTransition(this);
             this.targetState.removeIncomingTransition(this);

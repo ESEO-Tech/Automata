@@ -63,8 +63,6 @@ namespace(this, "automata.view", function (exports, globals) {
             
             // Update source state view if Moore actions have changed
             this.updateState(transition.sourceState);
-
-            // TODO handle transition text
         },
         
         afterRemoveTransition: function (model, transition) {

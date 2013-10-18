@@ -1,5 +1,6 @@
 $(function () {
     var world = {
+        key: "leve-vitre",
         sensors: ["BO", "BF", "CO", "CF", "sec"],
         actuators: ["MO", "MF", "inc"]
     };

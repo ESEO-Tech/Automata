@@ -16,6 +16,19 @@ namespace(this, "automata.model", function (exports, globals) {
             return this;
         },
         
+        toObject: function () {
+            return {
+                name: this.name,
+                encoding: this.encoding
+            };
+        },
+        
+        fromObject: function (obj) {
+            this.name = obj.name;
+            this.encoding = obj.encoding;
+            return this;
+        },
+        
         destroy: function () {
             while (this.outgoingTransitions.length) {
                 this.stateMachine.removeTransition(this.outgoingTransitions[0]);
@@ -84,7 +97,7 @@ namespace(this, "automata.model", function (exports, globals) {
             else {
                 return [];
             }
-        },
+        }
     });
 });
 

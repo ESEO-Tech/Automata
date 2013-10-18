@@ -18,6 +18,32 @@ namespace(this, "automata.model", function (exports, globals) {
             return this;
         },
         
+        toObject: function () {
+            var result = {
+                states: {},
+                transitions: {}
+            };
+            for (var sid in this.statesById) {
+                result.states[sid] = this.statesById[sid].toObject();
+            }
+            for (var tid in this.transitionsById) {
+                result.transitions[tid] = this.transitionsById[tid].toObject();
+            }
+            return result;
+        },
+        
+        fromObject: function (obj) {
+            var statesByObjId = {};
+            for (var sid in obj.states) {
+                statesByObjId[sid] = this.createState().fromObject(obj.states[sid]);
+            }
+            for (var tid in obj.transitions) {
+                var tobj = obj.transitions[tid];
+                this.createTransition(statesByObjId[tobj.sourceStateId], statesByObjId[tobj.targetStateId]).fromObject(tobj);
+            }
+            return this;
+        },
+        
         createState: function () {
             var state = Object.create(exports.State).init(this);
             this.states.push(state);
@@ -40,8 +66,8 @@ namespace(this, "automata.model", function (exports, globals) {
             return this;
         },
     
-        createTransitionFromState: function (state) {
-            var transition = Object.create(exports.Transition).init(state, state);
+        createTransition: function (sourceState, targetState) {
+            var transition = Object.create(exports.Transition).init(sourceState, targetState);
             this.transitions.push(transition);
             this.transitionsById[transition.id] = transition;
             
