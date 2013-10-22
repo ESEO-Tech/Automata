@@ -3,11 +3,10 @@ namespace(this, "automata.model", function (exports, globals) {
     "use strict";
 
     exports.StateMachine = Object.create(exports.Model).augment({
-        init: function (world, stateVars) {
+        init: function (world) {
             exports.Model.init.call(this);
             
             this.world = world;
-            this.stateVars = stateVars || [];
             
             this.states = [];
             this.statesById = {};
@@ -42,6 +41,15 @@ namespace(this, "automata.model", function (exports, globals) {
                 this.createTransition(statesByObjId[tobj.sourceStateId], statesByObjId[tobj.targetStateId]).fromObject(tobj);
             }
             return this;
+        },
+        
+        getStateVars: function () {
+            if (this.world.solution && _.isArray(this.world.solution.stateVars)) {
+                return this.world.solution.stateVars;
+            }
+            else {
+                return [];
+            }
         },
         
         createState: function () {

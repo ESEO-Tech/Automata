@@ -8,8 +8,8 @@ namespace(this, "automata.model", function (exports, globals) {
             
             this.name = "State" + this.id;
             this.stateMachine = stateMachine;
-            
-            this.encoding = stateMachine.stateVars.map(function () { return "0"; }),
+            this.encoding = stateMachine.getStateVars().map(function () { return "0"; });
+
             this.outgoingTransitions = [];
             this.incomingTransitions = [];
             

@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="css/TransitionTable.css">
         <link rel="stylesheet" href="css/Diagram.css">
+        <link rel="stylesheet" href="css/Control.css">
         
         <script src="js/namespace.js"></script>
         <script src="js/Object.create.js"></script>
@@ -22,6 +23,7 @@
         <script src="js/model/State.js"></script>
         <script src="js/model/Transition.js"></script>
         <script src="js/model/StateMachine.js"></script>
+        <script src="js/model/World.js"></script>
         <script src="js/view/svg.js"></script>
         <script src="js/view/TransitionTable.js"></script>
         <script src="js/view/Diagram.js"></script>
@@ -29,6 +31,10 @@
     </head>
     <body>
         <div id="table-view"></div>
+        <div id="control-view">
+            <!-- P: Play, S: Stop, u: Pause -->
+            <span class="play">P</span>
+        </div>
         <div id="world-view">
             Nothing.
         </div>
