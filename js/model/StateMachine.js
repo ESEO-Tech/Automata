@@ -31,14 +31,13 @@ namespace(this, "automata.model", function (exports, globals) {
             return result;
         },
         
-        fromObject: function (obj) {
-            var statesByObjId = {};
+        fromObject: function (obj, mapping) {
             for (var sid in obj.states) {
-                statesByObjId[sid] = this.createState().fromObject(obj.states[sid]);
+                mapping[sid] = this.createState().fromObject(obj.states[sid]);
             }
             for (var tid in obj.transitions) {
                 var tobj = obj.transitions[tid];
-                this.createTransition(statesByObjId[tobj.sourceStateId], statesByObjId[tobj.targetStateId]).fromObject(tobj);
+                mapping[tid] = this.createTransition(mapping[tobj.sourceStateId], mapping[tobj.targetStateId]).fromObject(tobj);
             }
             return this;
         },
@@ -62,7 +61,7 @@ namespace(this, "automata.model", function (exports, globals) {
             }, this);
             
             this.fire("createState", state);
-            this.fire("changed", this);
+            this.fire("changed");
             
             return state;
         },
@@ -75,7 +74,7 @@ namespace(this, "automata.model", function (exports, globals) {
             delete this.statesById[state.id];
             
             this.fire("afterRemoveState", state);
-            this.fire("changed", this);
+            this.fire("changed");
             
             return this;
         },
@@ -91,7 +90,7 @@ namespace(this, "automata.model", function (exports, globals) {
             
             
             this.fire("createTransition", transition);
-            this.fire("changed", this);
+            this.fire("changed");
             
             return transition;
         },
@@ -104,7 +103,7 @@ namespace(this, "automata.model", function (exports, globals) {
             delete this.transitionsById[transition.id];
             
             this.fire("afterRemoveTransition", transition);
-            this.fire("changed", this);
+            this.fire("changed");
             
             return this;
         }

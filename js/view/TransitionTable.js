@@ -2,10 +2,12 @@
 namespace(this, "automata.view", function (exports, globals) {
     "use strict";
 
-    exports.TransitionTable = {
+    exports.TransitionTable = Object.create(automata.model.Model).augment({
         templateNames: ["main", "state", "transition"],
         
         init: function (model, container) {
+            automata.model.Model.init.call(this);
+            
             this.model = model;
             this.templates = {};
             
@@ -163,5 +165,5 @@ namespace(this, "automata.view", function (exports, globals) {
             }
             $("td.remove-state, td.source-state-name", rows.first()).attr("rowspan", rows.length - 1);
         }
-    };
+    });
 });

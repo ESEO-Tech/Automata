@@ -43,20 +43,27 @@ $(function () {
         }
     });
     
-    var tableView = Object.create(automata.view.TransitionTable).init(world.stateMachine, $("#table-view"));
+    var tableView =   Object.create(automata.view.TransitionTable).init(world.stateMachine, $("#table-view"));
     var diagramView = Object.create(automata.view.Diagram).init(world.stateMachine, $("#diagram-view"));
+    
+    var sources = {};
+    sources["automata." + world.key + ".model"]        = world.stateMachine;
+    sources["automata." + world.key + ".view.table"]   = tableView;
+    sources["automata." + world.key + ".view.diagram"] = diagramView;
+    var storage = Object.create(automata.storage.LocalStorage).init(sources);
+
+    $.when(tableView.ready(), diagramView.ready()).done(function () {
+        storage.load();
+    });
     
     function resize() {
         diagramView.setSize($(window).width() - $("#table-view").width(), $(window).height());
     }
 
-    var storage = Object.create(automata.storage.LocalStorage).init(world);
-    $.when(tableView.ready(), diagramView.ready())
-        .done(function () {
-            storage.load();
-            resize();
-        });
+    world.stateMachine.addListener("changed", function () {
+        // Ensure the table view has been updated before resizing
+        setTimeout(resize, 1);
+    });
     
-    window.setInterval(resize, 1000);
     $(window).resize(resize);
 });

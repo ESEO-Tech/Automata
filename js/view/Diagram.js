@@ -9,9 +9,11 @@ namespace(this, "automata.view", function (exports, globals) {
     var TRANSITION_MARK_FACTOR = 6;
     var ZOOM_FACTOR = 1.05;
 
-    exports.Diagram = {
+    exports.Diagram = Object.create(automata.model.Model).augment({
         
         init: function (model, container) {
+            automata.model.Model.init.call(this);
+
             this.model = model;
             this.stateViews = {};
             this.transitionViews = {};
@@ -23,6 +25,8 @@ namespace(this, "automata.view", function (exports, globals) {
             
             container.append(this.createView());
 
+            this.setSize(100, 100);
+
             model.addListener("createState", this)
                  .addListener("afterRemoveState", this)
                  .addListener("createTransition", this)
@@ -32,18 +36,61 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         ready: function () {
-            return true;
+            return $.when(true);
+        },
+        
+        toObject: function () {
+            var result = {
+                x: this.x,
+                y: this.y,
+                zoom: this.zoom,
+                states: {},
+                transitions: {}
+            };
+            
+            for (var sid in this.stateViews) {
+                var bbox = this.getStateBBox(this.model.statesById[sid]);
+                result.states[sid] = {
+                    x: bbox.x,
+                    y: bbox.y
+                };
+            }
+            
+            for (var tid in this.transitionViews) {
+                result.transitions[tid] = svg.center(this.transitionViews[tid].handle);
+            }
+            
+            return result;
+        },
+        
+        fromObject: function (obj, mapping) {
+            this.x = obj.x;
+            this.y = obj.y;
+            this.zoom = obj.zoom;
+            this.updateViewbox();
+            
+            for (var sid in obj.states) {
+                this.putStateView(mapping[sid], obj.states[sid].x, obj.states[sid].y);
+            }
+            
+            for (var tid in obj.transitions) {
+                this.putTransitionHandle(mapping[tid], obj.transitions[tid].cx, obj.transitions[tid].cy);
+            }
+            
+            return this;
         },
         
         createState: function (model, state) {
             state.addListener("changed", this.updateState, this);
             this.createStateView(state);
+            this.fire("changed");
         },
 
         afterRemoveState: function (model, state) {
             this.root.removeChild(this.stateViews[state.id].wrapper);
             delete this.stateViews[state.id];
             this.updateResetView();
+            this.fire("changed");
         },
         
         updateState: function (state) {
@@ -53,6 +100,7 @@ namespace(this, "automata.view", function (exports, globals) {
             // we need to redraw all transition paths to/from the given state
             state.outgoingTransitions.forEach(this.updateTransitionPath, this);
             state.incomingTransitions.forEach(this.updateTransitionPath, this);
+            this.fire("changed");
         },
 
         createTransition: function (model, transition) {
@@ -108,6 +156,7 @@ namespace(this, "automata.view", function (exports, globals) {
                 this.updateTransitionText(ot);
             }, this);
             transition.sourceState.incomingTransitions.forEach(this.updateTransitionPath, this);
+            this.fire("changed");
         },
         
         setSize: function (width, height) {
@@ -264,22 +313,30 @@ namespace(this, "automata.view", function (exports, globals) {
             var rectWidth = Number(svg.attr(view.rect, "width"));
             var gx = this.x + (this.getViewboxWidth() - rectWidth)   * Math.random();
             var gy = this.y + (this.getViewboxHeight() - rectHeight) * Math.random();
-            svg.attr(view.group, {transform: "translate(" + gx + "," + gy + ")"});
+            this.putStateView(state, gx, gy);
 
             svg.setDraggable(view.wrapper, {
                 onDrag: function (dx, dy) {
                     var bbox = view.wrapper.getBBox();
-                    svg.attr(view.group, {"transform": "translate(" + (bbox.x + dx) + "," + (bbox.y + dy) + ")"})
-
-                    state.outgoingTransitions.forEach(this.updateTransitionPath, this);
-                    state.incomingTransitions.forEach(this.updateTransitionPath, this);
-                    
-                    if (state === this.model.states[0]) {
-                        this.updateResetView();
-                    }
+                    this.putStateView(state, bbox.x + dx, bbox.y + dy);
+                },
+                onDrop: function () {
+                    this.fire("changed");
                 },
                 context: this
             });
+        },
+        
+        putStateView: function (state, x, y) {
+            svg.attr(this.stateViews[state.id].group, {"transform": "translate(" + x + "," + y + ")"});
+
+            state.outgoingTransitions.forEach(this.updateTransitionPath, this);
+            state.incomingTransitions.forEach(this.updateTransitionPath, this);
+
+            if (state === this.model.states[0]) {
+                this.updateResetView();
+            }
+            return this;
         },
         
         updateStateView: function (state) {
@@ -293,10 +350,6 @@ namespace(this, "automata.view", function (exports, globals) {
             svg.attr(view.actions,   {x:     maxWidth / 2 +     STATE_LR_PADDING});
             svg.attr(view.rect,      {width: maxWidth     + 2 * STATE_LR_PADDING});
             svg.attr(view.separator, {x2:    maxWidth     + 2 * STATE_LR_PADDING});
-            
-            if (state === this.model.states[0]) {
-                this.updateResetView();
-            }
         },
         
         getStateBBox: function (state) {
@@ -337,22 +390,21 @@ namespace(this, "automata.view", function (exports, globals) {
                 canDrag: function () {
                     return transition.sourceState !== transition.targetState;
                 },
-                
                 onDrag: function (dx, dy) {
-                    this.moveTransitionHandle(transition, dx, dy);
+                    var p = svg.center(view.handle);
+                    this.putTransitionHandle(transition, p.cx + dx, p.cy + dy);
                 },
-                
+                onDrop: function () {
+                    this.fire("changed");
+                },
                 context: this
             });
         },
         
-        moveTransitionHandle: function (transition, dx, dy) {
-            var view = this.transitionViews[transition.id];
-            var p = svg.center(view.handle);
-            
-            svg.attr(view.handle, {
-                cx: p.cx + dx,
-                cy: p.cy + dy
+        putTransitionHandle: function (transition, x, y) {
+            svg.attr(this.transitionViews[transition.id].handle, {
+                cx: x,
+                cy: y
             });
             
             this.updateTransitionPath(transition);
@@ -543,5 +595,5 @@ namespace(this, "automata.view", function (exports, globals) {
             
             delete this.transitionViews[transition.id];
         }
-    };
+    });
 });
