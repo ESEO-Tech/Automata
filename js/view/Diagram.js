@@ -291,11 +291,11 @@ namespace(this, "automata.view", function (exports, globals) {
 
             // Set vertical position of State name
             var nameBBox = view.name.getBBox();
-            svg.attr(view.name, {y: -nameBBox.y + STATE_TB_PADDING});
+            svg.attr(view.name, {y: nameBBox.height});
 
             // Set vertical position of State actions
             var actionsBBox = view.actions.getBBox();
-            svg.attr(view.actions, {y: -nameBBox.y - actionsBBox.y + 3 * STATE_TB_PADDING});
+            svg.attr(view.actions, {y: nameBBox.height + actionsBBox.height + 2 * STATE_TB_PADDING});
 
             // Setup transition for initial state
             
@@ -342,14 +342,19 @@ namespace(this, "automata.view", function (exports, globals) {
         updateStateView: function (state) {
             var view = this.stateViews[state.id];
             
-            svg.text(view.name,    state.name);
-            svg.text(view.actions, state.getMooreActions().join(", "));
+            // Replace empty strings with non-breaking spaces to ensure correct bounding box in Webkit
+            svg.text(view.name,    state.name                         || "\u2000");
+            svg.text(view.actions, state.getMooreActions().join(", ") || "\u2000");
 
             var maxWidth = Math.max(view.name.getComputedTextLength(), view.actions.getComputedTextLength());
             svg.attr(view.name,      {x:     maxWidth / 2 +     STATE_LR_PADDING});
             svg.attr(view.actions,   {x:     maxWidth / 2 +     STATE_LR_PADDING});
             svg.attr(view.rect,      {width: maxWidth     + 2 * STATE_LR_PADDING});
             svg.attr(view.separator, {x2:    maxWidth     + 2 * STATE_LR_PADDING});
+
+            if (state === this.model.states[0]) {
+                this.updateResetView();
+            }
         },
         
         getStateBBox: function (state) {

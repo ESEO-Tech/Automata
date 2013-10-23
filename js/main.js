@@ -53,6 +53,7 @@ $(function () {
     var storage = Object.create(automata.storage.LocalStorage).init(sources);
 
     $.when(tableView.ready(), diagramView.ready()).done(function () {
+        resize();
         storage.load();
     });
     
