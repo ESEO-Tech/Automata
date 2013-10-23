@@ -65,6 +65,6 @@ $(function () {
         // Ensure the table view has been updated before resizing
         setTimeout(resize, 1);
     });
-    
+
     $(window).resize(resize);
 });
