@@ -26,6 +26,7 @@ namespace(this, "automata.model", function (exports, globals) {
         fromObject: function (obj) {
             this.name = obj.name;
             this.encoding = obj.encoding;
+            this.fire("changed");
             return this;
         },
         

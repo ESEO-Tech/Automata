@@ -50,6 +50,13 @@ $(function () {
         diagramView.setSize($(window).width() - $("#table-view").width(), $(window).height());
     }
 
+    var storage = Object.create(automata.storage.LocalStorage).init(world);
+    $.when(tableView.ready(), diagramView.ready())
+        .done(function () {
+            storage.load();
+            resize();
+        });
+    
     window.setInterval(resize, 1000);
     $(window).resize(resize);
 });

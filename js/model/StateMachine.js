@@ -57,9 +57,14 @@ namespace(this, "automata.model", function (exports, globals) {
             this.states.push(state);
             this.statesById[state.id] = state;
             
-            this.fire("createState", state);
+            state.addListener("changed", function () {
+                this.fire("changed");
+            }, this);
             
-            return this;
+            this.fire("createState", state);
+            this.fire("changed", this);
+            
+            return state;
         },
         
         removeState: function (state) {
@@ -70,6 +75,7 @@ namespace(this, "automata.model", function (exports, globals) {
             delete this.statesById[state.id];
             
             this.fire("afterRemoveState", state);
+            this.fire("changed", this);
             
             return this;
         },
@@ -78,10 +84,16 @@ namespace(this, "automata.model", function (exports, globals) {
             var transition = Object.create(exports.Transition).init(sourceState, targetState);
             this.transitions.push(transition);
             this.transitionsById[transition.id] = transition;
+
+            transition.addListener("changed", function () {
+                this.fire("changed");
+            }, this);
+            
             
             this.fire("createTransition", transition);
+            this.fire("changed", this);
             
-            return this;
+            return transition;
         },
         
         removeTransition: function (transition) {
@@ -92,6 +104,7 @@ namespace(this, "automata.model", function (exports, globals) {
             delete this.transitionsById[transition.id];
             
             this.fire("afterRemoveTransition", transition);
+            this.fire("changed", this);
             
             return this;
         }

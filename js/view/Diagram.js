@@ -31,6 +31,10 @@ namespace(this, "automata.view", function (exports, globals) {
             return this;
         },
         
+        ready: function () {
+            return true;
+        },
+        
         createState: function (model, state) {
             state.addListener("changed", this.updateState, this);
             this.createStateView(state);

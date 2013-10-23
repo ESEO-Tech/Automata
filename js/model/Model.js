@@ -12,6 +12,29 @@ namespace(this, "automata.model", function (exports, globals) {
             return this;
         },
         
+        createListenerRecord: function (event, a, b) {
+            if (_.isUndefined(b)) {
+                if (_.isFunction(a)) {
+                    return {
+                        callback: a,
+                        receiver: globals
+                    };
+                }
+                else {
+                    return {
+                        callback: a[event],
+                        receiver: a
+                    };
+                }
+            }
+            else {
+                return {
+                    callback: a,
+                    receiver: b
+                };
+            }
+        },
+        
         /*
          * Add a listener for a given event.
          *
@@ -28,28 +51,23 @@ namespace(this, "automata.model", function (exports, globals) {
             if (!(event in this.listeners)) {
                 this.listeners[event] = [];
             }
-            
-            if (_.isUndefined(b)) {
-                if (_.isFunction(a)) {
-                    this.listeners[event].push({
-                        callback: a,
-                        receiver: globals
-                    });
-                }
-                else {
-                    this.listeners[event].push({
-                        callback: a[event],
-                        receiver: a
-                    });
+            this.listeners[event].push(this.createListenerRecord(event, a, b));
+            return this;
+        },
+        
+        removeListener: function (event, a, b) {
+            if (event in this.listeners) {
+                var listeners = this.listeners[event];
+                var record = this.createListenerRecord(event, a, b);
+                for (var i = 0; i < listeners.length;) {
+                    if (listeners[i].callback === record.callback && listeners[i].receiver === record.receiver) {
+                        listeners.splice(i, 1);
+                    }
+                    else {
+                        i ++;
+                    }
                 }
             }
-            else {
-                this.listeners[event].push({
-                    callback: a,
-                    receiver: b
-                });
-            }
-            
             return this;
         },
         

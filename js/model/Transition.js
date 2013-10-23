@@ -31,6 +31,7 @@ namespace(this, "automata.model", function (exports, globals) {
         fromObject: function (obj) {
             this.inputs = obj.inputs;
             this.outputs = obj.outputs;
+            this.fire("changed");
             return this;
         },
         

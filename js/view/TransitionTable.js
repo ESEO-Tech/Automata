@@ -10,7 +10,7 @@ namespace(this, "automata.view", function (exports, globals) {
             this.templates = {};
             
             var self = this;
-            this.loadTemplates().done(function () {
+            this.promise = this.loadTemplates().done(function () {
                 self.root = $(self.templates.main(model)).appendTo(container);
                 
                 $("input", container).click(function () {
@@ -24,6 +24,10 @@ namespace(this, "automata.view", function (exports, globals) {
             });
             
             return this;
+        },
+        
+        ready: function () {
+            return this.promise;
         },
         
         loadTemplates: function () {
