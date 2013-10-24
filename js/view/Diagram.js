@@ -159,6 +159,8 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         setSize: function (width, height) {
+            this.width = width;
+            this.height = height;
             svg.attr(this.root, {width: width, height: height});
             this.updateViewbox();
             return this;
@@ -166,16 +168,8 @@ namespace(this, "automata.view", function (exports, globals) {
         
         updateViewbox: function () {
             svg.attr(this.root, {
-                viewBox: this.x + " " + this.y + " " + this.getViewboxWidth() + " " + this.getViewboxHeight()
+                viewBox: this.x + " " + this.y + " " + this.width + " " + this.height
             })
-        },
-        
-        getViewboxWidth: function () {
-            return Number(svg.attr(this.root, "width")) / this.zoom;
-        },
-        
-        getViewboxHeight: function () {
-            return Number(svg.attr(this.root, "height")) / this.zoom;
         },
         
         getViewIdByStates: function (transition) {
@@ -219,8 +213,8 @@ namespace(this, "automata.view", function (exports, globals) {
                     f = ZOOM_FACTOR;
                 }
                 self.zoom /= f;
-                self.x += self.getViewboxWidth()  * (1 - f) / 2;
-                self.y += self.getViewboxHeight() * (1 - f) / 2;
+                self.x += self.width  * (1 - f) / 2;
+                self.y += self.height * (1 - f) / 2;
                 self.updateViewbox();
             }
             
@@ -269,8 +263,8 @@ namespace(this, "automata.view", function (exports, globals) {
             this.updateStateView(state);
 
             // Move state group to a random location
-            var gx = this.x + (this.getViewboxWidth() - view.width)   * Math.random();
-            var gy = this.y + (this.getViewboxHeight() - view.height) * Math.random();
+            var gx = this.x + (this.width - view.width)   * Math.random();
+            var gy = this.y + (this.height - view.height) * Math.random();
             this.putStateView(state, gx, gy);
 
             svg.setDraggable(view.group, {
