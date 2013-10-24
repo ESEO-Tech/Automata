@@ -9,10 +9,13 @@ namespace(this, "automata.view", function (exports, globals) {
     var TRANSITION_MARK_FACTOR = 6;
     var ZOOM_FACTOR = 1.05;
 
-    exports.Diagram = Object.create(automata.model.Model).augment({
+    exports.Diagram = Object.create(exports.View).augment({
+        templateFiles: {
+            main: "templates/Diagram-main.tpl.svg"
+        },        
         
         init: function (model, container) {
-            automata.model.Model.init.call(this);
+            exports.View.init.call(this, model, container);
 
             this.model = model;
             this.stateViews = {};
@@ -23,20 +26,12 @@ namespace(this, "automata.view", function (exports, globals) {
             this.y = 0;
             this.zoom = 1;
             
-            container.append(this.createView());
-
-            this.setSize(100, 100);
-
             model.addListener("createState", this)
                  .addListener("afterRemoveState", this)
                  .addListener("createTransition", this)
                  .addListener("afterRemoveTransition", this);
 
             return this;
-        },
-        
-        ready: function () {
-            return $.when(true);
         },
         
         toObject: function () {
@@ -183,49 +178,10 @@ namespace(this, "automata.view", function (exports, globals) {
             return transition.sourceState.id + "-" + transition.targetState.id;
         },
         
-        createView: function () {
-            // Create arrow head marker for transitions
-            var path = svg.create("path", {d: "M0,0 L10,5 L0,10 L2,5 z"});
-            
-            var marker = svg.create("marker", {
-                id: "arrow-head",
-                viewBow: "0 0 10 10",
-                refX: 10,
-                refY: 5,
-                markerWidth: 10,
-                markerHeight: 10,
-                markerUnits: "strokeWidth",
-                orient: "auto"
-            });
-            marker.appendChild(path);
-            
-            var defs = svg.create("defs");
-            defs.appendChild(marker);
+        onLoad: function () {
+            this.root = $(this.templates.main(this.model)).appendTo(this.container)[0];
+            this.resetView = document.getElementById("reset");
 
-            // Create dummy transition view for initial state
-            var circle = svg.create("circle", {
-                cx: TRANSITION_RADIUS,
-                cy: TRANSITION_RADIUS,
-                r:  TRANSITION_RADIUS
-            });
-            
-            var path = svg.create("path", {
-                "marker-end": "url(#arrow-head)",
-                d: "M" + TRANSITION_RADIUS + "," + TRANSITION_RADIUS +
-                   "c" +      TRANSITION_RADIUS  + "," + 0                       + "," +
-                         (3 * TRANSITION_RADIUS) + "," +      TRANSITION_RADIUS  + "," +
-                         (3 * TRANSITION_RADIUS) + "," + (3 * TRANSITION_RADIUS)
-            });
-
-            this.resetView = svg.create("g", {"class": "reset transition"});
-            this.resetView.appendChild(circle);
-            this.resetView.appendChild(path);
-            
-            this.root = svg.create("svg", {
-                "class": "automata-Diagram",
-                preserveAspectRatio: "xMidYMid meet"
-            });
-            
             svg.setDraggable(this.root, {
                 onDrag: function (dx, dy) {
                     this.x -= dx / this.zoom;
@@ -267,9 +223,7 @@ namespace(this, "automata.view", function (exports, globals) {
             this.root.addEventListener("DOMMouseScroll", onWheel, false); // Mozilla
             this.root.onmousewheel = onWheel;
 
-            this.root.appendChild(defs);
-            this.root.appendChild(this.resetView);
-            return this.root;
+            this.setSize(100, 100);
         },
         
         createStateView: function (state) {

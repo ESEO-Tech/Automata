@@ -2,49 +2,33 @@
 namespace(this, "automata.view", function (exports, globals) {
     "use strict";
 
-    exports.TransitionTable = Object.create(automata.model.Model).augment({
-        templateNames: ["main", "state", "transition"],
+    exports.TransitionTable = Object.create(exports.View).augment({
+        templateFiles: {
+            main:       "templates/TransitionTable-main.tpl.html",
+            state:      "templates/TransitionTable-state.tpl.html",
+            transition: "templates/TransitionTable-transition.tpl.html"
+        },
         
         init: function (model, container) {
-            automata.model.Model.init.call(this);
-            
-            this.model = model;
-            this.templates = {};
-            
-            var self = this;
-            this.promise = this.loadTemplates().done(function () {
-                self.root = $(self.templates.main(model)).appendTo(container);
-                
-                $("input", container).click(function () {
-                    model.createState();
-                });
-                
-                model.addListener("createState",            self)
-                     .addListener("beforeRemoveState",      self)
-                     .addListener("createTransition",       self)
-                     .addListener("beforeRemoveTransition", self);
-            });
-            
+            exports.View.init.call(this, model, container);
+
+            model.addListener("createState",            this)
+                 .addListener("beforeRemoveState",      this)
+                 .addListener("createTransition",       this)
+                 .addListener("beforeRemoveTransition", this);
+
             return this;
         },
         
-        ready: function () {
-            return this.promise;
+        onLoad: function () {
+            this.root = $(this.templates.main(this.model)).appendTo(this.container);
+            
+            var model = this.model;
+            $("input", this.root).click(function () {
+                model.createState();
+            });
         },
         
-        loadTemplates: function () {
-            var self = this;
-            return $.when.apply($, this.templateNames.map(function (name) {
-                return $.ajax("templates/TransitionTable-" + name + ".tpl.html", {dataType: "text"})
-                    .done(function (resp) {
-                        self.templates[name] = _.template(resp);
-                    })
-                    .fail(function (xhr, status, error) {
-                        throw "Failed to load template '" + name + "' " + error;
-                    });
-            }));
-        },
-
         createState: function (model, state) {
             state.addListener("changed", this.updateState, this);
             
