@@ -161,20 +161,49 @@ namespace(this, "automata.view", function (exports, globals) {
         onLoad: function () {
             var fragment = Snap.parse(this.templates.main(this.model));
             this.container.append(fragment.node);
-            this.root = Snap("svg.automata-Diagram");
+            this.paper = Snap("svg.automata-Diagram");
+            this.resetView = this.paper.select("#reset");
             
-            this.resetView = this.root.select("#reset");
-
-            svg.setDraggable(this.root.node, {
-                onDrag: function (dx, dy) {
-                    this.x -= dx;
-                    this.y -= dy;
-                    this.updateViewbox();
-                },
-                context: this
-            });
-
             var self = this;
+            var startX, startY, startEvt;
+            
+            function onMouseDown(evt) {
+                if (evt.button === 0) {
+                    startX = self.x;
+                    startY = self.y;
+                    startEvt = evt;
+                    
+                    $(document.documentElement).mousemove(onMouseMove);
+                    $(document.documentElement).mouseup(onMouseUp);
+
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                }                
+            }
+            
+            function onMouseMove(evt) {
+                // The actual coordinates are computed each time the mouse moves
+                // in case the document has been tranformed in between.
+                self.x = startX - (evt.clientX - startEvt.clientX) / self.zoom;
+                self.y = startY - (evt.clientY - startEvt.clientY) / self.zoom;
+                self.updateViewbox();
+
+                evt.preventDefault();
+                evt.stopPropagation();
+            }
+            
+            function onMouseUp(evt) {
+                self.fire("changed");
+                
+                if (evt.button === 0) {
+                    $(document.documentElement).off("mouseup", onMouseUp);
+                    $(document.documentElement).off("mousemove", onMouseMove);
+                }
+                
+                evt.preventDefault();
+                evt.stopPropagation();
+            }
+            
             function onWheel(evt) {
                 evt.stopPropagation();
                 evt.preventDefault();
@@ -203,8 +232,9 @@ namespace(this, "automata.view", function (exports, globals) {
                 self.updateViewbox();
             }
             
-            this.root.node.addEventListener("DOMMouseScroll", onWheel, false); // Mozilla
-            this.root.node.onmousewheel = onWheel;
+            this.paper.mousedown(onMouseDown);
+            this.paper.node.addEventListener("DOMMouseScroll", onWheel, false); // Mozilla
+            this.paper.node.onmousewheel = onWheel;
         },
         
         getWidth: function () {
@@ -216,7 +246,7 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         updateViewbox: function () {
-            this.root.attr({viewBox: this.x + " " + this.y + " " + (this.getWidth() / this.zoom) + " " + (this.getHeight() / this.zoom)})
+            this.paper.attr({viewBox: this.x + " " + this.y + " " + (this.getWidth() / this.zoom) + " " + (this.getHeight() / this.zoom)})
         },
         
         getViewIdByStates: function (transition) {
@@ -229,11 +259,11 @@ namespace(this, "automata.view", function (exports, globals) {
                 y:         0,
                 width:     0,
                 height:    0,
-                rect:      this.root.rect(0, 0, 0, 0, STATE_RADIUS, STATE_RADIUS),
-                name:      this.root.text(0, 0, "State name"),
-                actions:   this.root.text(0, 0, "Moore actions"),
-                separator: this.root.line(0, 0, 0, 0),
-                group:     this.root.g().attr({"class": "state"})
+                rect:      this.paper.rect(0, 0, 0, 0, STATE_RADIUS, STATE_RADIUS),
+                name:      this.paper.text(0, 0, "State name"),
+                actions:   this.paper.text(0, 0, "Moore actions"),
+                separator: this.paper.line(0, 0, 0, 0),
+                group:     this.paper.g().attr({"class": "state"})
             };
 
             view.group.add(view.rect, view.name, view.actions, view.separator);
@@ -262,15 +292,37 @@ namespace(this, "automata.view", function (exports, globals) {
             var gy = this.y + (this.getHeight() / this.zoom - view.height) * Math.random();
             this.putStateView(state, gx, gy);
 
-            svg.setDraggable(view.group.node, {
-                onDrag: function (dx, dy) {
-                    this.putStateView(state, view.x + dx, view.y + dy);
-                },
-                onDrop: function () {
-                    this.fire("changed");
-                },
-                context: this
+            this.setDraggable(view, function (x, y) {
+                this.putStateView(state, x, y);
+                state.outgoingTransitions.forEach(function (transition) {
+                    if (transition.targetState === state) {
+                        this.updateTransitionHandle(transition);
+                        this.updateTransitionPath(transition);
+                    }
+                }, this)
             });
+        },
+        
+        setDraggable: function (view, fn) {
+            var startX, startY;
+            view.group.drag(
+                function onMove(dx, dy, x, y, evt) {
+                    fn.call(this, startX + dx / this.zoom, startY + dy / this.zoom);
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                },
+                function onStart(x, y, evt) {
+                    startX = view.x;
+                    startY = view.y;
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                },
+                function onEnd(evt) {
+                    this.fire("changed");
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                },
+                this, this, this);
         },
         
         putStateView: function (state, x, y) {
@@ -321,10 +373,10 @@ namespace(this, "automata.view", function (exports, globals) {
             var view = this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates] = {
                 x:      0,
                 y:      0,
-                handle: this.root.circle(0, 0, TRANSITION_RADIUS),
-                path:   this.root.path().attr({"marker-end": "url(#arrow-head)"}),
-                text:   this.root.text(""),
-                group:  this.root.g().attr({"class": "transition"})
+                handle: this.paper.circle(0, 0, TRANSITION_RADIUS),
+                path:   this.paper.path().attr({markerEnd: this.paper.select("#arrow-head")}),
+                text:   this.paper.text(""),
+                group:  this.paper.g().attr({"class": "transition"})
             };
 
             view.group.add(view.path, view.text, view.handle);
@@ -333,17 +385,8 @@ namespace(this, "automata.view", function (exports, globals) {
             this.updateTransitionPath(transition);
             
             // Setup event handlers for transition
-            svg.setDraggable(view.handle.node, {
-                canDrag: function () {
-                    return transition.sourceState !== transition.targetState;
-                },
-                onDrag: function (dx, dy) {
-                    this.putTransitionHandle(transition, view.x + dx, view.y + dy);
-                },
-                onDrop: function () {
-                    this.fire("changed");
-                },
-                context: this
+            this.setDraggable(view, function (x, y) {
+                this.putTransitionHandle(transition, x, y);
             });
         },
         
@@ -390,7 +433,7 @@ namespace(this, "automata.view", function (exports, globals) {
             
             var hasTerms = false;
             transitions.forEach(function (tr) {
-                var termSpan = this.root.el("tspan").attr({"class": "term", dy: "1em"});
+                var termSpan = this.paper.el("tspan").attr({"class": "term", dy: "1em"});
                 
                 if (hasTerms) {
                     termSpan.attr({text: "+"});
@@ -399,10 +442,10 @@ namespace(this, "automata.view", function (exports, globals) {
                 var hasInputs = false;
                 tr.inputs.forEach(function (value, index) {
                     if (value !== "-") {
-                        var inputSpan = this.root.el("tspan").attr({"class": "automata-bool-" + value});
+                        var inputSpan = this.paper.el("tspan").attr({"class": "automata-bool-" + value});
                         inputSpan.attr({text: sensors[index]});
                         if (hasInputs) {
-                            termSpan.add(this.root.el("tspan").attr({text: "."}));
+                            termSpan.add(this.paper.el("tspan").attr({text: "."}));
                         }
                         hasInputs = true;
                         termSpan.add(inputSpan);
@@ -413,13 +456,13 @@ namespace(this, "automata.view", function (exports, globals) {
                 tr.outputs.forEach(function (value, index) {
                     if (value === "1" && mooreActions.indexOf(actuators[index]) === -1) {
                         if (hasActions) {
-                            termSpan.add(this.root.el("tspan").attr({text: ", "}));
+                            termSpan.add(this.paper.el("tspan").attr({text: ", "}));
                         }
                         else {
-                            termSpan.add(this.root.el("tspan").attr({text: " / "}));
+                            termSpan.add(this.paper.el("tspan").attr({text: " / "}));
                             hasActions = true;
                         }
-                        termSpan.add(this.root.el("tspan").attr({text: actuators[index]}));
+                        termSpan.add(this.paper.el("tspan").attr({text: actuators[index]}));
                     }
                 }, this);
                 
@@ -467,23 +510,25 @@ namespace(this, "automata.view", function (exports, globals) {
                 {x: targetView.x + targetView.width, y: tcy,                              dx:  1, dy:  0}
             ];
             
-            function getBestPoint(arr) {
+            function getBestPoint(arr, other) {
                 var dmin = -1, result = arr[0];
                 for (var i = 0; i < arr.length; i ++) {
                     var p = arr[i];
-                    var dx = p.x + p.dx * Math.abs(view.x - p.x) - view.x;
-                    var dy = p.y + p.dy * Math.abs(view.y - p.y) - view.y;
-                    var d = dx * dx + dy * dy;
-                    if (dmin < 0 || d < dmin) {
-                        dmin = d;
-                        result = p;
+                    if (!other || other.x !== p.x || other.y !== p.y) {
+                        var dx = p.x + p.dx * Math.abs(view.x - p.x) - view.x;
+                        var dy = p.y + p.dy * Math.abs(view.y - p.y) - view.y;
+                        var d = dx * dx + dy * dy;
+                        if (dmin < 0 || d < dmin) {
+                            dmin = d;
+                            result = p;
+                        }
                     }
                 }
                 return result;
             }
             
             var snp = getBestPoint(sp);
-            var tnp = getBestPoint(tp);
+            var tnp = getBestPoint(tp, snp);
             
             var vx = (tnp.x - snp.x) / TRANSITION_MARK_FACTOR;
             var vy = (tnp.y - snp.y) / TRANSITION_MARK_FACTOR;
@@ -502,10 +547,6 @@ namespace(this, "automata.view", function (exports, globals) {
                  + "C" + scpx1 + "," + scpy1 + "," + scpx2 + "," + scpy2 + "," + view.x  + "," + view.y
                  + "C" + tcpx1 + "," + tcpy1 + "," + tcpx2 + "," + tcpy2 + "," + tnp.x   + "," + tnp.y
             });
-            
-            if (transition.sourceState === transition.targetState) {
-                this.updateTransitionHandle(transition);
-            }
         },
         
         removeTransitionViewIfUnused: function (transition) {
