@@ -52,7 +52,11 @@ namespace(this, "automata.view", function (exports, globals) {
             }
             
             for (var tid in this.transitionViews) {
-                result.transitions[tid] = svg.center(this.transitionViews[tid].handle);
+                var view = this.transitionViews[tid];
+                result.transitions[tid] = {
+                    x: view.x,
+                    y: view.y
+                };
             }
             
             return result;
@@ -69,7 +73,7 @@ namespace(this, "automata.view", function (exports, globals) {
             }
             
             for (var tid in obj.transitions) {
-                this.putTransitionHandle(mapping[tid], obj.transitions[tid].cx, obj.transitions[tid].cy);
+                this.putTransitionHandle(mapping[tid], obj.transitions[tid].x, obj.transitions[tid].y);
             }
             
             return this;
@@ -328,6 +332,8 @@ namespace(this, "automata.view", function (exports, globals) {
             var viewIdByStates = this.getViewIdByStates(transition);
 
             var view = this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates] = {
+                x:      0,
+                y:      0,
                 handle: svg.create("circle", {r: TRANSITION_RADIUS}),
                 path:   svg.create("path", {"marker-end": "url(#arrow-head)"}),
                 text:   svg.create("text"),
@@ -348,8 +354,7 @@ namespace(this, "automata.view", function (exports, globals) {
                     return transition.sourceState !== transition.targetState;
                 },
                 onDrag: function (dx, dy) {
-                    var p = svg.center(view.handle);
-                    this.putTransitionHandle(transition, p.cx + dx, p.cy + dy);
+                    this.putTransitionHandle(transition, view.x + dx, view.y + dy);
                 },
                 onDrop: function () {
                     this.fire("changed");
@@ -359,10 +364,10 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         putTransitionHandle: function (transition, x, y) {
-            svg.attr(this.transitionViews[transition.id].handle, {
-                cx: x,
-                cy: y
-            });
+            var view = this.transitionViews[transition.id];
+            view.x = x;
+            view.y = y;
+            svg.attr(view.handle, {cx: x, cy: y});
             
             this.updateTransitionPath(transition);
             this.moveTransitionText(transition);
@@ -374,17 +379,16 @@ namespace(this, "automata.view", function (exports, globals) {
             var sourceView = this.stateViews[transition.sourceState.id];
             var targetView = this.stateViews[transition.targetState.id];
             
-            var cx, cy;
             if (transition.sourceState === transition.targetState) {
-                cx = sourceView.x + sourceView.width + 4 * TRANSITION_RADIUS;
-                cy = sourceView.y + sourceView.height / 2;
+                view.x = sourceView.x + sourceView.width + 4 * TRANSITION_RADIUS;
+                view.y = sourceView.y + sourceView.height / 2;
             }
             else {
-                cx = (sourceView.x + sourceView.width  / 2 + targetView.x + targetView.width  / 2) / 2;
-                cy = (sourceView.y + sourceView.height / 2 + targetView.y + targetView.height / 2) / 2;
+                view.x = (sourceView.x + sourceView.width  / 2 + targetView.x + targetView.width  / 2) / 2;
+                view.y = (sourceView.y + sourceView.height / 2 + targetView.y + targetView.height / 2) / 2;
             }
 
-            svg.attr(view.handle, {cx: cx, cy: cy});
+            svg.attr(view.handle, {cx: view.x, cy: view.y});
             this.moveTransitionText(transition);
         },
         
@@ -444,10 +448,8 @@ namespace(this, "automata.view", function (exports, globals) {
         
         moveTransitionText: function (transition) {
             var view = this.transitionViews[transition.id];
-            var p = svg.center(view.handle);
-
-            var x = p.cx + 2 * TRANSITION_RADIUS;
-            var y = p.cy - view.text.getBBox().height / 2;
+            var x = view.x + 2 * TRANSITION_RADIUS;
+            var y = view.y - view.text.getBBox().height / 2;
 
             svg.attr(view.text, {y: y});
             
@@ -483,21 +485,19 @@ namespace(this, "automata.view", function (exports, globals) {
                 {x: targetView.x + targetView.width, y: tcy,                              dx:  1, dy:  0}
             ];
             
-            var p = svg.center(view.handle);
-            
             function getBestPoint(arr) {
-                var dmin = -1, qmin = arr[0];
+                var dmin = -1, result = arr[0];
                 for (var i = 0; i < arr.length; i ++) {
-                    var q = arr[i];
-                    var dx = q.x + q.dx * Math.abs(p.cx - q.x) - p.cx;
-                    var dy = q.y + q.dy * Math.abs(p.cy - q.y) - p.cy;
+                    var p = arr[i];
+                    var dx = p.x + p.dx * Math.abs(view.x - p.x) - view.x;
+                    var dy = p.y + p.dy * Math.abs(view.y - p.y) - view.y;
                     var d = dx * dx + dy * dy;
                     if (dmin < 0 || d < dmin) {
                         dmin = d;
-                        qmin = q;
+                        result = p;
                     }
                 }
-                return qmin;
+                return result;
             }
             
             var snp = getBestPoint(sp);
@@ -506,19 +506,19 @@ namespace(this, "automata.view", function (exports, globals) {
             var vx = (tnp.x - snp.x) / TRANSITION_MARK_FACTOR;
             var vy = (tnp.y - snp.y) / TRANSITION_MARK_FACTOR;
             
-            var scpx1 = snp.x + snp.dx * Math.abs(p.cx - snp.x) / TRANSITION_END_FACTOR;
-            var scpy1 = snp.y + snp.dy * Math.abs(p.cy - snp.y) / TRANSITION_END_FACTOR;
-            var scpx2 = p.cx - vx;
-            var scpy2 = p.cy - vy;
-            var tcpx1 = p.cx + vx;
-            var tcpy1 = p.cy + vy;
-            var tcpx2 = tnp.x + tnp.dx * Math.abs(p.cx - tnp.x) / TRANSITION_END_FACTOR;
-            var tcpy2 = tnp.y + tnp.dy * Math.abs(p.cy - tnp.y) / TRANSITION_END_FACTOR;
+            var scpx1 = snp.x + snp.dx * Math.abs(view.x - snp.x) / TRANSITION_END_FACTOR;
+            var scpy1 = snp.y + snp.dy * Math.abs(view.y - snp.y) / TRANSITION_END_FACTOR;
+            var scpx2 = view.x - vx;
+            var scpy2 = view.y - vy;
+            var tcpx1 = view.x + vx;
+            var tcpy1 = view.y + vy;
+            var tcpx2 = tnp.x + tnp.dx * Math.abs(view.x - tnp.x) / TRANSITION_END_FACTOR;
+            var tcpy2 = tnp.y + tnp.dy * Math.abs(view.y - tnp.y) / TRANSITION_END_FACTOR;
             
             svg.attr(view.path, {
                 d: "M" + snp.x + "," + snp.y
-                 + "C" + scpx1 + "," + scpy1 + "," + scpx2 + "," + scpy2 + "," + p.cx  + "," + p.cy
-                 + "C" + tcpx1 + "," + tcpy1 + "," + tcpx2 + "," + tcpy2 + "," + tnp.x + "," + tnp.y
+                 + "C" + scpx1 + "," + scpy1 + "," + scpx2 + "," + scpy2 + "," + view.x  + "," + view.y
+                 + "C" + tcpx1 + "," + tcpy1 + "," + tcpx2 + "," + tcpy2 + "," + tnp.x   + "," + tnp.y
             });
             
             if (transition.sourceState === transition.targetState) {
