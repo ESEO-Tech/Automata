@@ -58,7 +58,9 @@ $(function () {
     });
     
     function resize() {
-        diagramView.setSize($(window).width() - $("#table-view").width(), $(window).height());
+        $("#diagram-view").width($(window).width() - $("#table-view").width())
+                          .height($(window).height());
+        diagramView.updateViewbox();
     }
 
     world.stateMachine.addListener("changed", function () {

@@ -86,7 +86,7 @@ namespace(this, "automata.view", function (exports, globals) {
         },
 
         afterRemoveState: function (model, state) {
-            this.root.removeChild(this.stateViews[state.id].group);
+            this.stateViews[state.id].group.remove();
             delete this.stateViews[state.id];
             this.updateResetView();
             this.fire("changed");
@@ -158,37 +158,22 @@ namespace(this, "automata.view", function (exports, globals) {
             this.fire("changed");
         },
         
-        setSize: function (width, height) {
-            this.width = width;
-            this.height = height;
-            svg.attr(this.root, {width: width, height: height});
-            this.updateViewbox();
-            return this;
-        },
-        
-        updateViewbox: function () {
-            svg.attr(this.root, {
-                viewBox: this.x + " " + this.y + " " + this.width + " " + this.height
-            })
-        },
-        
-        getViewIdByStates: function (transition) {
-            return transition.sourceState.id + "-" + transition.targetState.id;
-        },
-        
         onLoad: function () {
-            this.root = $(this.templates.main(this.model)).appendTo(this.container)[0];
-            this.resetView = document.getElementById("reset");
+            var fragment = Snap.parse(this.templates.main(this.model));
+            this.container.append(fragment.node);
+            this.root = Snap("svg.automata-Diagram");
+            
+            this.resetView = this.root.select("#reset");
 
-            svg.setDraggable(this.root, {
+            svg.setDraggable(this.root.node, {
                 onDrag: function (dx, dy) {
-                    this.x -= dx / this.zoom;
-                    this.y -= dy / this.zoom;
+                    this.x -= dx;
+                    this.y -= dy;
                     this.updateViewbox();
                 },
                 context: this
             });
-            
+
             var self = this;
             function onWheel(evt) {
                 evt.stopPropagation();
@@ -213,15 +198,29 @@ namespace(this, "automata.view", function (exports, globals) {
                     f = ZOOM_FACTOR;
                 }
                 self.zoom /= f;
-                self.x += self.width  * (1 - f) / 2;
-                self.y += self.height * (1 - f) / 2;
+                self.x += self.getWidth()  * (1 - f) / 2;
+                self.y += self.getHeight() * (1 - f) / 2;
                 self.updateViewbox();
             }
             
-            this.root.addEventListener("DOMMouseScroll", onWheel, false); // Mozilla
-            this.root.onmousewheel = onWheel;
-
-            this.setSize(100, 100);
+            this.root.node.addEventListener("DOMMouseScroll", onWheel, false); // Mozilla
+            this.root.node.onmousewheel = onWheel;
+        },
+        
+        getWidth: function () {
+            return this.container.width();
+        },
+        
+        getHeight: function () {
+            return this.container.height();
+        },
+        
+        updateViewbox: function () {
+            this.root.attr({viewBox: this.x + " " + this.y + " " + (this.getWidth() / this.zoom) + " " + (this.getHeight() / this.zoom)})
+        },
+        
+        getViewIdByStates: function (transition) {
+            return transition.sourceState.id + "-" + transition.targetState.id;
         },
         
         createStateView: function (state) {
@@ -230,44 +229,40 @@ namespace(this, "automata.view", function (exports, globals) {
                 y:         0,
                 width:     0,
                 height:    0,
-                rect:      svg.create("rect", {x: 0, y: 0, rx: STATE_RADIUS, ry: STATE_RADIUS}),
-                name:      svg.create("text", "Qq"),
-                actions:   svg.create("text", "Qq"),
-                separator: svg.create("line", {x1: 0}),
-                group:     svg.create("g", {"class": "state"})
+                rect:      this.root.rect(0, 0, 0, 0, STATE_RADIUS, STATE_RADIUS),
+                name:      this.root.text(0, 0, "State name"),
+                actions:   this.root.text(0, 0, "Moore actions"),
+                separator: this.root.line(0, 0, 0, 0),
+                group:     this.root.g().attr({"class": "state"})
             };
 
-            view.group.appendChild(view.rect);
-            view.group.appendChild(view.name);
-            view.group.appendChild(view.actions);
-            view.group.appendChild(view.separator);
-            this.root.appendChild(view.group);
+            view.group.add(view.rect, view.name, view.actions, view.separator);
 
-            // Set vertical position of State name
+            // Set vertical position of state name
             var nameBBox = view.name.getBBox();
-            svg.attr(view.name, {y: nameBBox.height});
+            view.name.attr({y: nameBBox.height});
 
-            // Set vertical position of State actions
+            // Set vertical position of Moore actions
             var actionsBBox = view.actions.getBBox();
-            svg.attr(view.actions, {y: nameBBox.height + actionsBBox.height + 2 * STATE_TB_PADDING});
+            view.actions.attr({y: nameBBox.height + actionsBBox.height + 2 * STATE_TB_PADDING});
 
             // Set separator
-            svg.attr(view.separator, {
+            view.separator.attr({
                 y1: nameBBox.height + 2 * STATE_TB_PADDING,
                 y2: nameBBox.height + 2 * STATE_TB_PADDING
             });
             
             view.height = nameBBox.height + actionsBBox.height + 4 * STATE_TB_PADDING;
-            svg.attr(view.rect, {height: view.height});
+            view.rect.attr({height: view.height});
 
             this.updateStateView(state);
 
             // Move state group to a random location
-            var gx = this.x + (this.width - view.width)   * Math.random();
-            var gy = this.y + (this.height - view.height) * Math.random();
+            var gx = this.x + (this.getWidth()  / this.zoom - view.width)   * Math.random();
+            var gy = this.y + (this.getHeight() / this.zoom - view.height) * Math.random();
             this.putStateView(state, gx, gy);
 
-            svg.setDraggable(view.group, {
+            svg.setDraggable(view.group.node, {
                 onDrag: function (dx, dy) {
                     this.putStateView(state, view.x + dx, view.y + dy);
                 },
@@ -282,7 +277,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var view = this.stateViews[state.id];
             view.x = x;
             view.y = y;
-            svg.attr(view.group, {"transform": "translate(" + x + "," + y + ")"});
+            view.group.transform("translate(" + x + "," + y + ")");
 
             state.outgoingTransitions.forEach(this.updateTransitionPath, this);
             state.incomingTransitions.forEach(this.updateTransitionPath, this);
@@ -297,14 +292,14 @@ namespace(this, "automata.view", function (exports, globals) {
             var view = this.stateViews[state.id];
             
             // Replace empty strings with non-breaking spaces to ensure correct bounding box in Webkit
-            svg.text(view.name,    state.name                         || "\u2000");
-            svg.text(view.actions, state.getMooreActions().join(", ") || "\u2000");
+            view.name.attr({text: state.name || "\u2000"});
+            view.actions.attr({text: state.getMooreActions().join(", ") || "\u2000"});
 
-            view.width = Math.max(view.name.getComputedTextLength(), view.actions.getComputedTextLength()) + 2 * STATE_LR_PADDING;
-            svg.attr(view.name,      {x:     view.width / 2});
-            svg.attr(view.actions,   {x:     view.width / 2});
-            svg.attr(view.rect,      {width: view.width});
-            svg.attr(view.separator, {x2:    view.width});
+            view.width = Math.max(view.name.node.getComputedTextLength(), view.actions.node.getComputedTextLength()) + 2 * STATE_LR_PADDING;
+            view.name.attr({x: view.width / 2});
+            view.actions.attr({x: view.width / 2});
+            view.rect.attr({width: view.width});
+            view.separator.attr({x2: view.width});
 
             if (state === this.model.states[0]) {
                 this.updateResetView();
@@ -315,10 +310,8 @@ namespace(this, "automata.view", function (exports, globals) {
             var state = this.model.states[0];
             if (state) {
                 var view = this.stateViews[state.id];
-                svg.attr(this.resetView, {
-                    "transform": "translate(" + (view.x + view.width / 2 - 4 * TRANSITION_RADIUS) + ","
-                                              + (view.y                  - 4 * TRANSITION_RADIUS) + ")"
-                });
+                this.resetView.transform("translate(" + (view.x + view.width / 2 - 4 * TRANSITION_RADIUS) + ","
+                                                      + (view.y                  - 4 * TRANSITION_RADIUS) + ")");
             }
         },
         
@@ -328,22 +321,19 @@ namespace(this, "automata.view", function (exports, globals) {
             var view = this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates] = {
                 x:      0,
                 y:      0,
-                handle: svg.create("circle", {r: TRANSITION_RADIUS}),
-                path:   svg.create("path", {"marker-end": "url(#arrow-head)"}),
-                text:   svg.create("text"),
-                group:  svg.create("g", {"class": "transition"})
+                handle: this.root.circle(0, 0, TRANSITION_RADIUS),
+                path:   this.root.path().attr({"marker-end": "url(#arrow-head)"}),
+                text:   this.root.text(""),
+                group:  this.root.g().attr({"class": "transition"})
             };
 
-            view.group.appendChild(view.path);
-            view.group.appendChild(view.text);
-            view.group.appendChild(view.handle);
-            this.root.appendChild(view.group);
+            view.group.add(view.path, view.text, view.handle);
 
             this.updateTransitionHandle(transition);
             this.updateTransitionPath(transition);
             
             // Setup event handlers for transition
-            svg.setDraggable(view.group, {
+            svg.setDraggable(view.handle.node, {
                 canDrag: function () {
                     return transition.sourceState !== transition.targetState;
                 },
@@ -361,7 +351,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var view = this.transitionViews[transition.id];
             view.x = x;
             view.y = y;
-            svg.attr(view.handle, {cx: x, cy: y});
+            view.handle.attr({cx: x, cy: y});
             
             this.updateTransitionPath(transition);
             this.moveTransitionText(transition);
@@ -382,14 +372,16 @@ namespace(this, "automata.view", function (exports, globals) {
                 view.y = (sourceView.y + sourceView.height / 2 + targetView.y + targetView.height / 2) / 2;
             }
 
-            svg.attr(view.handle, {cx: view.x, cy: view.y});
+            view.handle.attr({cx: view.x, cy: view.y});
             this.moveTransitionText(transition);
         },
         
         updateTransitionText: function (transition) {
             var view = this.transitionViews[transition.id];
 
-            svg.clear(view.text);
+            view.text.selectAll("tspan.term").forEach(function (ts) {
+                ts.remove();
+            });
             
             var sensors = transition.sourceState.stateMachine.world.sensors;
             var actuators = transition.sourceState.stateMachine.world.actuators;
@@ -398,22 +390,22 @@ namespace(this, "automata.view", function (exports, globals) {
             
             var hasTerms = false;
             transitions.forEach(function (tr) {
-                var termSpan = svg.create("tspan", {dy: "1em"});
+                var termSpan = this.root.el("tspan").attr({"class": "term", dy: "1em"});
                 
                 if (hasTerms) {
-                    svg.text(termSpan, "+");
+                    termSpan.attr({text: "+"});
                 }
 
                 var hasInputs = false;
                 tr.inputs.forEach(function (value, index) {
                     if (value !== "-") {
-                        var inputSpan = svg.create("tspan", sensors[index]);
-                        svg.attr(inputSpan, {"class": "automata-bool-" + value});
+                        var inputSpan = this.root.el("tspan").attr({"class": "automata-bool-" + value});
+                        inputSpan.attr({text: sensors[index]});
                         if (hasInputs) {
-                            termSpan.appendChild(svg.createText("."));
+                            termSpan.add(this.root.el("tspan").attr({text: "."}));
                         }
                         hasInputs = true;
-                        termSpan.appendChild(inputSpan);
+                        termSpan.add(inputSpan);
                     }
                 }, this);
                 
@@ -421,19 +413,19 @@ namespace(this, "automata.view", function (exports, globals) {
                 tr.outputs.forEach(function (value, index) {
                     if (value === "1" && mooreActions.indexOf(actuators[index]) === -1) {
                         if (hasActions) {
-                            termSpan.appendChild(svg.createText(", "));
+                            termSpan.add(this.root.el("tspan").attr({text: ", "}));
                         }
                         else {
-                            termSpan.appendChild(svg.createText(" / "));
+                            termSpan.add(this.root.el("tspan").attr({text: " / "}));
                             hasActions = true;
                         }
-                        termSpan.appendChild(svg.createText(actuators[index]));
+                        termSpan.add(this.root.el("tspan").attr({text: actuators[index]}));
                     }
                 }, this);
                 
                 if (hasInputs || hasActions) {
                     hasTerms = true;
-                    view.text.appendChild(termSpan);
+                    view.text.add(termSpan);
                 }
             }, this);
             
@@ -445,12 +437,8 @@ namespace(this, "automata.view", function (exports, globals) {
             var x = view.x + 2 * TRANSITION_RADIUS;
             var y = view.y - view.text.getBBox().height / 2;
 
-            svg.attr(view.text, {y: y});
-            
-            var tspans = view.text.childNodes;
-            for (var t = 0; t < tspans.length; t ++) {
-                svg.attr(tspans[t], {x: x});
-            }
+            view.text.attr({y: y});
+            view.text.selectAll("tspan.term").attr({x: x});
         },
         
         updateTransitionPath: function (transition) {
@@ -509,7 +497,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var tcpx2 = tnp.x + tnp.dx * Math.abs(view.x - tnp.x) / TRANSITION_END_FACTOR;
             var tcpy2 = tnp.y + tnp.dy * Math.abs(view.y - tnp.y) / TRANSITION_END_FACTOR;
             
-            svg.attr(view.path, {
+            view.path.attr({
                 d: "M" + snp.x + "," + snp.y
                  + "C" + scpx1 + "," + scpy1 + "," + scpx2 + "," + scpy2 + "," + view.x  + "," + view.y
                  + "C" + tcpx1 + "," + tcpy1 + "," + tcpx2 + "," + tcpy2 + "," + tnp.x   + "," + tnp.y
@@ -535,7 +523,7 @@ namespace(this, "automata.view", function (exports, globals) {
             // If no other transition uses the current transition view,
             // remove it from the DOM and from the dictionary of transition by states
             if (obsolete) {
-                this.root.removeChild(viewByTransition.group);
+                viewByTransition.group.remove();
                 for (var id in this.transitionViewsByStates) {
                     if (this.transitionViewsByStates[id] === viewByTransition) {
                         delete this.transitionViewsByStates[id];
