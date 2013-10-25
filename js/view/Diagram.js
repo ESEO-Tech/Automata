@@ -162,7 +162,7 @@ namespace(this, "automata.view", function (exports, globals) {
             this.fire("changed");
         },
         
-        onLoad: function () {
+        render: function () {
             var fragment = Snap.parse(this.templates.main(this.model));
             this.container.append(fragment.node);
             this.paper = Snap("svg.automata-Diagram");

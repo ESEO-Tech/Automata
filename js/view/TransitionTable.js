@@ -20,7 +20,7 @@ namespace(this, "automata.view", function (exports, globals) {
             return this;
         },
         
-        onLoad: function () {
+        render: function () {
             this.root = $(this.templates.main(this.model)).appendTo(this.container);
             
             var model = this.model;

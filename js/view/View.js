@@ -8,28 +8,36 @@ namespace(this, "automata.view", function (exports, globals) {
             automata.model.Model.init.call(this);
 
             this.model = model;
-            this.container = container;
-            this.templates = {};
+            
+            if (!_.isUndefined(container)) {
+                this.container = container;
+            }
+            
+            if (_.isUndefined(this.templates)) {
+                this.loadTemplates();
+            }
             
             var self = this;
-            this.promise = this.loadTemplates().done(function () {
-                self.onLoad();
+            this.deferredRender = this.deferredLoad.done(function () {
+                self.container.empty();
+                self.render();
             });
             
             return this;
         },
 
-        onLoad: function () {
+        render: function () {
             // Abstract
         },
         
         ready: function () {
-            return this.promise;
+            return this.deferredRender;
         },
         
         loadTemplates: function () {
             var self = this;
             var promises = [];
+            this.templates = {};
             Object.keys(this.templateFiles).forEach(function (name) {
                 promises.push($.ajax(self.templateFiles[name], {dataType: "text"})
                     .done(function (resp) {
@@ -39,7 +47,8 @@ namespace(this, "automata.view", function (exports, globals) {
                         throw "Failed to load template '" + name + "' " + error;
                     }));                
             });
-            return $.when.apply($, promises);
+            this.deferredLoad = $.when.apply($, promises);
+            return this;
         }
     });
 });
