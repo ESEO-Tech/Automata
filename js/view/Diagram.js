@@ -69,11 +69,15 @@ namespace(this, "automata.view", function (exports, globals) {
             this.updateViewbox();
             
             for (var sid in obj.states) {
-                this.putStateView(mapping[sid], obj.states[sid].x, obj.states[sid].y);
+                if (mapping[sid].id in this.stateViews) {
+                    this.putStateView(mapping[sid], obj.states[sid].x, obj.states[sid].y);
+                }
             }
             
             for (var tid in obj.transitions) {
-                this.putTransitionHandle(mapping[tid], obj.transitions[tid].x, obj.transitions[tid].y);
+                if (mapping[tid].id in this.transitionViews) {
+                    this.putTransitionHandle(mapping[tid], obj.transitions[tid].x, obj.transitions[tid].y);
+                }
             }
             
             return this;
