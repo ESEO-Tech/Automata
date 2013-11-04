@@ -69,13 +69,13 @@ namespace(this, "automata.view", function (exports, globals) {
             this.updateViewbox();
             
             for (var sid in obj.states) {
-                if (mapping[sid].id in this.stateViews) {
+                if (sid in mapping && mapping[sid].id in this.stateViews) {
                     this.putStateView(mapping[sid], obj.states[sid].x, obj.states[sid].y);
                 }
             }
             
             for (var tid in obj.transitions) {
-                if (mapping[tid].id in this.transitionViews) {
+                if (tid in mapping && mapping[tid].id in this.transitionViews) {
                     this.putTransitionHandle(mapping[tid], obj.transitions[tid].x, obj.transitions[tid].y);
                 }
             }
@@ -437,19 +437,19 @@ namespace(this, "automata.view", function (exports, globals) {
             
             var hasTerms = false;
             transitions.forEach(function (tr) {
-                var termSpan = this.paper.el("tspan").attr({"class": "term", dy: "1em"});
+                var termSpan = this.paper.el("tspan").attr({"class": "term", dy: "1.5em"});
                 
                 if (hasTerms) {
-                    termSpan.attr({text: "+"});
+                    termSpan.attr({"#text": "+"});
                 }
 
                 var hasInputs = false;
                 tr.inputs.forEach(function (value, index) {
                     if (value !== "-") {
                         var inputSpan = this.paper.el("tspan").attr({"class": "automata-bool-" + value});
-                        inputSpan.attr({text: sensors[index]});
+                        inputSpan.attr({"#text": sensors[index]});
                         if (hasInputs) {
-                            termSpan.add(this.paper.el("tspan").attr({text: "."}));
+                            termSpan.add(this.paper.el("tspan").attr({"#text": "."}));
                         }
                         hasInputs = true;
                         termSpan.add(inputSpan);
@@ -460,13 +460,13 @@ namespace(this, "automata.view", function (exports, globals) {
                 tr.outputs.forEach(function (value, index) {
                     if (value === "1" && mooreActions.indexOf(actuators[index]) === -1) {
                         if (hasActions) {
-                            termSpan.add(this.paper.el("tspan").attr({text: ", "}));
+                            termSpan.add(this.paper.el("tspan").attr({"#text": ", "}));
                         }
                         else {
-                            termSpan.add(this.paper.el("tspan").attr({text: " / "}));
+                            termSpan.add(this.paper.el("tspan").attr({"#text": " / "}));
                             hasActions = true;
                         }
-                        termSpan.add(this.paper.el("tspan").attr({text: actuators[index]}));
+                        termSpan.add(this.paper.el("tspan").attr({"#text": actuators[index]}));
                     }
                 }, this);
                 
@@ -484,7 +484,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var x = view.x + 2 * TRANSITION_RADIUS;
             var y = view.y - view.text.getBBox().height / 2;
 
-            view.text.attr({y: y});
+            view.text.attr({x: x, y: y});
             view.text.selectAll("tspan.term").attr({x: x});
         },
         
