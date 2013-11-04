@@ -68,6 +68,16 @@ namespace(this, "automata.model", function (exports, globals) {
         
         getIndex: function () {
             return this.sourceState.outgoingTransitions.indexOf(this);
+        },
+        
+        canFire: function () {
+            var world = this.sourceState.stateMachine.world;
+            for (var index = 0; index < this.inputs.length; index ++) {
+                if (this.inputs[index] !== "-" && this.inputs[index] !== world.getSensorValue(index)) {
+                    return false;
+                }
+            }
+            return true;
         }
     });
 });

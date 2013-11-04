@@ -98,6 +98,16 @@ namespace(this, "automata.model", function (exports, globals) {
             else {
                 return [];
             }
+        },
+        
+        getTransitionToFire: function () {
+            for (var index = 0; index < this.outgoingTransitions.length; index ++) {
+                var transition = this.outgoingTransitions[index];
+                if (transition.canFire()) {
+                    return transition;
+                }
+            }
+            return null;
         }
     });
 });

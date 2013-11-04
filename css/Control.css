@@ -1,3 +1,12 @@
 #control-view {
+    background: rgb(170, 170, 170);
+}
+
+#control-view input {
     font-family: "Heydings Controls";
+    height: 100%;
+}
+
+#control-play.running {
+    color: rgb(100, 150, 255);
 }

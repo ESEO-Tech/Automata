@@ -1,6 +1,7 @@
 $(function () {
     var world       = Object.create(automata.games.robot.Labyrinth).init();
     var tableView   = Object.create(automata.view.TransitionTable).init(world.stateMachine, $("#table-view"));
+    var controlView = Object.create(automata.view.ControlView).init(world, $("#control-view"));
     var diagramView = Object.create(automata.view.Diagram).init(world.stateMachine, $("#diagram-view"));
     var worldView   = Object.create(automata.games.robot.WorldView).init(world, $("#world-view"));
     
@@ -18,7 +19,7 @@ $(function () {
     function resize() {
         $("#diagram-view").width($(window).width() - $("#table-view").width())
                           .height($(window).height());
-        $("#world-view").width($("#table-view").width());
+        $("#control-view, #world-view").width($("#table-view").width());
         diagramView.updateViewbox();
     }
 

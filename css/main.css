@@ -8,26 +8,34 @@ body {
 #table-view {
     display: inline-block;
     position: absolute;
-    top: 0;
     left: 0;
+    top: 0;
     height: 50%;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
+#control-view {
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 2em;
+}
+
 #world-view {
     display: inline-block;
     position: absolute;
-    bottom: 0;
     left: 0;
-    height: 50%;
+    bottom: 0;
+    height: calc(50% - 2em);
 }
 
 #diagram-view {
     display: inline-block;
     position: absolute;
-    top: 0;
     right: 0;
+    top: 0;
     height: 100%;
     overflow: hidden;
 }

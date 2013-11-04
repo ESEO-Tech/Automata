@@ -14,6 +14,8 @@ namespace(this, "automata.model", function (exports, globals) {
             this.transitions = [];
             this.transitionsById = {};
             
+            this.reset();
+            
             return this;
         },
         
@@ -69,8 +71,13 @@ namespace(this, "automata.model", function (exports, globals) {
         removeState: function (state) {
             this.fire("beforeRemoveState", state);
             
+            var index = this.states.indexOf(state);
+            if (index === 0) {
+                this.world.stop();
+            }
+
             state.destroy();
-            this.states.splice(this.states.indexOf(state), 1);
+            this.states.splice(index, 1);
             delete this.statesById[state.id];
             
             this.fire("afterRemoveState", state);
@@ -106,6 +113,27 @@ namespace(this, "automata.model", function (exports, globals) {
             this.fire("changed");
             
             return this;
+        },
+        
+        reset: function () {
+            if (this.states.length) {
+                this.currentState = this.states[0];
+            }
+            else {
+                this.currentState = null;
+            }
+        },
+        
+        step: function () {
+            var transition = this.currentState.getTransitionToFire();
+            if (!transition) {
+                this.world.pause();
+                return this.world.actuators.map(function () { return "0"; });
+            }
+            else {
+                this.currentState = transition.targetState;
+                return transition.outputs;
+            }
         }
     });
 });
