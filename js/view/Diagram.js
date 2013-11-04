@@ -250,7 +250,13 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         updateViewbox: function () {
-            this.paper.attr({viewBox: this.x + " " + this.y + " " + (this.getWidth() / this.zoom) + " " + (this.getHeight() / this.zoom)})
+            var w = this.getWidth();
+            var h = this.getHeight();
+            this.paper.attr({
+                width: w,
+                height: h,
+                viewBox: [this.x, this.y, w / this.zoom, w / this.zoom]
+            })
         },
         
         getViewIdByStates: function (transition) {
