@@ -22,11 +22,9 @@ namespace(this, "automata.games.robot", function (exports, globals) {
             }, this);
             
             // Draw robot
-            this.sensorViews = [
-                this.paper.circle(-world.robotRadius, -world.robotRadius - world.sensorDistance, world.robotRadius / 4),
-                this.paper.circle(-world.robotRadius,  world.robotRadius + world.sensorDistance, world.robotRadius / 4),
-                this.paper.circle(world.robotRadius + world.sensorDistance, 0, world.robotRadius / 4)
-            ];
+            this.sensorViews = world.sensorPoints.map(function (p) {
+                return this.paper.circle(p.x, p.y, world.sensorRadius);
+            }, this);
 
             this.robotView = this.paper.g(
                 this.paper.circle(0, 0, world.robotRadius).attr({"class": "chassis"}),

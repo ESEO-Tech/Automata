@@ -10,10 +10,9 @@ namespace(this, "automata.games.robot", function (exports, globals) {
         
         walls: [],
         
-        robotRadius: 12,
-        sensorDistance: 5,
+        robotRadius: 10,
+        sensorFactor: 1.4,
         stepDistance: 1,
-        stepAngle: 2,
         
         startX: 0,
         startY: 0,
@@ -23,12 +22,23 @@ namespace(this, "automata.games.robot", function (exports, globals) {
         exitY: 0,
         exitRadius: 5,
         
+        init: function () {
+            this.sensorRadius = this.robotRadius / 4;
+            this.sensorPoints = [
+                {x: -this.robotRadius,                     y: -this.robotRadius * this.sensorFactor},
+                {x: -this.robotRadius,                     y:  this.robotRadius * this.sensorFactor},
+                {x:  this.robotRadius * this.sensorFactor, y: 0}
+            ];
+            return automata.model.World.init.call(this);
+        },
+        
         onReset: function () {
             this.robotMatrix = (new Snap.Matrix()).rotate(this.startAngle).translate(this.startX, this.startY);
         },
         
         onStep: function () {
             var transform = this.robotMatrix.split();
+            this.sensorValues = ["0", "0", "0", "0"];
             
             // Compute next coordinates
             var leftDir = 0;
@@ -54,10 +64,10 @@ namespace(this, "automata.games.robot", function (exports, globals) {
                 nextMatrix.rotate(leftDir * this.stepDistance * 180 / this.robotRadius / Math.PI);
             }
             else if (leftDir === 0) {
-                nextMatrix.rotate(-rightDir * this.stepDistance * 90 / this.robotRadius / Math.PI, -this.robotRadius, -this.robotRadius - this.sensorDistance);
+                nextMatrix.rotate(-rightDir * this.stepDistance * 90 / this.robotRadius / Math.PI, this.sensorPoints[0].x, this.sensorPoints[0].y);
             }
             else if (rightDir === 0) {
-                nextMatrix.rotate(leftDir * this.stepDistance * 90 / this.robotRadius / Math.PI, -this.robotRadius, this.robotRadius + this.sensorDistance);
+                nextMatrix.rotate(leftDir * this.stepDistance * 90 / this.robotRadius / Math.PI, this.sensorPoints[1].x, this.sensorPoints[1].y);
             }
 
             // Detect collisions
@@ -90,26 +100,45 @@ namespace(this, "automata.games.robot", function (exports, globals) {
             }
             
             if (!collision) {
+                if (leftDir !== rightDir && (nextMatrix.a === 0 || nextMatrix.a * this.robotMatrix.a < 0 ||
+                                             nextMatrix.b === 0 || nextMatrix.b * this.robotMatrix.b < 0)) {
+                    if (nextMatrix.a > 0.99) {
+                        nextMatrix.a = 1;
+                        nextMatrix.b = 0;
+                    }
+                    if (nextMatrix.a < -0.99) {
+                        nextMatrix.a = -1;
+                        nextMatrix.b = 0;
+                    }
+                    if (nextMatrix.b > 0.99) {
+                        nextMatrix.a = 0;
+                        nextMatrix.b = 1;
+                    }
+                    if (nextMatrix.b < -0.99) {
+                        nextMatrix.a = 0;
+                        nextMatrix.b = -1;
+                    }
+                    this.sensorValues[3] = "1";
+                }
+
                 this.robotMatrix = nextMatrix;
             }
             
             // Update sensors
-            var sensorPoints = [
-                {x: -this.robotRadius, y: -this.robotRadius - this.sensorDistance},
-                {x: -this.robotRadius, y:  this.robotRadius + this.sensorDistance},
-                {x:  this.robotRadius + this.sensorDistance, y: 0}
-            ];
-            
-            this.sensorValues = ["0", "0", "0"];
-            for (var index = 0; index < sensorPoints.length; index ++) {
-                var s = sensorPoints[index];
+            for (var index = 0; index < this.sensorPoints.length; index ++) {
+                var s = this.sensorPoints[index];
                 var sx = this.robotMatrix.x(s.x, s.y);
                 var sy = this.robotMatrix.y(s.x, s.y);
-                this.walls.forEach(function (w) {
-                    if (sx >= w[0] && sx <= w[2] && sy >= w[1] && sy <= w[3]) {
+                for (var wIndex = 0; wIndex < this.walls.length; wIndex ++) {
+                    var w = this.walls[wIndex];
+                    if (intersect(sx, sy, this.sensorRadius, w[0], w[1], w[3]) ||
+                        intersect(sx, sy, this.sensorRadius, w[2], w[1], w[3]) ||
+                        intersect(sy, sx, this.sensorRadius, w[1], w[0], w[2]) ||
+                        intersect(sy, sx, this.sensorRadius, w[3], w[0], w[2])) {
                         this.sensorValues[index] = "1";
+                        break;
                     }
-                }, this);
+                }
             }
         }        
     });
