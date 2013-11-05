@@ -500,33 +500,48 @@ namespace(this, "automata.view", function (exports, globals) {
             var sourceView = this.stateViews[transition.sourceState.id];
             var targetView = this.stateViews[transition.targetState.id];
 
-            var scx = sourceView.x + sourceView.width  / 2;
-            var scy = sourceView.y + sourceView.height / 1.5;
+            var scx = sourceView.x + sourceView.width / 2;
+            var scy = sourceView.y + sourceView.height / 2;
+            var tcx = targetView.x + targetView.width / 2;
+            var tcy = targetView.y + targetView.height / 2;
 
-            var sp = [
-                {x: scx,                             y: sourceView.y,                     dx:  0, dy: -1},
-                {x: scx,                             y: sourceView.y + sourceView.height, dx:  0, dy:  1},
-                {x: sourceView.x,                    y: scy,                              dx: -1, dy:  0},
-                {x: sourceView.x + sourceView.width, y: scy,                              dx:  1, dy:  0}
-            ];
+            if (transition.sourceState !== transition.targetState) {
+                var vx = (tcx - scx) / TRANSITION_MARK_FACTOR;
+                var vy = (tcy - scy) / TRANSITION_MARK_FACTOR;
+            }
+            else {
+                vx = 0;
+                vy = sourceView.height / 3;
+            }
+            
+            var scpx = view.x - vx;
+            var scpy = view.y - vy;
+            var tcpx = view.x + vx;
+            var tcpy = view.y + vy;
 
-            var tcx = targetView.x + targetView.width  / 2;
-            var tcy = targetView.y + targetView.height / 3;
+            var sp = [];
+            var tp = [];
+            for (var i = -1; i <= 1; i ++) {
+                sp.push({x: scx + i * sourceView.width / 3, y: sourceView.y,                     dx: i, dy: -1});
+                sp.push({x: scx + i * sourceView.width / 3, y: sourceView.y + sourceView.height, dx: i, dy:  1});
+                
+                sp.push({x: sourceView.x,                    y: scy + i * sourceView.height / 3, dx: -1, dy: i});
+                sp.push({x: sourceView.x + sourceView.width, y: scy + i * sourceView.height / 3, dx:  1, dy: i});
+
+                tp.push({x: tcx + i * targetView.width / 3, y: targetView.y,                     dx: i, dy: -1});
+                tp.push({x: tcx + i * targetView.width / 3, y: targetView.y + targetView.height, dx: i, dy:  1});
+                
+                tp.push({x: targetView.x,                    y: tcy + i * targetView.height / 3, dx: -1, dy: i});
+                tp.push({x: targetView.x + targetView.width, y: tcy + i * targetView.height / 3, dx:  1, dy: i});
+            }
             
-            var tp = [
-                {x: tcx,                             y: targetView.y,                     dx:  0, dy: -1},
-                {x: tcx,                             y: targetView.y + targetView.height, dx:  0, dy:  1},
-                {x: targetView.x,                    y: tcy,                              dx: -1, dy:  0},
-                {x: targetView.x + targetView.width, y: tcy,                              dx:  1, dy:  0}
-            ];
-            
-            function getBestPoint(arr, other) {
+            function getBestPoint(cpx, cpy, arr, other) {
                 var dmin = -1, result = arr[0];
                 for (var i = 0; i < arr.length; i ++) {
                     var p = arr[i];
                     if (!other || other.x !== p.x || other.y !== p.y) {
-                        var dx = p.x + p.dx * Math.abs(view.x - p.x) - view.x;
-                        var dy = p.y + p.dy * Math.abs(view.y - p.y) - view.y;
+                        var dx = p.x + p.dx * Math.abs(cpx - p.x) - cpx;
+                        var dy = p.y + p.dy * Math.abs(cpy - p.y) - cpy;
                         var d = dx * dx + dy * dy;
                         if (dmin < 0 || d < dmin) {
                             dmin = d;
@@ -537,25 +552,18 @@ namespace(this, "automata.view", function (exports, globals) {
                 return result;
             }
             
-            var snp = getBestPoint(sp);
-            var tnp = getBestPoint(tp, snp);
+            var snp = getBestPoint(scpx, scpy, sp);
+            var tnp = getBestPoint(tcpx, tcpy, tp, snp);
             
-            var vx = (tnp.x - snp.x) / TRANSITION_MARK_FACTOR;
-            var vy = (tnp.y - snp.y) / TRANSITION_MARK_FACTOR;
-            
-            var scpx1 = snp.x + snp.dx * Math.abs(view.x - snp.x) / TRANSITION_END_FACTOR;
-            var scpy1 = snp.y + snp.dy * Math.abs(view.y - snp.y) / TRANSITION_END_FACTOR;
-            var scpx2 = view.x - vx;
-            var scpy2 = view.y - vy;
-            var tcpx1 = view.x + vx;
-            var tcpy1 = view.y + vy;
-            var tcpx2 = tnp.x + tnp.dx * Math.abs(view.x - tnp.x) / TRANSITION_END_FACTOR;
-            var tcpy2 = tnp.y + tnp.dy * Math.abs(view.y - tnp.y) / TRANSITION_END_FACTOR;
+            var scpx0 = snp.x + snp.dx * Math.abs(view.x - snp.x) / TRANSITION_END_FACTOR;
+            var scpy0 = snp.y + snp.dy * Math.abs(view.y - snp.y) / TRANSITION_END_FACTOR;
+            var tcpx0 = tnp.x + tnp.dx * Math.abs(view.x - tnp.x) / TRANSITION_END_FACTOR;
+            var tcpy0 = tnp.y + tnp.dy * Math.abs(view.y - tnp.y) / TRANSITION_END_FACTOR;
             
             view.path.attr({
                 d: "M" + snp.x + "," + snp.y
-                 + "C" + scpx1 + "," + scpy1 + "," + scpx2 + "," + scpy2 + "," + view.x  + "," + view.y
-                 + "C" + tcpx1 + "," + tcpy1 + "," + tcpx2 + "," + tcpy2 + "," + tnp.x   + "," + tnp.y
+                 + "C" + scpx0 + "," + scpy0 + "," + scpx + "," + scpy + "," + view.x  + "," + view.y
+                 + "C" + tcpx + "," + tcpy + "," + tcpx0 + "," + tcpy0 + "," + tnp.x   + "," + tnp.y
             });
         },
         
