@@ -443,10 +443,10 @@ namespace(this, "automata.view", function (exports, globals) {
             
             var hasTerms = false;
             transitions.forEach(function (tr) {
-                var termSpan = this.paper.el("tspan").attr({"class": "term", dy: "1.5em"});
+                var termSpan = this.paper.el("tspan").attr({"class": "term"});
                 
                 if (hasTerms) {
-                    termSpan.attr({"#text": "+"});
+                    termSpan.attr({"#text": "+", dy: "1.5em"});
                 }
 
                 var hasInputs = false;
@@ -488,7 +488,7 @@ namespace(this, "automata.view", function (exports, globals) {
         moveTransitionText: function (transition) {
             var view = this.transitionViews[transition.id];
             var x = view.x + 2 * TRANSITION_RADIUS;
-            var y = view.y - view.text.getBBox().height / 2;
+            var y = view.y - view.text.getBBox().height / 2; // FIXME getBBox().height returns 0
 
             view.text.attr({x: x, y: y});
             view.text.selectAll("tspan.term").attr({x: x});
