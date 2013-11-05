@@ -93,7 +93,11 @@ namespace(this, "automata.games.robot", function (exports, globals) {
                 if (intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, w[0], w[1], w[3]) ||
                     intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, w[2], w[1], w[3]) ||
                     intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, w[1], w[0], w[2]) ||
-                    intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, w[3], w[0], w[2])) {
+                    intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, w[3], w[0], w[2]) ||
+                    intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, 0,           0, this.height) ||
+                    intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, this.width,  0, this.height) ||
+                    intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, 0,           0, this.width)  ||
+                    intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, this.height, 0, this.width)) {
                     collision = true;
                     break;
                 }
