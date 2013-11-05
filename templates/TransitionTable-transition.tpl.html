@@ -1,18 +1,18 @@
 <td class="remove-transition"><input type="button" value="-" title="Remove this transition"></td>
-<% _.each(model.world.sensors, function (name, index) { %>
-    <td class="transition-input"><input type="button" class="automata-bool" value="<%= transition.inputs[index] %>"></td>
-<% }); %>
+{% for value in transition.inputs %}
+    <td class="transition-input"><input type="button" class="automata-bool" value="{{value}}"></td>
+{% endfor %}
 <td>&rarr;</td>
-    <% _.each(model.world.actuators, function (name, index) { %>
-        <td class="transition-output"><input type="button" class="automata-bool" value="<%= transition.outputs[index] %>"></td>
-    <% }); %>
-    <td class="target-state-name">
-        <select>
-            <% _.each(model.states, function (targetState) { %>
-                <option value="<%= targetState.id %>"
-                    <% if (targetState.id === transition.targetState.id) { %> selected <% } %> >
-                        <%= targetState.name %>
-                </option>
-            <% }); %>
-        </select>
+{% for value in transition.outputs %}
+    <td class="transition-output"><input type="button" class="automata-bool" value="{{value}}"></td>
+{% endfor %}
+<td class="target-state-name">
+    <select>
+        {% for targetState in model.states %}
+            <option value="{{targetState.id}}"
+                    {% if targetState.id == transition.targetState.id %} selected {% endif %}>
+                {{targetState.name}}
+            </option>
+        {% endfor %}
+    </select>
 </td>

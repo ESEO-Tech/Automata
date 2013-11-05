@@ -9,11 +9,11 @@ namespace(this, "automata.view", function (exports, globals) {
 
             this.model = model;
             
-            if (!_.isUndefined(container)) {
+            if (container) {
                 this.container = container;
             }
             
-            if (_.isUndefined(this.templates)) {
+            if (!this.templates) {
                 this.loadTemplates();
             }
             
@@ -41,7 +41,7 @@ namespace(this, "automata.view", function (exports, globals) {
             Object.keys(this.templateFiles).forEach(function (name) {
                 promises.push($.ajax(self.templateFiles[name], {dataType: "text"})
                     .done(function (resp) {
-                        self.templates[name] = _.template(resp);
+                        self.templates[name] = resp;
                     })
                     .fail(function (xhr, status, error) {
                         throw "Failed to load template '" + name + "' " + error;
@@ -49,6 +49,10 @@ namespace(this, "automata.view", function (exports, globals) {
             });
             this.deferredLoad = $.when.apply($, promises);
             return this;
+        },
+        
+        renderTemplate: function (name, context) {
+            return nunjucks.renderString(this.templates[name], context);
         }
     });
 });

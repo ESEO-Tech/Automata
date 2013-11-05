@@ -45,7 +45,7 @@ namespace(this, "automata.model", function (exports, globals) {
         },
         
         getStateVars: function () {
-            if (this.world.solution && _.isArray(this.world.solution.stateVars)) {
+            if (this.world.solution && this.world.solution.stateVars) {
                 return this.world.solution.stateVars;
             }
             else {

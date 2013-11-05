@@ -17,7 +17,7 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         render: function () {
-            $(this.templates.main(this.model)).appendTo(this.container);
+            $(this.renderTemplate("main", this.model)).appendTo(this.container);
             
             this.playButton = $("#control-play", this.container);
             

@@ -21,7 +21,7 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         render: function () {
-            this.root = $(this.templates.main(this.model)).appendTo(this.container);
+            this.root = $(this.renderTemplate("main", this.model)).appendTo(this.container);
             
             var model = this.model;
             $("input", this.root).click(function () {
@@ -36,7 +36,7 @@ namespace(this, "automata.view", function (exports, globals) {
             $("<option>").val(state.id).text(state.name).appendTo($("td.target-state-name select", this.root))
             
             // Create new row in the transition table
-            var row = $(this.templates.state({state: state, model: model})).insertBefore($("tr", this.root).last());
+            var row = $(this.renderTemplate("state", {state: state, model: model})).insertBefore($("tr", this.root).last());
             
             $("td.remove-state input", row).click(function () {
                 model.removeState(state);
@@ -85,7 +85,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var rows = this.getRowsForState(state);
             var transitionRow = rows.last();
             var tdnt = $("td.create-transition", transitionRow);
-            tdnt.after(this.templates.transition({transition: transition, model: model}));
+            tdnt.after(this.renderTemplate("transition", {transition: transition, model: model}));
 
             // Add handler for the "Remove transition" button
             $("td.remove-transition input", transitionRow).click(function () {

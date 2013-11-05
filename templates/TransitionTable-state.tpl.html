@@ -1,23 +1,23 @@
-<tr class="state-<%= state.id %>">
+<tr class="state-{{state.id}}">
     <td class="remove-state"><input type="button" value="-" title="Remove this state"></td>
     <td class="source-state-name">
-        <input type="text" value="<%= state.name %>">
-        <% if (model.getStateVars().length) { %>
+        <input type="text" value="{{state.name}}">
+        {% if model.getStateVars().length %}
             <table class="state-encoding">
                 <tr>
-                    <% _.each(model.getStateVars(), function (name) { %>
-                        <th>s<sub><%= name %></sub></th>
-                    <% }); %>
+                    {% for name in model.getStateVars() %}
+                        <th>s<sub>{{name}}</sub></th>
+                    {% endfor %}
                 </tr>
                 <tr>
-                    <% _.each(model.getStateVars(), function (name, index) { %>
-                        <td><input type="button" class="automata-bool" value="<%= state.encoding[index] %>"></td>
-                    <% }); %>
+                    {% for value in state.encoding %}
+                        <td><input type="button" class="automata-bool" value="{{value}}"></td>
+                    {% endfor %}
                 </tr>
             </table>
-        <% } %>
+        {% endif %}
     </td>
-    <td class="create-transition" colspan="<%= model.world.sensors.length + model.world.actuators.length + 3 %>">
+    <td class="create-transition" colspan="{{model.world.sensors.length + model.world.actuators.length + 3}}">
         <input type="button" value="+" title="Create a transition">
     </td>
 </tr>

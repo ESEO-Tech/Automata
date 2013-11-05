@@ -13,8 +13,8 @@ namespace(this, "automata.model", function (exports, globals) {
         },
         
         createListenerRecord: function (event, a, b) {
-            if (_.isUndefined(b)) {
-                if (_.isFunction(a)) {
+            if (typeof b === "undefined") {
+                if (typeof a === "function") {
                     return {
                         callback: a,
                         receiver: globals
