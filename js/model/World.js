@@ -68,6 +68,11 @@ namespace(this, "automata.model", function (exports, globals) {
             this.reset();
             this.fire("stop");
         },
+
+        done: function () {
+            this.pause();
+            this.fire("done");
+        },
         
         onStep: function () {
             // Abstract

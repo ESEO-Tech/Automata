@@ -18,9 +18,9 @@ namespace(this, "automata.games.robot", function (exports, globals) {
         startY: 0,
         startAngle: 0,
 
-        exitX: 0,
-        exitY: 0,
-        exitRadius: 5,
+        goalX: 0,
+        goalY: 0,
+        goalRadius: 10,
         
         init: function () {
             this.sensorRadius = this.robotRadius / 4;
@@ -139,6 +139,13 @@ namespace(this, "automata.games.robot", function (exports, globals) {
                         break;
                     }
                 }
+            }
+            
+            // Check goal
+            var goalDx = this.goalX - this.robotMatrix.e;
+            var goalDy = this.goalY - this.robotMatrix.f;
+            if (goalDx * goalDx + goalDy * goalDy <= this.goalRadius * this.goalRadius) {
+                this.done();
             }
         }        
     });

@@ -38,7 +38,8 @@ namespace(this, "automata.games.robot", function (exports, globals) {
         startX: 15,
         startY: 200,
         
-        exitX: 646,
-        exitY: 77
+        goalX: 646,
+        goalY: 82,
+        goalRadius: 15
     });
 });

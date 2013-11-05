@@ -16,6 +16,9 @@ namespace(this, "automata.games.robot", function (exports, globals) {
                 preserveAspectRatio: "xMidYMid meet"
             });
             
+            // Draw goal
+            this.paper.circle(world.goalX, world.goalY, world.goalRadius).attr({"class": "automata-robot-goal"});
+            
             // Draw walls
             world.walls.forEach(function (wall) {
                 this.paper.rect(wall[0], wall[1], wall[2] - wall[0], wall[3] - wall[1]).attr({"class": "automata-robot-wall"});

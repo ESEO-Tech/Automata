@@ -17,3 +17,7 @@
 .automata-robot .active {
     fill: red;
 }
+
+.automata-robot-goal {
+    fill: orange;
+}
