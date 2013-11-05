@@ -43,10 +43,10 @@ namespace(this, "automata.games.robot", function (exports, globals) {
         
         update: function () {
             this.sensorViews.forEach(function (view, index) {
-                var cls = this.world.sensorValues[index] ? "active" : "inactive";
+                var cls = this.world.sensorValues[index] === "1" ? "active" : "inactive";
                 view.attr({"class": cls});
             }, this);
-            this.robotView.transform("translate(" + this.world.robotX + "," + this.world.robotY + ") rotate(" + this.world.robotAngle + ")");
+            this.robotView.transform(this.world.robotMatrix);
         }
     });
 });
