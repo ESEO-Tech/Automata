@@ -1,7 +1,7 @@
 <tr class="state-{{state.id}}">
     <td class="remove-state"><input type="button" value="-" title="Remove this state"></td>
     <td class="source-state-name">
-        <input type="text" value="{{state.name}}">
+        <input type="text" size="10" value="{{state.name}}">
         {% if model.getStateVars().length %}
             <table class="state-encoding">
                 <tr>

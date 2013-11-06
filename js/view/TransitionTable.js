@@ -30,16 +30,22 @@ namespace(this, "automata.view", function (exports, globals) {
             });
         },
         
-        fit: function () {
-            for (var i = 0; i < 10; i ++) {
-                var tw = this.root.width();
-                var cw = this.container.innerWidth();
-                if (cw / tw >= 0.95 && cw / tw <= 1.05) {
-                    break;
+        scale: function () {
+            // Adjust state name input width
+            var stateNameInputs = $(".source-state-name input[type=text]", this.root);
+            var size = -1;
+            stateNameInputs.each(function () {
+                if (size < 0 || $(this).val().length > size) {
+                    size = $(this).val().length;
                 }
-                var fontSize = parseFloat(this.root.css("font-size"));
-                this.root.css("font-size", (fontSize * cw / tw) + "px");
-            }
+            });
+            stateNameInputs.attr("size", Math.max(4, size));
+            
+            // Adjust zoom level
+            this.root.css("transform", "none");
+            var tw = this.root.width();
+            var cw = this.container.innerWidth();
+            this.root.css("transform", "scale(" + (cw / tw) + ")");
         },
         
         createState: function (model, state) {
@@ -69,6 +75,8 @@ namespace(this, "automata.view", function (exports, globals) {
                     state.setEncoding(index, value);
                 });
             });
+            
+            this.scale();
         },
         
         getRowsForState: function (state) {
@@ -78,6 +86,8 @@ namespace(this, "automata.view", function (exports, globals) {
         beforeRemoveState: function (model, state) {
             this.getRowsForState(state).remove();
             $("option[value='" + state.id + "']", this.root).remove();
+            
+            this.scale();
         },
         
         updateState: function (state) {
@@ -87,6 +97,8 @@ namespace(this, "automata.view", function (exports, globals) {
                 $(this).val(state.encoding[index]);
             });
             $("option[value='" + state.id + "']", this.root).text(state.name);
+            
+            this.scale();
         },
         
         createTransition: function (model, transition) {
@@ -134,6 +146,8 @@ namespace(this, "automata.view", function (exports, globals) {
             $("<tr>").addClass("state-" + state.id).append(tdnt).insertAfter(transitionRow);
             
             $("td.remove-state, td.source-state-name", rows).attr("rowspan", rows.length + 1);
+            
+            this.scale();
         },
         
         updateTransition: function (transition) {
@@ -146,6 +160,8 @@ namespace(this, "automata.view", function (exports, globals) {
             $("td.transition-output input", row).each(function (i) {
                 $(this).val(transition.outputs[i]);
             });
+            
+            this.scale();
         },
         
         beforeRemoveTransition: function (model, transition) {
@@ -161,6 +177,8 @@ namespace(this, "automata.view", function (exports, globals) {
                 rows.slice(1, 2).remove();
             }
             $("td.remove-state, td.source-state-name", rows.first()).attr("rowspan", rows.length - 1);
+            
+            this.scale();
         },
         
         currentStateChanged: function (model, state) {

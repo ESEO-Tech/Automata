@@ -3,11 +3,14 @@
  * Table layout
  * ---------------------------------------------------------------------- */
 
+.automata-TransitionTable {
+    transform-origin: 0 0;
+}
+
 .automata-TransitionTable * {
     font-family: Arsenal, sans-serif;
     font-weight: normal;
 }
-
 
 .automata-TransitionTable tr {
     border-bottom: 1px solid rgb(240, 240, 240);
@@ -75,10 +78,6 @@
     text-align: center;
     border: none;
     box-shadow: 0 2px 4px 0 rgb(128, 128, 128);
-    
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 16ex;
 }
 
 .automata-TransitionTable .source-state-name input[type=text],
