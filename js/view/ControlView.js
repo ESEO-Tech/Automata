@@ -56,19 +56,28 @@ namespace(this, "automata.view", function (exports, globals) {
         },
         
         moveLeft: function () {
-            this.panes.unshift(this.panes.pop());
-            this.updatePanes();
+            var entering = this.panes.pop();
+            $(entering).attr("class", "entering-left-pane");
+            this.panes.unshift(entering);
+
+            var self = this;
+            setTimeout(function () {
+                $(self.panes[0]).attr("class", "left-pane");
+                $(self.panes[1]).attr("class", "right-pane");
+                $(self.panes[2]).attr("class", "leaving-right-pane");
+            }, 20);
         },
         
         moveRight: function () {
+            $(this.panes[2]).attr("class", "entering-right-pane");
             this.panes.push(this.panes.shift());
-            this.updatePanes();
-        },
-        
-        updatePanes: function () {
-            $(this.panes[0]).css({left: "0", visibility: "visible"});
-            $(this.panes[1]).css({left: "50%", visibility: "visible"});
-            $(this.panes[2]).css("visibility", "hidden");
+            
+            var self = this;
+            setTimeout(function () {
+                $(self.panes[0]).attr("class", "left-pane");
+                $(self.panes[1]).attr("class", "right-pane");
+                $(self.panes[2]).attr("class", "leaving-left-pane");
+            }, 20);
         }
     });
 });

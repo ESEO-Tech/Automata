@@ -23,17 +23,36 @@ body {
 }
 
 #table-view {
-    left: 50%;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-#world-view {
-    position: absolute;
-    left: 0;
-    height: calc(50% - 2em);
+.entering-left-pane, .leaving-left-pane {
+    left: -50%;
 }
 
-#diagram-view {
+.left-pane {
+    left: 0%;
+}
+
+.right-pane {
+    left: 50%;
+}
+
+.entering-right-pane, .leaving-right-pane {
+    left: 100%;
+}
+
+.hidden {
     visibility: hidden;
+}
+
+.entering-left-pane, .entering-right-pane {
+    transition-duration: 0;
+}
+
+.left-pane, .right-pane, .leaving-left-pane, .leaving-right-pane {
+    transition-property: left;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
 }
