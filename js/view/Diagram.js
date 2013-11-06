@@ -167,6 +167,7 @@ namespace(this, "automata.view", function (exports, globals) {
             this.container.append(fragment.node);
             this.paper = Snap("svg.automata-Diagram");
             this.resetView = this.paper.select("#reset");
+            this.shadow = this.paper.select("#state-shadow");
             
             var self = this;
             var startX, startY, startEvt;
@@ -269,7 +270,7 @@ namespace(this, "automata.view", function (exports, globals) {
                 y:         0,
                 width:     0,
                 height:    0,
-                rect:      this.paper.rect(0, 0, 0, 0, STATE_RADIUS, STATE_RADIUS),
+                rect:      this.paper.rect(0, 0, 0, 0, STATE_RADIUS, STATE_RADIUS).attr({filter: this.shadow}),
                 name:      this.paper.text(0, 0, "State name"),
                 actions:   this.paper.text(0, 0, "Moore actions"),
                 separator: this.paper.line(0, 0, 0, 0),
