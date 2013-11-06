@@ -11,7 +11,7 @@
 }
 
 .automata-Diagram text {
-    font-family: Iwona;
+    font-family: Arsenal, sans-serif;
     fill: black;
 }
 .automata-Diagram .state text {
