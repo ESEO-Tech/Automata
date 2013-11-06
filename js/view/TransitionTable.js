@@ -15,7 +15,8 @@ namespace(this, "automata.view", function (exports, globals) {
             model.addListener("createState",            this)
                  .addListener("beforeRemoveState",      this)
                  .addListener("createTransition",       this)
-                 .addListener("beforeRemoveTransition", this);
+                 .addListener("beforeRemoveTransition", this)
+                 .addListener("currentStateChanged",    this);
 
             return this;
         },
@@ -148,6 +149,13 @@ namespace(this, "automata.view", function (exports, globals) {
                 rows.slice(1, 2).remove();
             }
             $("td.remove-state, td.source-state-name", rows.first()).attr("rowspan", rows.length - 1);
+        },
+        
+        currentStateChanged: function (model, state) {
+            $("tr", this.root).removeClass("current");
+            if (state) {
+                this.getRowsForState(state).addClass("current");
+            }
         }
     });
 });

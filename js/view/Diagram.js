@@ -29,7 +29,8 @@ namespace(this, "automata.view", function (exports, globals) {
             model.addListener("createState", this)
                  .addListener("afterRemoveState", this)
                  .addListener("createTransition", this)
-                 .addListener("afterRemoveTransition", this);
+                 .addListener("afterRemoveTransition", this)
+                 .addListener("currentStateChanged", this);
 
             return this;
         },
@@ -583,6 +584,13 @@ namespace(this, "automata.view", function (exports, globals) {
             }
             
             delete this.transitionViews[transition.id];
+        },
+        
+        currentStateChanged: function (model, state) {
+            this.paper.selectAll(".state").attr({"class": "state"});
+            if (state) {
+                this.stateViews[state.id].group.attr({"class": "state current"});
+            }
         }
     });
 });

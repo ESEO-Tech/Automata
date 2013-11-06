@@ -6,6 +6,10 @@
     stroke: none;
 }
 
+.automata-Diagram .state.current rect {
+    fill: rgb(255, 200, 0);
+}
+
 .automata-Diagram text {
     font-family: Iwona;
     fill: black;

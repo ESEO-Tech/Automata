@@ -122,6 +122,7 @@ namespace(this, "automata.model", function (exports, globals) {
             else {
                 this.currentState = null;
             }
+            this.fire("currentStateChanged", this.currentState);
         },
         
         step: function () {
@@ -132,6 +133,9 @@ namespace(this, "automata.model", function (exports, globals) {
             }
             else {
                 this.currentState = transition.targetState;
+                if (transition.sourceState !== transition.targetState) {
+                    this.fire("currentStateChanged", this.currentState);
+                }
                 return transition.outputs;
             }
         }

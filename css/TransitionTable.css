@@ -83,6 +83,14 @@
     padding-right: 1em;
 }
 
+.automata-TransitionTable .current {
+    background: rgb(255, 250, 220);
+}
+
+.automata-TransitionTable .current .source-state-name input[type=text] {
+    background: rgb(255, 200, 0);
+}
+
 /* ---------------------------------------------------------------------- *
  * Boolean values
  * ---------------------------------------------------------------------- */
