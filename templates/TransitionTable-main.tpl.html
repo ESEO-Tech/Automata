@@ -4,11 +4,11 @@
         <th>Source state</th>
         <th></th>
         {% for name in world.sensors %}
-            <th>i<sub>{{name}}</sub></th>
+            <th>{{name}}</th>
         {% endfor %}
         <th>&rarr;</th>
         {% for name in world.actuators %}
-            <th>q<sub>{{name}}</sub></th>
+            <th>{{name}}</th>
         {% endfor %}
         <th>Target state</th>
     </tr>
