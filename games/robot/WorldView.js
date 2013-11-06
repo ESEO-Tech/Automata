@@ -8,13 +8,15 @@ namespace(this, "automata.games.robot", function (exports, globals) {
             
             this.world = world;
             
-            this.paper = Snap();
+            this.paper = Snap("100%", "auto");
             container.append(this.paper.node);
             
             this.paper.attr({
                 viewBox: "0 0 " + world.width + " " + world.height,
-                preserveAspectRatio: "xMidYMid meet"
+                preserveAspectRatio: "xMidYMid meet" // FIXME not supported by Snap.svg (see below)
             });
+            
+            this.paper.node.setAttribute("preserveAspectRatio", "xMidYMid meet");
             
             // Draw goal
             this.paper.circle(world.goalX, world.goalY, world.goalRadius).attr({"class": "automata-robot-goal"});

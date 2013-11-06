@@ -7,36 +7,33 @@ body {
     font-size: large;
 }
 
-#table-view {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 50%;
-    height: 50%;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
 #control-view {
     position: absolute;
     left: 0;
-    top: 50%;
-    width: 50%;
+    top: 0;
+    width: 100%;
     height: 2em;
+}
+
+#table-view, #diagram-view, #world-view {
+    position: absolute;
+    top: 2em;
+    width: 50%;
+    height: calc(100% - 2em);
+}
+
+#table-view {
+    left: 50%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 #world-view {
     position: absolute;
     left: 0;
-    bottom: 0;
-    width: 50%;
     height: calc(50% - 2em);
 }
 
 #diagram-view {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 50%;
-    height: 100%;
+    visibility: hidden;
 }

@@ -13,6 +13,8 @@ namespace(this, "automata.view", function (exports, globals) {
                  .addListener("pause", this.pauseOrStop, this)
                  .addListener("stop",  this.pauseOrStop, this);
             
+            this.panes = ["#world-view", "#table-view", "#diagram-view"];
+            
             return this;
         },
         
@@ -34,6 +36,15 @@ namespace(this, "automata.view", function (exports, globals) {
             $("#control-stop", this.container).click(function () {
                 model.stop();
             });
+            
+            var self = this;
+            $("#control-left", this.container).click(function () {
+                self.moveLeft();
+            });
+            
+            $("#control-right", this.container).click(function () {
+                self.moveRight();
+            });
         },
         
         start: function () {
@@ -42,6 +53,22 @@ namespace(this, "automata.view", function (exports, globals) {
         
         pauseOrStop: function () {
             this.playButton.removeClass("running").val("P");
+        },
+        
+        moveLeft: function () {
+            this.panes.unshift(this.panes.pop());
+            this.updatePanes();
+        },
+        
+        moveRight: function () {
+            this.panes.push(this.panes.shift());
+            this.updatePanes();
+        },
+        
+        updatePanes: function () {
+            $(this.panes[0]).css({left: "0", visibility: "visible"});
+            $(this.panes[1]).css({left: "50%", visibility: "visible"});
+            $(this.panes[2]).css("visibility", "hidden");
         }
     });
 });
