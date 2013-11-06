@@ -154,7 +154,12 @@ namespace(this, "automata.view", function (exports, globals) {
         currentStateChanged: function (model, state) {
             $("tr", this.root).removeClass("current");
             if (state) {
-                this.getRowsForState(state).addClass("current");
+                var rows = this.getRowsForState(state);
+                rows.addClass("current");
+                var rowsTop = rows.position().top;
+                if (rowsTop < this.container.scrollTop() || rowsTop > this.container.scrollTop() + this.container.height()) {
+                    this.container.scrollTop(rowsTop);
+                }
             }
         }
     });
