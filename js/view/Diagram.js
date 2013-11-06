@@ -6,7 +6,7 @@ namespace(this, "automata.view", function (exports, globals) {
     var STATE_TB_PADDING = 3;
     var TRANSITION_RADIUS = 6;
     var TRANSITION_END_FACTOR = 3;
-    var TRANSITION_MARK_FACTOR = 6;
+    var TRANSITION_HANDLE_FACTOR = 6;
     var ZOOM_FACTOR = 1.05;
 
     exports.Diagram = Object.create(exports.View).augment({
@@ -417,7 +417,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var targetView = this.stateViews[transition.targetState.id];
             
             if (transition.sourceState === transition.targetState) {
-                view.x = sourceView.x + sourceView.width + 4 * TRANSITION_RADIUS;
+                view.x = sourceView.x + sourceView.width + sourceView.height;
                 view.y = sourceView.y + sourceView.height / 2;
             }
             else {
@@ -500,70 +500,60 @@ namespace(this, "automata.view", function (exports, globals) {
             var sourceView = this.stateViews[transition.sourceState.id];
             var targetView = this.stateViews[transition.targetState.id];
 
-            var scx = sourceView.x + sourceView.width / 2;
-            var scy = sourceView.y + sourceView.height / 2;
-            var tcx = targetView.x + targetView.width / 2;
-            var tcy = targetView.y + targetView.height / 2;
+            // Compute coordinates of source and target state views
+            var sourceCenter = {
+                x: sourceView.x + sourceView.width / 2,
+                y: sourceView.y + sourceView.height / 2
+            };
+            var targetCenter = {
+                x: targetView.x + targetView.width / 2,
+                y: targetView.y + targetView.height / 2
+            }
 
+            // Compute Bezier control points
             if (transition.sourceState !== transition.targetState) {
-                var vx = (tcx - scx) / TRANSITION_MARK_FACTOR;
-                var vy = (tcy - scy) / TRANSITION_MARK_FACTOR;
+                var tangentVector = {
+                    x: (targetCenter.x - sourceCenter.x) / TRANSITION_HANDLE_FACTOR,
+                    y: (targetCenter.y - sourceCenter.y) / TRANSITION_HANDLE_FACTOR
+                };
             }
             else {
-                vx = 0;
-                vy = sourceView.height / 3;
+                tangentVector = {
+                    x: 0,
+                    y: sourceView.height
+                };
             }
             
-            var scpx = view.x - vx;
-            var scpy = view.y - vy;
-            var tcpx = view.x + vx;
-            var tcpy = view.y + vy;
-
-            var sp = [];
-            var tp = [];
-            for (var i = -1; i <= 1; i ++) {
-                sp.push({x: scx + i * sourceView.width / 3, y: sourceView.y,                     dx: i, dy: -1});
-                sp.push({x: scx + i * sourceView.width / 3, y: sourceView.y + sourceView.height, dx: i, dy:  1});
-                
-                sp.push({x: sourceView.x,                    y: scy + i * sourceView.height / 3, dx: -1, dy: i});
-                sp.push({x: sourceView.x + sourceView.width, y: scy + i * sourceView.height / 3, dx:  1, dy: i});
-
-                tp.push({x: tcx + i * targetView.width / 3, y: targetView.y,                     dx: i, dy: -1});
-                tp.push({x: tcx + i * targetView.width / 3, y: targetView.y + targetView.height, dx: i, dy:  1});
-                
-                tp.push({x: targetView.x,                    y: tcy + i * targetView.height / 3, dx: -1, dy: i});
-                tp.push({x: targetView.x + targetView.width, y: tcy + i * targetView.height / 3, dx:  1, dy: i});
-            }
+            var sourceControl = {
+                x: view.x - tangentVector.x,
+                y: view.y - tangentVector.y
+            };
             
-            function getBestPoint(cpx, cpy, arr, other) {
-                var dmin = -1, result = arr[0];
-                for (var i = 0; i < arr.length; i ++) {
-                    var p = arr[i];
-                    if (!other || other.x !== p.x || other.y !== p.y) {
-                        var dx = p.x + p.dx * Math.abs(cpx - p.x) - cpx;
-                        var dy = p.y + p.dy * Math.abs(cpy - p.y) - cpy;
-                        var d = dx * dx + dy * dy;
-                        if (dmin < 0 || d < dmin) {
-                            dmin = d;
-                            result = p;
-                        }
-                    }
+            var targetControl = {
+                x: view.x + tangentVector.x,
+                y: view.y + tangentVector.y
+            };
+            
+            // Compute source and target ends
+            function intersection(cp, v, vc) {
+                var xv = (cp.x < vc.x) ? v.x : v.x + v.width;
+                var yv = (cp.y - vc.y) * (xv - vc.x) / (cp.x - vc.x) + vc.y;
+
+                if (yv < v.y || yv > v.y + v.height) {
+                    yv = cp.y < vc.y ? v.y : v.y + v.height;
+                    xv = (cp.x - vc.x) * (yv - vc.y) / (cp.y - vc.y) + vc.x;
                 }
-                return result;
+
+                return {x : xv, y : yv};
             }
             
-            var snp = getBestPoint(scpx, scpy, sp);
-            var tnp = getBestPoint(tcpx, tcpy, tp, snp);
-            
-            var scpx0 = snp.x + snp.dx * Math.abs(view.x - snp.x) / TRANSITION_END_FACTOR;
-            var scpy0 = snp.y + snp.dy * Math.abs(view.y - snp.y) / TRANSITION_END_FACTOR;
-            var tcpx0 = tnp.x + tnp.dx * Math.abs(view.x - tnp.x) / TRANSITION_END_FACTOR;
-            var tcpy0 = tnp.y + tnp.dy * Math.abs(view.y - tnp.y) / TRANSITION_END_FACTOR;
-            
+            var sourceIntersect = intersection(sourceControl, sourceView, sourceCenter);
+            var targetIntersect = intersection(targetControl, targetView, targetCenter);
+
             view.path.attr({
-                d: "M" + snp.x + "," + snp.y
-                 + "C" + scpx0 + "," + scpy0 + "," + scpx + "," + scpy + "," + view.x  + "," + view.y
-                 + "C" + tcpx + "," + tcpy + "," + tcpx0 + "," + tcpy0 + "," + tnp.x   + "," + tnp.y
+                d: "M" + sourceIntersect.x     + "," + sourceIntersect.y
+                 + "Q" + sourceControl.x       + "," + sourceControl.y + "," + view.x            + "," + view.y
+                 + "Q" + targetControl.x       + "," + targetControl.y + "," + targetIntersect.x + "," + targetIntersect.y
             });
         },
         
