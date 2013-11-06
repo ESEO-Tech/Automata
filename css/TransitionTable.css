@@ -3,6 +3,10 @@
  * Table layout
  * ---------------------------------------------------------------------- */
 
+.automata-TransitionTable {
+    width: 100%;
+}
+
 .automata-TransitionTable * {
     font-family: Arsenal, sans-serif;
     font-size: large;
@@ -76,12 +80,17 @@
     text-align: center;
     border: none;
     box-shadow: 0 2px 4px 0 rgb(128, 128, 128);
+    
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 16ex;
 }
 
 .automata-TransitionTable .source-state-name input[type=text],
 .automata-TransitionTable .target-state-name option {
     padding-left: 1em;
     padding-right: 1em;
+    text-align: center;
 }
 
 .automata-TransitionTable .current {

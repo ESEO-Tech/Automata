@@ -3,39 +3,39 @@ body {
     width: 100%;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 #table-view {
-    display: inline-block;
     position: absolute;
     left: 0;
     top: 0;
+    width: 50%;
     height: 50%;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
 #control-view {
-    display: inline-block;
     position: absolute;
     left: 0;
     top: 50%;
+    width: 50%;
     height: 2em;
 }
 
 #world-view {
-    display: inline-block;
     position: absolute;
     left: 0;
     bottom: 0;
+    width: 50%;
     height: calc(50% - 2em);
 }
 
 #diagram-view {
-    display: inline-block;
     position: absolute;
     right: 0;
     top: 0;
+    width: 50%;
     height: 100%;
-    overflow: hidden;
 }

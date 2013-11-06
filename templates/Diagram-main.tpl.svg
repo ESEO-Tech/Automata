@@ -1,4 +1,4 @@
-<svg class="automata-Diagram" preserveAspectRatio="xMidYMid meet">
+<svg class="automata-Diagram">
     <defs>
         <marker id="arrow-head"
                 viewBox="0 0 10 10" refX="10" refY="5"

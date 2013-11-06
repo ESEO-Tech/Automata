@@ -255,9 +255,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var w = this.getWidth();
             var h = this.getHeight();
             this.paper.attr({
-                width: w,
-                height: h,
-                viewBox: [this.x, this.y, w / this.zoom, w / this.zoom]
+                viewBox: [this.x, this.y, w / this.zoom, h / this.zoom]
             })
         },
         

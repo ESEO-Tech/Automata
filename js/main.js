@@ -11,21 +11,13 @@ $(function () {
     sources[world.key + ".view.diagram"] = diagramView;
     var storage = Object.create(automata.storage.LocalStorage).init(sources);
 
-    $.when(tableView.ready(), diagramView.ready()).done(function () {
-        resize();
-        storage.load();
-    });
-    
     function resize() {
-        $("#diagram-view").width($(window).width() - $("#table-view").width())
-                          .height($(window).height());
-        $("#control-view, #world-view").width($("#table-view").width());
         diagramView.updateViewbox();
     }
 
-    world.stateMachine.addListener("changed", function () {
-        // Ensure the table view has been updated before resizing
-        setTimeout(resize, 1);
+    $.when(tableView.ready(), diagramView.ready()).done(function () {
+        resize();
+        storage.load();
     });
 
     $(window).resize(resize);
