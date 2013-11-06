@@ -30,6 +30,18 @@ namespace(this, "automata.view", function (exports, globals) {
             });
         },
         
+        fit: function () {
+            for (var i = 0; i < 10; i ++) {
+                var tw = this.root.width();
+                var cw = this.container.innerWidth();
+                if (cw / tw >= 0.95 && cw / tw <= 1.05) {
+                    break;
+                }
+                var fontSize = parseFloat(this.root.css("font-size"));
+                this.root.css("font-size", (fontSize * cw / tw) + "px");
+            }
+        },
+        
         createState: function (model, state) {
             state.addListener("changed", this.updateState, this);
             

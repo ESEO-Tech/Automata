@@ -3,13 +3,8 @@
  * Table layout
  * ---------------------------------------------------------------------- */
 
-.automata-TransitionTable {
-    width: 100%;
-}
-
 .automata-TransitionTable * {
     font-family: Arsenal, sans-serif;
-    font-size: large;
     font-weight: normal;
 }
 

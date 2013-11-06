@@ -12,12 +12,14 @@ $(function () {
     var storage = Object.create(automata.storage.LocalStorage).init(sources);
 
     function resize() {
+        tableView.fit();
         diagramView.updateViewbox();
     }
 
     $.when(tableView.ready(), diagramView.ready()).done(function () {
         resize();
         storage.load();
+        tableView.fit();
     });
 
     $(window).resize(resize);
