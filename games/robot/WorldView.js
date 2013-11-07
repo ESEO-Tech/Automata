@@ -8,7 +8,7 @@ namespace(this, "automata.games.robot", function (exports, globals) {
             
             this.world = world;
             
-            this.paper = Snap("100%", "auto");
+            this.paper = Snap();
             container.append(this.paper.node);
             
             this.paper.attr({

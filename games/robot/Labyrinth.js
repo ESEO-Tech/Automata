@@ -4,7 +4,7 @@ namespace(this, "automata.games.robot", function (exports, globals) {
     exports.Labyrinth = Object.create(exports.World).augment({
         key: "automata.games.robot.Labyrinth",
         
-        width: 660,
+        width: 690,
         height: 405,
         
         walls: [
@@ -35,7 +35,7 @@ namespace(this, "automata.games.robot", function (exports, globals) {
            [65,  389, 651, 399]
         ],
         
-        startX: 15,
+        startX: 30,
         startY: 200,
         
         goalX: 646,
