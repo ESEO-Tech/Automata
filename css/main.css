@@ -5,6 +5,7 @@ body {
     padding: 0;
     overflow: hidden;
     font-size: large;
+    background: rgb(170, 170, 170);
 }
 
 #control-view {
@@ -17,9 +18,11 @@ body {
 
 #table-view, #diagram-view, #world-view {
     position: absolute;
-    top: 2em;
-    width: 50%;
-    height: calc(100% - 2em);
+    top: 2.5em;
+    width: calc(50% - 1em);
+    height: calc(100% - 3em);
+    background: white;
+    border-radius: 0.5em;
 }
 
 #table-view {
@@ -28,19 +31,19 @@ body {
 }
 
 .entering-left-pane, .leaving-left-pane {
-    left: -50%;
+    left: calc(-50% + 0.5em);
 }
 
 .left-pane {
-    left: 0%;
+    left: 0.5em;
 }
 
 .right-pane {
-    left: 50%;
+    left: calc(50% + 0.5em);
 }
 
 .entering-right-pane, .leaving-right-pane {
-    left: 100%;
+    left: calc(100% + 0.5em);
 }
 
 .hidden {
