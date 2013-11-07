@@ -355,7 +355,7 @@ namespace(this, "automata.view", function (exports, globals) {
             
             // Replace empty strings with non-breaking spaces to ensure correct bounding box in Webkit
             view.name.attr({text: state.name || "\u2000"});
-            view.actions.attr({text: state.getMooreActions().map(function (a) {return a.name;}).join(", ") || "\u2000"});
+            view.actions.attr({text: state.getMooreActions().join(", ") || "\u2000"});
 
             view.width = Math.max(view.name.node.getComputedTextLength(), view.actions.node.getComputedTextLength()) + 2 * STATE_LR_PADDING;
             view.name.attr({x: view.width / 2});
@@ -439,7 +439,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var sensors = transition.sourceState.stateMachine.world.sensors;
             var actuators = transition.sourceState.stateMachine.world.actuators;
             var transitions = transition.sourceState.getTransitionsToState(transition.targetState);
-            var mooreActions = transition.sourceState.getMooreActions().map(function (a) {return a.name;});
+            var mooreActions = transition.sourceState.getMooreActions();
             
             var hasTerms = false;
             transitions.forEach(function (tr) {

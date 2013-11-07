@@ -93,6 +93,8 @@ namespace(this, "automata.model", function (exports, globals) {
                                 return value === "-";
                             });
                     });
+                }, this).map(function (q) {
+                    return q.name;
                 }, this);
             }
             else {
