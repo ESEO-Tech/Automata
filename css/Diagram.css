@@ -3,6 +3,11 @@
     height: 100%;
 }
 
+.automata-Diagram .state,
+.automata-Diagram .transition circle {
+    cursor: move;
+}
+
 .automata-Diagram .state rect {
     fill: rgb(255, 230, 128);
     stroke: none;
@@ -25,6 +30,10 @@
     stroke: black;
     stroke-width: 1px;
     fill: none;
+}
+
+.automata-Diagram .transition circle {
+    fill: rgb(96, 110, 128);
 }
 
 .automata-Diagram .automata-bool-0 {

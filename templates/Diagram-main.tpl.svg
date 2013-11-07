@@ -21,7 +21,7 @@
         </filter>
     </defs>
     <g id="reset" class="transition">
-        <circle r="6" cx="6" cy="6" />
         <path marker-end="url(#arrow-head)" d="M6,6 c6,0 18,6 18,18" />
+        <circle r="6" cx="6" cy="6" filter="url(#state-shadow)" />
     </g>
 </svg>

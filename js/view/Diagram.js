@@ -302,7 +302,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var gy = this.y + (this.getHeight() / this.zoom - view.height) * Math.random();
             this.putStateView(state, gx, gy);
 
-            this.setDraggable(view, function (x, y) {
+            this.setDraggable(view, "group", function (x, y) {
                 this.putStateView(state, x, y);
                 state.outgoingTransitions.forEach(function (transition) {
                     if (transition.targetState === state) {
@@ -313,9 +313,9 @@ namespace(this, "automata.view", function (exports, globals) {
             });
         },
         
-        setDraggable: function (view, fn) {
+        setDraggable: function (view, elt, fn) {
             var startX, startY;
-            view.group.drag(
+            view[elt].drag(
                 function onMove(dx, dy, x, y, evt) {
                     fn.call(this, startX + dx / this.zoom, startY + dy / this.zoom);
                     evt.stopPropagation();
@@ -383,7 +383,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var view = this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates] = {
                 x:      0,
                 y:      0,
-                handle: this.paper.circle(0, 0, TRANSITION_RADIUS),
+                handle: this.paper.circle(0, 0, TRANSITION_RADIUS).attr({filter: this.shadow}),
                 path:   this.paper.path().attr({markerEnd: this.paper.select("#arrow-head")}),
                 text:   this.paper.text(""),
                 group:  this.paper.g().attr({"class": "transition"})
@@ -395,7 +395,7 @@ namespace(this, "automata.view", function (exports, globals) {
             this.updateTransitionPath(transition);
             
             // Setup event handlers for transition
-            this.setDraggable(view, function (x, y) {
+            this.setDraggable(view, "handle", function (x, y) {
                 this.putTransitionHandle(transition, x, y);
             });
         },
