@@ -70,14 +70,28 @@ namespace(this, "automata.model", function (exports, globals) {
             return this.sourceState.outgoingTransitions.indexOf(this);
         },
         
-        canFire: function () {
-            var world = this.sourceState.stateMachine.world;
+        matchesPattern: function (pattern) {
             for (var index = 0; index < this.inputs.length; index ++) {
-                if (this.inputs[index] !== "-" && this.inputs[index] !== world.getSensorValue(index)) {
+                if (this.inputs[index] !== "-" && pattern[index] !== "-" && this.inputs[index] !== pattern[index]) {
                     return false;
                 }
             }
             return true;
+        },
+        
+        canFire: function () {
+            return this.matchesPattern(this.sourceState.stateMachine.world.sensorValues);
+        },
+        
+        isNonDeterministic: function () {
+            return this.sourceState.outgoingTransitions.some(function (transition) {
+                // TODO check if outputs and target state are different
+                return transition !== this && this.matchesPattern(transition.inputs) && (
+                    this.targetState !== transition.targetState || this.outputs.some(function (value, index) {
+                        return value !== transition.outputs[index];
+                    })
+                );
+            }, this);
         }
     });
 });

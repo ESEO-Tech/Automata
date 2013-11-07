@@ -2,7 +2,7 @@
 {% for value in transition.inputs %}
     <td class="transition-input"><input type="button" class="automata-bool" value="{{value}}"></td>
 {% endfor %}
-<td>&rarr;</td>
+<td class="arrow">&rarr;</td>
 {% for value in transition.outputs %}
     <td class="transition-output"><input type="button" class="automata-bool" value="{{value}}"></td>
 {% endfor %}

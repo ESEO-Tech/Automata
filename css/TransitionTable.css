@@ -117,3 +117,10 @@
     background: rgb(255, 192, 192);
 }
 
+/* ---------------------------------------------------------------------- *
+ * Error markers
+ * ---------------------------------------------------------------------- */
+
+.automata-TransitionTable tr.error td.arrow {
+    background: repeating-linear-gradient(-45deg, rgb(255, 150, 150), rgb(255, 150, 150) 0.3em, transparent 0.3em, transparent 0.6em);
+}

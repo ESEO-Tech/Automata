@@ -16,6 +16,7 @@ namespace(this, "automata.view", function (exports, globals) {
                  .addListener("beforeRemoveState",      this)
                  .addListener("createTransition",       this)
                  .addListener("beforeRemoveTransition", this)
+                 .addListener("afterRemoveTransition",  this)
                  .addListener("currentStateChanged",    this);
 
             return this;
@@ -147,6 +148,7 @@ namespace(this, "automata.view", function (exports, globals) {
             
             $("td.remove-state, td.source-state-name", rows).attr("rowspan", rows.length + 1);
             
+            this.showNonDeterministicTransitions(transition.sourceState);
             this.scale();
         },
         
@@ -161,6 +163,7 @@ namespace(this, "automata.view", function (exports, globals) {
                 $(this).val(transition.outputs[i]);
             });
             
+            this.showNonDeterministicTransitions(transition.sourceState);
             this.scale();
         },
         
@@ -177,8 +180,24 @@ namespace(this, "automata.view", function (exports, globals) {
                 rows.slice(1, 2).remove();
             }
             $("td.remove-state, td.source-state-name", rows.first()).attr("rowspan", rows.length - 1);
-            
+        },
+        
+        afterRemoveTransition: function (model, transition) {
+            this.showNonDeterministicTransitions(transition.sourceState);
             this.scale();
+        },
+        
+        showNonDeterministicTransitions: function (state) {
+            state.outgoingTransitions.forEach(function (transition) {
+                var index = transition.getIndex();
+                var row = this.getRowsForState(state).slice(index, index + 1);
+                if (transition.isNonDeterministic()) {
+                    row.addClass("error");
+                }
+                else {
+                    row.removeClass("error");
+                }
+            }, this);
         },
         
         currentStateChanged: function (model, state) {
