@@ -355,7 +355,7 @@ namespace(this, "automata.view", function (exports, globals) {
             
             // Replace empty strings with non-breaking spaces to ensure correct bounding box in Webkit
             view.name.attr({text: state.name || "\u2000"});
-            view.actions.attr({text: state.getMooreActions().join(", ") || "\u2000"});
+            view.actions.attr({text: state.getMooreActions().map(function (a) {return a.name;}).join(", ") || "\u2000"});
 
             view.width = Math.max(view.name.node.getComputedTextLength(), view.actions.node.getComputedTextLength()) + 2 * STATE_LR_PADDING;
             view.name.attr({x: view.width / 2});
@@ -439,7 +439,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var sensors = transition.sourceState.stateMachine.world.sensors;
             var actuators = transition.sourceState.stateMachine.world.actuators;
             var transitions = transition.sourceState.getTransitionsToState(transition.targetState);
-            var mooreActions = transition.sourceState.getMooreActions();
+            var mooreActions = transition.sourceState.getMooreActions().map(function (a) {return a.name;});
             
             var hasTerms = false;
             transitions.forEach(function (tr) {
@@ -453,7 +453,7 @@ namespace(this, "automata.view", function (exports, globals) {
                 tr.inputs.forEach(function (value, index) {
                     if (value !== "-") {
                         var inputSpan = this.paper.el("tspan").attr({"class": "automata-bool-" + value});
-                        inputSpan.attr({"#text": sensors[index]});
+                        inputSpan.attr({"#text": sensors[index].name});
                         if (hasInputs) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": "."}));
                         }
@@ -464,7 +464,7 @@ namespace(this, "automata.view", function (exports, globals) {
                 
                 var hasActions = false;
                 tr.outputs.forEach(function (value, index) {
-                    if (value === "1" && mooreActions.indexOf(actuators[index]) === -1) {
+                    if (value === "1" && mooreActions.indexOf(actuators[index].name) === -1) {
                         if (hasActions) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": ", "}));
                         }
@@ -472,7 +472,7 @@ namespace(this, "automata.view", function (exports, globals) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": " / "}));
                             hasActions = true;
                         }
-                        termSpan.add(this.paper.el("tspan").attr({"#text": actuators[index]}));
+                        termSpan.add(this.paper.el("tspan").attr({"#text": actuators[index].name}));
                     }
                 }, this);
                 

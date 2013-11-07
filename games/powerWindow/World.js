@@ -2,8 +2,18 @@ namespace(this, "automata.games.powerWindow", function (exports, globals) {
 
     exports.World = Object.create(automata.model.World).augment({
         key: "automata.games.powerWindow",
-        sensors:   ["BO", "BF", "CO", "CF", "sec"],
-        actuators: ["MO", "MF", "inc"],
+        sensors:   [
+            {name: "OB",  desc: "Open Button"},
+            {name: "CB",  desc: "Close Button"},
+            {name: "WO",  desc: "Window completely Open"},
+            {name: "WF",  desc: "Window completely Closed"},
+            {name: "Sec", desc: "Second elapsed"}
+        ],
+        actuators: [
+            {name: "OG",  desc: "Open Gate"},
+            {name: "CG",  desc: "Close Gate"},
+            {name: "Inc", desc: "Increment seconds counter"}
+        ],
         solution: {
             stateVars: ["AA", "O", "OA", "F", "FA", "AR"],
             transitions: {

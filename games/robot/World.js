@@ -2,8 +2,18 @@
 namespace(this, "automata.games.robot", function (exports, globals) {
 
     exports.World = Object.create(automata.model.World).augment({
-        sensors:   ["WL", "WR", "WA", "EOR"],
-        actuators: ["LF", "LB", "RF", "RB"],
+        sensors:   [
+            {name: "WL",  desc: "Wall on the Left"},
+            {name: "WR",  desc: "Wall on the right"},
+            {name: "WA",  desc: "Wall Ahead"},
+            {name: "EOR", desc: "End Of Rotation"}
+        ],
+        actuators: [
+            {name: "LF", desc: "Left wheel Forward"},
+            {name: "LB", desc: "Left wheel Backward"},
+            {name: "RF", desc: "Right wheel Forward"},
+            {name: "RB", desc: "Right wheel Backward"}
+        ],
 
         width: 100,
         height: 100,

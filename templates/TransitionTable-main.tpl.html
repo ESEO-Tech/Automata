@@ -3,12 +3,12 @@
         <th></th>
         <th>Source state</th>
         <th></th>
-        {% for name in world.sensors %}
-            <th>{{name}}</th>
+        {% for s in world.sensors %}
+            <th title="{{s.desc}}">{{s.name}}</th>
         {% endfor %}
         <th>&rarr;</th>
-        {% for name in world.actuators %}
-            <th>{{name}}</th>
+        {% for a in world.actuators %}
+            <th title="{{a.desc}}">{{a.name}}</th>
         {% endfor %}
         <th>Target state</th>
     </tr>
