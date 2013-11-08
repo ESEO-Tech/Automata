@@ -19,6 +19,7 @@ namespace(this, "automata.view", function (exports, globals) {
                  .addListener("afterRemoveTransition",  this)
                  .addListener("currentStateChanged",    this);
 
+            this.zoom = 1;
             return this;
         },
         
@@ -42,11 +43,25 @@ namespace(this, "automata.view", function (exports, globals) {
             });
             stateNameInputs.attr("size", Math.max(4, size));
             
-            // Adjust zoom level
+            // Adjust zoom level, preserving the current scroll position
+            var scrollTop = this.container.scrollTop() / this.zoom;
             this.root.css("transform", "none");
-            var tw = this.root.width();
-            var cw = this.container.innerWidth();
-            this.root.css("transform", "scale(" + (cw / tw) + ")");
+            this.zoom = this.container.innerWidth() / this.root.width();
+            this.root.css("transform", "scale(" + this.zoom + ")");
+            this.container.scrollTop(scrollTop * this.zoom);
+        },
+        
+        scrollTo: function (rows) {
+            var rowsTop = rows.position().top;
+            var rowsBottom = rows.last().position().top + rows.last().height();
+            var containerTop = this.container.scrollTop();
+            var containerHeight = this.container.height();
+            if (rowsTop < 0 || rowsBottom - rowsTop > containerHeight) {
+                this.container.scrollTop(containerTop + rowsTop);
+            }
+            else if (rowsBottom > containerHeight) {
+                this.container.scrollTop(containerTop + rowsBottom - containerHeight);
+            }
         },
         
         createState: function (model, state) {
@@ -78,6 +93,10 @@ namespace(this, "automata.view", function (exports, globals) {
             });
             
             this.scale();
+            
+            // Scroll to the new state row and focus the state name field
+            this.scrollTo(row);
+            $("input[type=text]", row).focus();
         },
         
         getRowsForState: function (state) {
@@ -100,6 +119,7 @@ namespace(this, "automata.view", function (exports, globals) {
             $("option[value='" + state.id + "']", this.root).text(state.name);
             
             this.scale();
+            this.scrollTo(rows);
         },
         
         createTransition: function (model, transition) {
@@ -150,6 +170,7 @@ namespace(this, "automata.view", function (exports, globals) {
             
             this.showNonDeterministicTransitions(transition.sourceState);
             this.scale();
+            this.scrollTo(transitionRow);
         },
         
         updateTransition: function (transition) {
@@ -165,6 +186,7 @@ namespace(this, "automata.view", function (exports, globals) {
             
             this.showNonDeterministicTransitions(transition.sourceState);
             this.scale();
+            this.scrollTo(row);
         },
         
         beforeRemoveTransition: function (model, transition) {
@@ -205,10 +227,7 @@ namespace(this, "automata.view", function (exports, globals) {
             if (state) {
                 var rows = this.getRowsForState(state);
                 rows.addClass("current");
-                var rowsTop = rows.position().top;
-                if (rowsTop < this.container.scrollTop() || rowsTop > this.container.scrollTop() + this.container.height()) {
-                    this.container.scrollTop(rowsTop);
-                }
+                this.scrollTo(rows);
             }
         }
     });
