@@ -1,5 +1,5 @@
 $(function () {
-    var world       = Object.create(automata.games.robot.Labyrinth).init();
+    var world       = Object.create(automata.games.robot.Maze).init();
     var tableView   = Object.create(automata.view.TransitionTable).init(world.stateMachine, $("#table-view"));
     var controlView = Object.create(automata.view.ControlView).init(world, $("#control-view"));
     var diagramView = Object.create(automata.view.Diagram).init(world.stateMachine, $("#diagram-view"));

@@ -1,8 +1,8 @@
 
 namespace(this, "automata.games.robot", function (exports, globals) {
 
-    exports.Labyrinth = Object.create(exports.World).augment({
-        key: "automata.games.robot.Labyrinth",
+    exports.Maze = Object.create(exports.World).augment({
+        key: "automata.games.robot.Maze",
         
         width: 690,
         height: 405,
