@@ -2,7 +2,7 @@ namespace(this, "automata.view", function (exports, globals) {
     "use strict";
 
     exports.View = Object.create(automata.model.Model).augment({
-        templateFiles: {},
+        templates: {},
         
         init: function (model, container) {
             automata.model.Model.init.call(this);
@@ -12,16 +12,9 @@ namespace(this, "automata.view", function (exports, globals) {
             if (container) {
                 this.container = container;
             }
-            
-            if (!this.templates) {
-                this.loadTemplates();
-            }
-            
-            var self = this;
-            this.deferredRender = this.deferredLoad.done(function () {
-                self.container.empty();
-                self.render();
-            });
+
+            container.empty();
+            this.render();
             
             return this;
         },
@@ -30,29 +23,8 @@ namespace(this, "automata.view", function (exports, globals) {
             // Abstract
         },
         
-        ready: function () {
-            return this.deferredRender;
-        },
-        
-        loadTemplates: function () {
-            var self = this;
-            var promises = [];
-            this.templates = {};
-            Object.keys(this.templateFiles).forEach(function (name) {
-                promises.push($.ajax(self.templateFiles[name], {dataType: "text"})
-                    .done(function (resp) {
-                        self.templates[name] = resp;
-                    })
-                    .fail(function (xhr, status, error) {
-                        throw "Failed to load template '" + name + "' " + error;
-                    }));                
-            });
-            this.deferredLoad = $.when.apply($, promises);
-            return this;
-        },
-        
         renderTemplate: function (name, context) {
-            return nunjucks.renderString(this.templates[name], context);
+            return nunjucks.render(this.templates[name], context);
         }
     });
 });

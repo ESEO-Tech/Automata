@@ -2,6 +2,14 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        
+        nunjucks: {
+            precompile: {
+                src: "templates/*",
+                dest: "build/automata.templates.js"
+            }
+        },
+        
         uglify: {
             "automata.core": {
                 src: [
@@ -17,7 +25,8 @@ module.exports = function(grunt) {
                     'js/view/TransitionTable.js',
                     'js/view/ControlView.js',
                     'js/view/Diagram.js',
-                    'js/storage/LocalStorage.js'
+                    'js/storage/LocalStorage.js',
+                    "<%= nunjucks.precompile.dest %>"
                 ],
                 dest: 'build/automata.core.min.js'
             },
@@ -33,9 +42,10 @@ module.exports = function(grunt) {
     });
     
     // Load the plugin that provides the "uglify" task.
-    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks("grunt-contrib-uglify");
+    grunt.loadNpmTasks("grunt-nunjucks");
     
     // Default task(s).
-    grunt.registerTask('default', ['uglify']);
+    grunt.registerTask('default', ["nunjucks", "uglify"]);
 
 };

@@ -16,10 +16,8 @@ $(function () {
         diagramView.updateViewbox();
     }
 
-    $.when(tableView.ready(), diagramView.ready()).done(function () {
-        resize();
-        storage.load();
-    });
+    resize();
+    storage.load();
 
     $(window).resize(resize);
 });
