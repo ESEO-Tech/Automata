@@ -1,4 +1,8 @@
 
+@import "../vendor/normalize.css";
+@import "../fonts/Arsenal/stylesheet.css";
+@import "../fonts/Heydings/stylesheet.css";
+
 body {
     margin: 0;
     padding: 0;

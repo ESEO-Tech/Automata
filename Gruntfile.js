@@ -61,13 +61,38 @@ module.exports = function(grunt) {
                 ],
                 dest: "build/automata.games.robot.Maze.min.js"
             }
+        },
+        
+        concat: {
+            "automata.core": {
+                src: [
+                    "css/main.css",
+                    "css/TransitionTable.css",
+                    "css/Diagram.css",
+                    "css/Control.css"
+                ],
+                dest: "build/automata.core.css"
+            }
+        },
+        
+        cssmin: {
+            "automata.core": {
+                src: "build/automata.core.css",
+                dest: "build/automata.core.min.css"
+            },
+            "automata.games.robot.Maze": {
+                src: 'games/robot/WorldView.css',
+                dest: "build/automata.games.robot.Maze.min.css"
+            }
         }
     });
     
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks("grunt-contrib-uglify");
+    grunt.loadNpmTasks("grunt-contrib-concat");
+    grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-nunjucks");
     
-    grunt.registerTask('default', ["nunjucks", "uglify"]);
+    grunt.registerTask('default', ["nunjucks", "uglify", "concat", "cssmin"]);
 
 };
