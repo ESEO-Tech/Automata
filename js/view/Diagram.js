@@ -45,18 +45,18 @@ namespace(this, "automata.view", function (exports, globals) {
             };
             
             for (var sid in this.stateViews) {
-                var view = this.stateViews[sid];
+                var stateView = this.stateViews[sid];
                 result.states[sid] = {
-                    x: view.x,
-                    y: view.y
+                    x: stateView.x,
+                    y: stateView.y
                 };
             }
             
             for (var tid in this.transitionViews) {
-                var view = this.transitionViews[tid];
+                var transitionView = this.transitionViews[tid];
                 result.transitions[tid] = {
-                    x: view.x,
-                    y: view.y
+                    x: transitionView.x,
+                    y: transitionView.y
                 };
             }
             
@@ -108,7 +108,7 @@ namespace(this, "automata.view", function (exports, globals) {
         },
 
         createTransition: function (model, transition) {
-            transition.addListener("changed", this.updateTransition, this)
+            transition.addListener("changed", this.updateTransition, this);
             var viewIdByStates = this.getViewIdByStates(transition);
             if (viewIdByStates in this.transitionViewsByStates) {
                 this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates];
@@ -256,7 +256,7 @@ namespace(this, "automata.view", function (exports, globals) {
             var h = this.getHeight();
             this.paper.attr({
                 viewBox: [this.x, this.y, w / this.zoom, h / this.zoom]
-            })
+            });
         },
         
         getViewIdByStates: function (transition) {
@@ -309,7 +309,7 @@ namespace(this, "automata.view", function (exports, globals) {
                         this.updateTransitionHandle(transition);
                         this.updateTransitionPath(transition);
                     }
-                }, this)
+                }, this);
             });
         },
         
@@ -372,8 +372,8 @@ namespace(this, "automata.view", function (exports, globals) {
             var state = this.model.states[0];
             if (state) {
                 var view = this.stateViews[state.id];
-                this.resetView.transform("translate(" + (view.x + view.width / 2 - 4 * TRANSITION_RADIUS) + ","
-                                                      + (view.y                  - 4 * TRANSITION_RADIUS) + ")");
+                this.resetView.transform("translate(" + (view.x + view.width / 2 - 4 * TRANSITION_RADIUS) + "," +
+                                                        (view.y                  - 4 * TRANSITION_RADIUS) + ")");
             }
         },
         
@@ -508,11 +508,12 @@ namespace(this, "automata.view", function (exports, globals) {
             var targetCenter = {
                 x: targetView.x + targetView.width / 2,
                 y: targetView.y + targetView.height / 2
-            }
+            };
 
             // Compute Bezier control points
+            var tangentVector;
             if (transition.sourceState !== transition.targetState) {
-                var tangentVector = {
+                tangentVector = {
                     x: (targetCenter.x - sourceCenter.x) / TRANSITION_HANDLE_FACTOR,
                     y: (targetCenter.y - sourceCenter.y) / TRANSITION_HANDLE_FACTOR
                 };
@@ -551,9 +552,9 @@ namespace(this, "automata.view", function (exports, globals) {
             var targetIntersect = intersection(targetControl, targetView, targetCenter);
 
             view.path.attr({
-                d: "M" + sourceIntersect.x     + "," + sourceIntersect.y
-                 + "Q" + sourceControl.x       + "," + sourceControl.y + "," + view.x            + "," + view.y
-                 + "Q" + targetControl.x       + "," + targetControl.y + "," + targetIntersect.x + "," + targetIntersect.y
+                d: "M" + sourceIntersect.x     + "," + sourceIntersect.y +
+                   "Q" + sourceControl.x       + "," + sourceControl.y + "," + view.x            + "," + view.y +
+                   "Q" + targetControl.x       + "," + targetControl.y + "," + targetIntersect.x + "," + targetIntersect.y
             });
         },
         
@@ -562,8 +563,8 @@ namespace(this, "automata.view", function (exports, globals) {
 
             // Find whether another transition uses the same view as the given transition
             var obsolete = true;
-            for (var id in this.transitionViews) {
-                if (id !== transition.id && this.transitionViews[id] === viewByTransition) {
+            for (var tid in this.transitionViews) {
+                if (tid !== transition.id && this.transitionViews[tid] === viewByTransition) {
                     obsolete = false;
                     break;
                 }
@@ -573,9 +574,9 @@ namespace(this, "automata.view", function (exports, globals) {
             // remove it from the DOM and from the dictionary of transition by states
             if (obsolete) {
                 viewByTransition.group.remove();
-                for (var id in this.transitionViewsByStates) {
-                    if (this.transitionViewsByStates[id] === viewByTransition) {
-                        delete this.transitionViewsByStates[id];
+                for (var sid in this.transitionViewsByStates) {
+                    if (this.transitionViewsByStates[sid] === viewByTransition) {
+                        delete this.transitionViewsByStates[sid];
                         break;
                     }
                 }

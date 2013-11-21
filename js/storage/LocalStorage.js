@@ -20,7 +20,7 @@ namespace(this, "automata.storage", function (exports, globals) {
                 }
             }
             else {
-                throw "HTML5 storage not supported."
+                throw "HTML5 storage not supported.";
             }
             return this;
         },
@@ -30,13 +30,13 @@ namespace(this, "automata.storage", function (exports, globals) {
                 for (var key in this.sources) {
                     this.sources[key].removeListener("changed", this.save, this);
                 }
-                for (var key in this.sources) {
+                for (key in this.sources) {
                     if (key in globals.localStorage) {
                         console.log("Loading: " + key);
                         this.sources[key].fromObject(JSON.parse(globals.localStorage[key]), this.mapping);
                     }
                 }
-                for (var key in this.sources) {
+                for (key in this.sources) {
                     this.sources[key].addListener("changed", this.save, this);
                 }
             }
@@ -52,5 +52,5 @@ namespace(this, "automata.storage", function (exports, globals) {
                 }
             }
         }
-    }
+    };
 });

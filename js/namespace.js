@@ -40,8 +40,8 @@ function namespace(globals, path, body) {
 
 	// For each name in the given path
 	path.split(".").forEach(function (name) {
-	    // If the current path element does not exist
-	    // in the current namespace, create a new sub-namespace
+        // If the current path element does not exist
+        // in the current namespace, create a new sub-namespace
 		if (typeof current[name] === "undefined") {
 			current[name] = {};
 		}
@@ -52,7 +52,7 @@ function namespace(globals, path, body) {
 
 	// Execute the given function in the last namespace
 	if (body) {
-	    body(current, globals);
+        body(current, globals);
 	}
 
 	return current;

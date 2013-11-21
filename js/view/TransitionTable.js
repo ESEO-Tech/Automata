@@ -68,7 +68,7 @@ namespace(this, "automata.view", function (exports, globals) {
             state.addListener("changed", this.updateState, this);
             
             // Update target state selectors
-            $("<option>").val(state.id).text(state.name).appendTo($("td.target-state-name select", this.root))
+            $("<option>").val(state.id).text(state.name).appendTo($("td.target-state-name select", this.root));
             
             // Create new row in the transition table
             var row = $(this.renderTemplate("state", {state: state, model: model})).insertBefore($("tr", this.root).last());

@@ -102,8 +102,8 @@ namespace(this, "automata.games.robot", function (exports, globals) {
                 intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, 0,           0, this.width)  ||
                 intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, this.height, 0, this.width);
             
-            for (var index = 0; index < this.walls.length; index ++) {
-                var w = this.walls[index];
+            for (var wallIndex = 0; wallIndex < this.walls.length; wallIndex ++) {
+                var w = this.walls[wallIndex];
                 if (intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, w[0], w[1], w[3]) ||
                     intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, w[2], w[1], w[3]) ||
                     intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, w[1], w[0], w[2]) ||
@@ -139,21 +139,20 @@ namespace(this, "automata.games.robot", function (exports, globals) {
             }
             
             // Update sensors
-            for (var index = 0; index < this.sensorPoints.length; index ++) {
-                var s = this.sensorPoints[index];
-                var sx = this.robotMatrix.x(s.x, s.y);
-                var sy = this.robotMatrix.y(s.x, s.y);
-                for (var wIndex = 0; wIndex < this.walls.length; wIndex ++) {
-                    var w = this.walls[wIndex];
+            sensorPoints.forEach(function (sensor, sensorIndex) {
+                var sx = this.robotMatrix.x(sensor.x, sensor.y);
+                var sy = this.robotMatrix.y(sensor.x, sensor.y);
+                for (var wallIndex = 0; wallIndex < this.walls.length; wallIndex ++) {
+                    var w = this.walls[wallIndex];
                     if (intersect(sx, sy, this.sensorRadius, w[0], w[1], w[3]) ||
                         intersect(sx, sy, this.sensorRadius, w[2], w[1], w[3]) ||
                         intersect(sy, sx, this.sensorRadius, w[1], w[0], w[2]) ||
                         intersect(sy, sx, this.sensorRadius, w[3], w[0], w[2])) {
-                        this.sensorValues[index] = "1";
+                        this.sensorValues[sensorIndex] = "1";
                         break;
                     }
                 }
-            }
+            }, this);
             
             // Check goal
             var goalDx = this.goalX - this.robotMatrix.e;

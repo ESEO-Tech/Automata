@@ -3,6 +3,16 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         
+        jshint: {
+            options: {
+                newcap: false
+            },
+            all: [
+                "js/**/*.js",
+                "games/**/*.js"
+            ]
+        },
+        
         nunjucks: {
             precompile: {
                 src: "templates/*",
@@ -41,11 +51,10 @@ module.exports = function(grunt) {
         }
     });
     
-    // Load the plugin that provides the "uglify" task.
+    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-nunjucks");
     
-    // Default task(s).
     grunt.registerTask('default', ["nunjucks", "uglify"]);
 
 };
