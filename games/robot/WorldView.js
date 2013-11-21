@@ -1,5 +1,5 @@
 
-namespace(this, "automata.games.robot", function (exports, globals) {
+namespace(this, "automata.games.robot", function (exports) {
 
     exports.WorldView = Object.create(automata.model.Model).augment({
        

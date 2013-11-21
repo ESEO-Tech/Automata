@@ -5,7 +5,20 @@ module.exports = function(grunt) {
         
         jshint: {
             options: {
-                newcap: false
+                undef: true,
+                unused: true,
+                newcap: false,
+                
+                browser: true,
+                devel: true,
+                jquery: true,
+                
+                globals: {
+                    namespace: true,
+                    automata: true,
+                    Snap: true,
+                    nunjucks: true
+                }
             },
             all: [
                 "js/**/*.js",

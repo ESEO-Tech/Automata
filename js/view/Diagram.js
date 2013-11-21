@@ -1,11 +1,10 @@
-namespace(this, "automata.view", function (exports, globals) {
+namespace(this, "automata.view", function (exports) {
     "use strict";
 
     var STATE_RADIUS = 20;
     var STATE_LR_PADDING = 6;
     var STATE_TB_PADDING = 3;
     var TRANSITION_RADIUS = 6;
-    var TRANSITION_END_FACTOR = 3;
     var TRANSITION_HANDLE_FACTOR = 6;
     var ZOOM_FACTOR = 1.05;
 

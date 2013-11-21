@@ -1,4 +1,4 @@
-namespace(this, "automata.view", function (exports, globals) {
+namespace(this, "automata.view", function (exports) {
     "use strict";
 
     exports.View = Object.create(automata.model.Model).augment({

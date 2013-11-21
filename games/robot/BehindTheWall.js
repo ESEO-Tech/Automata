@@ -1,5 +1,5 @@
 
-namespace(this, "automata.games.robot", function (exports, globals) {
+namespace(this, "automata.games.robot", function (exports) {
 
     exports.BehindTheWall = Object.create(exports.World).augment({
         key: "automata.games.robot.BehindTheWall",

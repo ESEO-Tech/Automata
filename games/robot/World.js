@@ -1,5 +1,5 @@
 
-namespace(this, "automata.games.robot", function (exports, globals) {
+namespace(this, "automata.games.robot", function (exports) {
 
     exports.World = Object.create(automata.model.World).augment({
         sensors:   [
@@ -47,7 +47,6 @@ namespace(this, "automata.games.robot", function (exports, globals) {
         },
         
         onStep: function () {
-            var transform = this.robotMatrix.split();
             this.sensorValues = ["0", "0", "0", "0"];
             
             // Compute next coordinates
@@ -139,7 +138,7 @@ namespace(this, "automata.games.robot", function (exports, globals) {
             }
             
             // Update sensors
-            sensorPoints.forEach(function (sensor, sensorIndex) {
+            this.sensorPoints.forEach(function (sensor, sensorIndex) {
                 var sx = this.robotMatrix.x(sensor.x, sensor.y);
                 var sy = this.robotMatrix.y(sensor.x, sensor.y);
                 for (var wallIndex = 0; wallIndex < this.walls.length; wallIndex ++) {
