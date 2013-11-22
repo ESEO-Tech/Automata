@@ -40,15 +40,19 @@ module.exports = function(grunt) {
                     'js/namespace.js',
                     'js/main.js',
                     'js/shims/*.js',
+                    
                     'js/model/Model.js',
+                    'js/view/View.js',
+
                     'js/model/State.js',
                     'js/model/Transition.js',
                     'js/model/StateMachine.js',
                     'js/model/World.js',
-                    'js/view/View.js',
+                    
                     'js/view/TransitionTable.js',
                     'js/view/ControlView.js',
                     'js/view/Diagram.js',
+                    
                     'js/storage/LocalStorage.js',
                     "<%= nunjucks.precompile.dest %>"
                 ],
@@ -87,6 +91,10 @@ module.exports = function(grunt) {
             "vendor": {
                 src: "vendor/*",
                 dest: "dist/"
+            },
+            "index": {
+                src: "index.html",
+                dest: "dist/"
             }
         }
     });
@@ -104,15 +112,25 @@ module.exports = function(grunt) {
     });
     
     var games = {
+        "automata.games.robot.InTheOpenField": {
+            js: ['games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/InTheOpenField.js'],
+            css: ['games/robot/WorldView.css']
+        },
+        "automata.games.robot.RightAndAhead": {
+            js: ['games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/RightAndAhead.js'],
+            css: ['games/robot/WorldView.css']
+        },
+        "automata.games.robot.Cornered": {
+            js: ['games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Cornered.js'],
+            css: ['games/robot/WorldView.css']
+        },
+        "automata.games.robot.BehindTheWall": {
+            js: ['games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/BehindTheWall.js'],
+            css: ['games/robot/WorldView.css']
+        },
         "automata.games.robot.Maze": {
-            js: [
-                'games/robot/World.js',
-                'games/robot/WorldView.js',
-                'games/robot/Maze.js'
-            ],
-            css: [
-                'games/robot/WorldView.css'
-            ]
+            js: ['games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Maze.js'],
+            css: ['games/robot/WorldView.css']
         }
     };
     

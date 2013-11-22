@@ -1,9 +1,9 @@
 $(function () {
-    var world       = Object.create(automata.games.robot.Maze).init();
+    var world       = Object.create(automata.game.world).init();
+    var worldView   = Object.create(automata.game.view).init(world, $("#world-view"));
     var tableView   = Object.create(automata.view.TransitionTable).init(world.stateMachine, $("#table-view"));
     var controlView = Object.create(automata.view.ControlView).init(world, $("#control-view"));
     var diagramView = Object.create(automata.view.Diagram).init(world.stateMachine, $("#diagram-view"));
-    var worldView   = Object.create(automata.games.robot.WorldView).init(world, $("#world-view"));
     
     var sources = {};
     sources[world.key + ".model"]        = world.stateMachine;
