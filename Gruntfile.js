@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
-
+    var nunjucks = require('nunjucks');
+    
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         
@@ -51,15 +52,7 @@ module.exports = function(grunt) {
                     'js/storage/LocalStorage.js',
                     "<%= nunjucks.precompile.dest %>"
                 ],
-                dest: 'build/automata.core.min.js'
-            },
-            "automata.games.robot.Maze": {
-                src: [
-                    'games/robot/World.js',
-                    'games/robot/WorldView.js',
-                    'games/robot/Maze.js'
-                ],
-                dest: "build/automata.games.robot.Maze.min.js"
+                dest: 'dist/js/automata.core.min.js'
             }
         },
         
@@ -78,11 +71,22 @@ module.exports = function(grunt) {
         cssmin: {
             "automata.core": {
                 src: "build/automata.core.css",
-                dest: "build/automata.core.min.css"
+                dest: "dist/css/automata.core.min.css"
+            }
+        },
+        
+        copy: {
+            "font/Arsenal": {
+                src: "fonts/Arsenal/*.otf",
+                dest: "dist/"
             },
-            "automata.games.robot.Maze": {
-                src: 'games/robot/WorldView.css',
-                dest: "build/automata.games.robot.Maze.min.css"
+            "font/Heydings": {
+                src: "fonts/Heydings/*.ttf",
+                dest: "dist/"
+            },
+            "vendor": {
+                src: "vendor/*",
+                dest: "dist/"
             }
         }
     });
@@ -90,9 +94,47 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-contrib-concat");
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-nunjucks");
     
-    grunt.registerTask('default', ["nunjucks", "uglify", "concat", "cssmin"]);
-
+    grunt.registerMultiTask("nunjucks-render", function () {
+        var result = nunjucks.render(this.data.src, this.data.context);
+        grunt.file.write(this.data.dest, result);
+    });
+    
+    var games = {
+        "automata.games.robot.Maze": {
+            js: [
+                'games/robot/World.js',
+                'games/robot/WorldView.js',
+                'games/robot/Maze.js'
+            ],
+            css: [
+                'games/robot/WorldView.css'
+            ]
+        }
+    };
+    
+    for (var key in games) {
+        grunt.config.set(["concat", key], {
+            src: games[key].css,
+            dest: "build/" + key + ".css"
+        });
+        grunt.config.set(["cssmin", key], {
+            src: "build/" + key + ".css",
+            dest: "dist/css/" + key + ".min.css"
+        });
+        grunt.config.set(["uglify", key], {
+            src: games[key].js,
+            dest: "dist/js/" + key + ".min.js"
+        });
+        grunt.config.set(["nunjucks-render", key], {
+            src: "templates/game.tpl.html",
+            context: {key: key},
+            dest: "dist/" + key + ".html"
+        });
+    }
+    
+    grunt.registerTask('default', ["nunjucks", "uglify", "concat", "cssmin", "nunjucks-render", "copy"]);
 };
