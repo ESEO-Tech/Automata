@@ -33,8 +33,8 @@ Run the local server:
 Connect to http://localhost:8000
 The port can be changed in the ``connect`` task in ``Gruntfile.js``.
 
-Deploying
----------
+Installing
+----------
 
 Upload to the remote server:
 
@@ -42,5 +42,5 @@ Upload to the remote server:
 
 The host can be changed in the ``rsync`` task in ``Gruntfile.js``.
 
-Automata can be installed as a [packaged Open Web App](https://developer.mozilla.org/en-US/Apps/Developing/Packaged_apps)
+Automata can also be installed as a [packaged Open Web App](https://developer.mozilla.org/en-US/Apps/Developing/Packaged_apps)
 for the desktop and mobile Firefox browser.
