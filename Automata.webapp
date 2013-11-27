@@ -4,7 +4,7 @@
     "description": "A game to learn finite-state machines",
     "launch_path": "/index.html",
     "icons": {
-        "60":  "icons/60.png"
+        "60":  "icons/60.png",
         "90":  "icons/90.png",
         "128":  "icons/128.png"
     },
