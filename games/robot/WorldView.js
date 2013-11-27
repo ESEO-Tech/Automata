@@ -22,9 +22,9 @@ namespace(this, "automata.games.robot", function (exports) {
             this.paper.circle(world.goalX, world.goalY, world.goalRadius).attr({"class": "automata-robot-goal"});
             
             // Draw walls
-            world.walls.forEach(function (wall) {
+            forEach(wall of world.walls) {
                 this.paper.rect(wall[0], wall[1], wall[2] - wall[0], wall[3] - wall[1]).attr({"class": "automata-robot-wall"});
-            }, this);
+            }
             
             // Draw robot
             this.sensorViews = world.sensorPoints.map(function (p) {
@@ -45,10 +45,10 @@ namespace(this, "automata.games.robot", function (exports) {
         },
         
         update: function () {
-            this.sensorViews.forEach(function (view, index) {
+            forEach(view, index of this.sensorViews) {
                 var cls = this.world.sensorValues[index] === "1" ? "active" : "inactive";
                 view.attr({"class": cls});
-            }, this);
+            }
             this.robotView.transform(this.world.robotMatrix);
         }
     });

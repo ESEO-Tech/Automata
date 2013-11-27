@@ -58,7 +58,7 @@ module.exports = function(grunt) {
                     'js/storage/LocalStorage.js',
                     "<%= nunjucks.core.dest %>"
                 ],
-                dest: 'build/automata.core.js'
+                dest: 'build/automata.core.concat.js'
             },
             "core-css": {
                 src: [
@@ -67,7 +67,7 @@ module.exports = function(grunt) {
                     "css/Diagram.css",
                     "css/Control.css"
                 ],
-                dest: "build/automata.core.css"
+                dest: "build/automata.core.concat.css"
             }
         },
         
@@ -119,40 +119,50 @@ module.exports = function(grunt) {
     
     var games = {
         "automata.games.robot.InTheOpenField": {
-            js: ['games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/InTheOpenField.js'],
+            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/InTheOpenField.js'],
             css: ['games/robot/WorldView.css']
         },
         "automata.games.robot.RightAndAhead": {
-            js: ['games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/RightAndAhead.js'],
+            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/RightAndAhead.js'],
             css: ['games/robot/WorldView.css']
         },
         "automata.games.robot.Cornered": {
-            js: ['games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Cornered.js'],
+            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Cornered.js'],
             css: ['games/robot/WorldView.css']
         },
         "automata.games.robot.BehindTheWall": {
-            js: ['games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/BehindTheWall.js'],
+            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/BehindTheWall.js'],
             css: ['games/robot/WorldView.css']
         },
         "automata.games.robot.Maze": {
-            js: ['games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Maze.js'],
+            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Maze.js'],
             css: ['games/robot/WorldView.css']
         }
     };
     
     for (var key in games) {
-        grunt.config.set(["concat", key], {
-            src: games[key].css,
-            dest: "build/" + key + ".css"
+        grunt.config.set(["concat", key + "-js"], {
+            src: games[key].js,
+            dest: "build/" + key + ".concat.js"
         });
-        grunt.config.set(["cssmin", key], {
-            src: "build/" + key + ".css",
-            dest: "dist/css/" + key + ".min.css"
+        grunt.config.set(["sweet_js", key], {
+            src:  "build/" + key + ".concat.js",
+            dest: "build/" + key + ".sweet.js"
         });
         grunt.config.set(["uglify", key], {
-            src: games[key].js,
+            src:  "build/"   + key + ".sweet.js",
             dest: "dist/js/" + key + ".min.js"
         });
+
+        grunt.config.set(["concat", key + "-css"], {
+            src: games[key].css,
+            dest: "build/" + key + ".concat.css"
+        });
+        grunt.config.set(["cssmin", key], {
+            src: "build/" + key + ".concat.css",
+            dest: "dist/css/" + key + ".min.css"
+        });
+
         grunt.config.set(["nunjucks-render", key], {
             src: "templates/game.tpl.html",
             context: {key: key},
@@ -160,5 +170,5 @@ module.exports = function(grunt) {
         });
     }
     
-    grunt.registerTask('default', ["nunjucks", "sweet_js", "uglify", "concat", "cssmin", "nunjucks-render", "copy"]);
+    grunt.registerTask('default', ["nunjucks", "concat", "sweet_js", "uglify", "cssmin", "nunjucks-render", "copy"]);
 };

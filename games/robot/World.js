@@ -138,7 +138,7 @@ namespace(this, "automata.games.robot", function (exports) {
             }
             
             // Update sensors
-            this.sensorPoints.forEach(function (sensor, sensorIndex) {
+            forEach(sensor, sensorIndex of this.sensorPoints) {
                 var sx = this.robotMatrix.x(sensor.x, sensor.y);
                 var sy = this.robotMatrix.y(sensor.x, sensor.y);
                 for (var wallIndex = 0; wallIndex < this.walls.length; wallIndex ++) {
@@ -151,7 +151,7 @@ namespace(this, "automata.games.robot", function (exports) {
                         break;
                     }
                 }
-            }, this);
+            }
             
             // Check goal
             var goalDx = this.goalX - this.robotMatrix.e;
