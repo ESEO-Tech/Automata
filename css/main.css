@@ -26,14 +26,24 @@ body {
     width: 100%;
 }
 
-#table-view, #diagram-view, #world-view {
+#games-menu, #table-view, #diagram-view, #world-view {
     position: absolute;
     top: 2.5em;
-    width: calc(50% - 1em);
-    height: calc(100% - 3em);
     background: white;
     border-radius: 0.5em;
     box-shadow: inset 0 1px 4px 0 rgb(128, 128, 128);
+}
+
+#games-menu {
+    left: 0.5em;
+    width: calc(100% - 5em);
+    height: calc(100% - 5em);
+    padding: 1em 2em;
+}
+
+#table-view, #diagram-view, #world-view {
+    width: calc(50% - 1em);
+    height: calc(100% - 3em);
 }
 
 #table-view {

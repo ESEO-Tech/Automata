@@ -63,6 +63,7 @@ module.exports = function(grunt) {
             "core-css": {
                 src: [
                     "css/main.css",
+                    "css/games-menu.css",
                     "css/TransitionTable.css",
                     "css/Diagram.css",
                     "css/Control.css"
@@ -120,23 +121,28 @@ module.exports = function(grunt) {
     var games = {
         "automata.games.robot.InTheOpenField": {
             js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/InTheOpenField.js'],
-            css: ['games/robot/WorldView.css']
+            css: ['games/robot/WorldView.css'],
+            icon: "games/robot/InTheOpenField.icon.svg"
         },
         "automata.games.robot.RightAndAhead": {
             js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/RightAndAhead.js'],
-            css: ['games/robot/WorldView.css']
+            css: ['games/robot/WorldView.css'],
+            icon: "games/robot/RightAndAhead.icon.svg"
         },
         "automata.games.robot.Cornered": {
             js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Cornered.js'],
-            css: ['games/robot/WorldView.css']
+            css: ['games/robot/WorldView.css'],
+            icon: "games/robot/Cornered.icon.svg"
         },
         "automata.games.robot.BehindTheWall": {
             js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/BehindTheWall.js'],
-            css: ['games/robot/WorldView.css']
+            css: ['games/robot/WorldView.css'],
+            icon: "games/robot/BehindTheWall.icon.svg"
         },
         "automata.games.robot.Maze": {
             js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Maze.js'],
-            css: ['games/robot/WorldView.css']
+            css: ['games/robot/WorldView.css'],
+            icon: "games/robot/Maze.icon.svg"
         }
     };
     
@@ -167,6 +173,11 @@ module.exports = function(grunt) {
             src: "templates/game.tpl.html",
             context: {key: key},
             dest: "dist/" + key + ".html"
+        });
+
+        grunt.config.set(["copy", key], {
+            src: games[key].icon,
+            dest: "dist/icons/" + key + ".svg"
         });
     }
     

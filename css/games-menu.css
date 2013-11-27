@@ -1,0 +1,22 @@
+
+#games-menu h1 {
+    font-size: 120%;
+    font-weight: normal;
+}
+
+#games-menu ul {
+    list-style: none;
+}
+
+#games-menu ul li {
+    display: inline-block;
+    width: 128px;
+    margin: 0 0.5em 1em 0.5em;
+    vertical-align: top;
+    text-align: center;
+}
+
+#games-menu ul li a {
+    color: inherit;
+    text-decoration: none;
+}

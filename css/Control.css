@@ -4,6 +4,15 @@
     color: white;
 }
 
+#control-view a {
+    color: inherit;
+    text-decoration: none;
+}
+
+#control-view a:hover {
+    text-decoration: underline;
+}
+
 #control-view input {
     font-family: "Heydings Controls";
     height: 100%;
