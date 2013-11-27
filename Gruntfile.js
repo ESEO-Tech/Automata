@@ -46,7 +46,7 @@ module.exports = function(grunt) {
         nunjucks: {
             core: {
                 src: "templates/*",
-                dest: "build/automata.templates.js"
+                dest: "build/tmp/automata.templates.js"
             }
         },
         
@@ -74,9 +74,26 @@ module.exports = function(grunt) {
                     'js/storage/LocalStorage.js',
                     "<%= nunjucks.core.dest %>"
                 ],
-                dest: 'build/automata.core.concat.js'
-            },
-            "core-css": {
+                dest: 'build/tmp/automata.core.concat.js'
+            }
+        },
+        
+        sweet_js: {
+            core: {
+                src: "<%= concat['core-js'].dest %>",
+                dest: 'build/tmp/automata.core.sweet.js'
+            }
+        },
+        
+        uglify: {
+            core: {
+                src: "<%= sweet_js.core.dest %>",
+                dest: 'build/dist/js/automata.core.min.js'
+            }
+        },
+        
+        cssmin: {
+            core: {
                 src: [
                     "css/main.css",
                     "css/games-menu.css",
@@ -84,42 +101,21 @@ module.exports = function(grunt) {
                     "css/Diagram.css",
                     "css/Control.css"
                 ],
-                dest: "build/automata.core.concat.css"
-            }
-        },
-        
-        sweet_js: {
-            core: {
-                src: "<%= concat['core-js'].dest %>",
-                dest: 'build/automata.core.sweet.js'
-            }
-        },
-        
-        uglify: {
-            core: {
-                src: "<%= sweet_js.core.dest %>",
-                dest: 'dist/js/automata.core.min.js'
-            }
-        },
-        
-        cssmin: {
-            core: {
-                src: "<%= concat['core-css'].dest %>",
-                dest: "dist/css/automata.core.min.css"
+                dest: "build/dist/css/automata.core.min.css"
             }
         },
         
         copy: {
             core: {
                 files: [
-                    {src: "fonts/Arsenal/*.otf", dest: "dist/"},
-                    {src: "fonts/Heydings/*.ttf", dest: "dist/"},
-                    {src: "vendor/*", dest: "dist/"},
-                    {src: "index.html", dest: "dist/"},
-                    {src: "manifest.webapp", dest: "dist/"},
-                    {src: "icons/*.png", dest: "dist/"},
-                    {src: "install.html", dest: "package/"},
-                    {src: "package.manifest", dest: "package/"}
+                    {src: "fonts/Arsenal/*.otf", dest: "build/dist/"},
+                    {src: "fonts/Heydings/*.ttf", dest: "build/dist/"},
+                    {src: "vendor/*", dest: "build/dist/"},
+                    {src: "index.html", dest: "build/dist/"},
+                    {src: "manifest.webapp", dest: "build/dist/"},
+                    {src: "icons/*.png", dest: "build/dist/"},
+                    {src: "install.html", dest: "build/pkg/"},
+                    {src: "package.manifest", dest: "build/pkg/"}
                 ]
             }
         },
@@ -128,7 +124,7 @@ module.exports = function(grunt) {
             server: {
                 options: {
                     port: 8000,
-                    base: "dist",
+                    base: "build/dist",
                     keepalive: true
                 }
             }
@@ -140,7 +136,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 options: {
-                    src: ["dist/", "package/"],
+                    src: ["build/dist/", "build/pkg/"],
                     dest: "/home/GuillaumeSavaton/public_html/Automata/",
                     host: "GuillaumeSavaton@trame.eseo.fr",
                     syncDest: true,
@@ -151,9 +147,9 @@ module.exports = function(grunt) {
         
         zip: {
             webapp: {
-                src: "dist/**/*",
-                dest: "package/Automata.zip",
-                cwd: "dist"
+                src: "build/dist/**/*",
+                dest: "build/pkg/Automata.zip",
+                cwd: "build/dist"
             }
         }
     });
@@ -189,35 +185,31 @@ module.exports = function(grunt) {
     for (var key in games) {
         grunt.config.set(["concat", key + "-js"], {
             src: games[key].js,
-            dest: "build/" + key + ".concat.js"
+            dest: "build/tmp/" + key + ".concat.js"
         });
         grunt.config.set(["sweet_js", key], {
-            src:  "build/" + key + ".concat.js",
-            dest: "build/" + key + ".sweet.js"
+            src:  "build/tmp/" + key + ".concat.js",
+            dest: "build/tmp/" + key + ".sweet.js"
         });
         grunt.config.set(["uglify", key], {
-            src:  "build/"   + key + ".sweet.js",
-            dest: "dist/js/" + key + ".min.js"
+            src:  "build/tmp/"   + key + ".sweet.js",
+            dest: "build/dist/js/" + key + ".min.js"
         });
 
-        grunt.config.set(["concat", key + "-css"], {
-            src: games[key].css,
-            dest: "build/" + key + ".concat.css"
-        });
         grunt.config.set(["cssmin", key], {
-            src: "build/" + key + ".concat.css",
-            dest: "dist/css/" + key + ".min.css"
+            src:  games[key].css,
+            dest: "build/dist/css/" + key + ".min.css"
         });
 
         grunt.config.set(["nunjucks-render", key], {
             src: "templates/game.tpl.html",
             context: {key: key},
-            dest: "dist/" + key + ".html"
+            dest: "build/dist/" + key + ".html"
         });
 
         grunt.config.set(["copy", key], {
             src: games[key].icon,
-            dest: "dist/icons/" + key + ".svg"
+            dest: "build/dist/icons/" + key + ".svg"
         });
     }
     
