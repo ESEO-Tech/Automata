@@ -104,6 +104,16 @@ module.exports = function(grunt) {
             }
         },
         
+        connect: {
+            server: {
+                options: {
+                    port: 8000,
+                    base: "dist",
+                    keepalive: true
+                }
+            }
+        },
+        
         rsync: {
             dist: {
                 options: {
@@ -124,6 +134,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-nunjucks");
+    grunt.loadNpmTasks("grunt-contrib-connect");
     grunt.loadNpmTasks("grunt-rsync");
     
     grunt.registerMultiTask("nunjucks-render", function () {
