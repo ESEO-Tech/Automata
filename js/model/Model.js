@@ -80,9 +80,9 @@ namespace(this, "automata.model", function (exports, globals) {
             if (event in this.listeners) {
                 var args = Array.prototype.slice.call(arguments, 1);
                 args.unshift(this);
-                this.listeners[event].forEach(function (listener) {
+                forEach(listener of this.listeners[event]) {
                     listener.callback.apply(listener.receiver, args);
-                });
+                }
             }
             return this;
         },

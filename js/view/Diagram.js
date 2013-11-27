@@ -101,8 +101,12 @@ namespace(this, "automata.view", function (exports) {
 
             // If the size of the state view has changed,
             // we need to redraw all transition paths to/from the given state
-            state.outgoingTransitions.forEach(this.updateTransitionPath, this);
-            state.incomingTransitions.forEach(this.updateTransitionPath, this);
+            forEach(transition of state.incomingTransitions) {
+                this.updateTransitionPath(transition);
+            }
+            forEach(transition of state.outgoingTransitions) {
+                this.updateTransitionPath(transition);
+            }
             this.fire("changed");
         },
 
@@ -154,11 +158,13 @@ namespace(this, "automata.view", function (exports) {
 
             // Update incoming and outgoing transition paths if Moore actions have changed.
             // Update outgoing transition conditions if conditions have changed.
-            transition.sourceState.outgoingTransitions.forEach(function (ot) {
+            forEach(ot of transition.sourceState.outgoingTransitions) {
                 this.updateTransitionPath(ot);
                 this.updateTransitionText(ot);
-            }, this);
-            transition.sourceState.incomingTransitions.forEach(this.updateTransitionPath, this);
+            }
+            forEach(it of transition.sourceState.incomingTransitions) {
+                this.updateTransitionPath(it);
+            }
             this.fire("changed");
         },
         
@@ -303,12 +309,12 @@ namespace(this, "automata.view", function (exports) {
 
             this.setDraggable(view, "group", function (x, y) {
                 this.putStateView(state, x, y);
-                state.outgoingTransitions.forEach(function (transition) {
+                forEach(transition of state.outgoingTransitions) {
                     if (transition.targetState === state) {
                         this.updateTransitionHandle(transition);
                         this.updateTransitionPath(transition);
                     }
-                }, this);
+                }
             });
         },
         
@@ -340,8 +346,12 @@ namespace(this, "automata.view", function (exports) {
             view.y = y;
             view.group.transform("translate(" + x + "," + y + ")");
 
-            state.outgoingTransitions.forEach(this.updateTransitionPath, this);
-            state.incomingTransitions.forEach(this.updateTransitionPath, this);
+            forEach(transition of state.incomingTransitions) {
+                this.updateTransitionPath(transition);
+            }
+            forEach(transition of state.outgoingTransitions) {
+                this.updateTransitionPath(transition);
+            }
 
             if (state === this.model.states[0]) {
                 this.updateResetView();
@@ -441,7 +451,7 @@ namespace(this, "automata.view", function (exports) {
             var mooreActions = transition.sourceState.getMooreActions();
             
             var hasTerms = false;
-            transitions.forEach(function (tr) {
+            forEach(tr of transitions) {
                 var termSpan = this.paper.el("tspan").attr({"class": "term"});
                 
                 if (hasTerms) {
@@ -449,7 +459,7 @@ namespace(this, "automata.view", function (exports) {
                 }
 
                 var hasInputs = false;
-                tr.inputs.forEach(function (value, index) {
+                forEach(value, index of tr.inputs) {
                     if (value !== "-") {
                         var inputSpan = this.paper.el("tspan").attr({"class": "automata-bool-" + value});
                         inputSpan.attr({"#text": sensors[index].name});
@@ -459,10 +469,10 @@ namespace(this, "automata.view", function (exports) {
                         hasInputs = true;
                         termSpan.add(inputSpan);
                     }
-                }, this);
+                }
                 
                 var hasActions = false;
-                tr.outputs.forEach(function (value, index) {
+                forEach(value, index of tr.outputs) {
                     if (value === "1" && mooreActions.indexOf(actuators[index].name) === -1) {
                         if (hasActions) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": ", "}));
@@ -473,13 +483,13 @@ namespace(this, "automata.view", function (exports) {
                         }
                         termSpan.add(this.paper.el("tspan").attr({"#text": actuators[index].name}));
                     }
-                }, this);
+                }
                 
                 if (hasInputs || hasActions) {
                     hasTerms = true;
                     view.text.add(termSpan);
                 }
-            }, this);
+            }
             
             this.moveTransitionText(transition);
         },

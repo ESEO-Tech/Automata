@@ -210,7 +210,7 @@ namespace(this, "automata.view", function (exports) {
         },
         
         showNonDeterministicTransitions: function (state) {
-            state.outgoingTransitions.forEach(function (transition) {
+            forEach(transition of state.outgoingTransitions) {
                 var index = transition.getIndex();
                 var row = this.getRowsForState(state).slice(index, index + 1);
                 if (transition.isNonDeterministic()) {
@@ -219,7 +219,7 @@ namespace(this, "automata.view", function (exports) {
                 else {
                     row.removeClass("error");
                 }
-            }, this);
+            }
         },
         
         currentStateChanged: function (model, state) {

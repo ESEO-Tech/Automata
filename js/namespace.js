@@ -32,7 +32,7 @@
  * @param {String} path The dot-separated path to the namespace
  * @param {Function} body A function to execute in the context of the namespace
  */
-function namespace(globals, path, body) {
+this.namespace = function(globals, path, body) {
     "use strict";
 
     // Start name lookup in the global object

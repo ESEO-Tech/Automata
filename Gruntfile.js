@@ -28,15 +28,17 @@ module.exports = function(grunt) {
         },
         
         nunjucks: {
-            precompile: {
+            core: {
                 src: "templates/*",
                 dest: "build/automata.templates.js"
             }
         },
         
-        uglify: {
-            "automata.core": {
+        concat: {
+            "core-js": {
                 src: [
+                    "macros/arrays.js",
+                    
                     'js/namespace.js',
                     'js/main.js',
                     'js/shims/*.js',
@@ -54,14 +56,11 @@ module.exports = function(grunt) {
                     'js/view/Diagram.js',
                     
                     'js/storage/LocalStorage.js',
-                    "<%= nunjucks.precompile.dest %>"
+                    "<%= nunjucks.core.dest %>"
                 ],
-                dest: 'dist/js/automata.core.min.js'
-            }
-        },
-        
-        concat: {
-            "automata.core": {
+                dest: 'build/automata.core.js'
+            },
+            "core-css": {
                 src: [
                     "css/main.css",
                     "css/TransitionTable.css",
@@ -72,34 +71,41 @@ module.exports = function(grunt) {
             }
         },
         
+        sweet_js: {
+            core: {
+                src: "<%= concat['core-js'].dest %>",
+                dest: 'build/automata.core.sweet.js'
+            }
+        },
+        
+        uglify: {
+            core: {
+                src: "<%= sweet_js.core.dest %>",
+                dest: 'dist/js/automata.core.min.js'
+            }
+        },
+        
         cssmin: {
-            "automata.core": {
-                src: "build/automata.core.css",
+            core: {
+                src: "<%= concat['core-css'].dest %>",
                 dest: "dist/css/automata.core.min.css"
             }
         },
         
         copy: {
-            "font/Arsenal": {
-                src: "fonts/Arsenal/*.otf",
-                dest: "dist/"
-            },
-            "font/Heydings": {
-                src: "fonts/Heydings/*.ttf",
-                dest: "dist/"
-            },
-            "vendor": {
-                src: "vendor/*",
-                dest: "dist/"
-            },
-            "index": {
-                src: "index.html",
-                dest: "dist/"
+            "core-fonts": {
+                files: [
+                    {src: "fonts/Arsenal/*.otf", dest: "dist/"},
+                    {src: "fonts/Heydings/*.ttf", dest: "dist/"},
+                    {src: "vendor/*", dest: "dist/"},
+                    {src: "index.html", dest: "dist/"}
+                ]
             }
         }
     });
     
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-sweet.js');
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-contrib-concat");
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -154,5 +160,5 @@ module.exports = function(grunt) {
         });
     }
     
-    grunt.registerTask('default', ["nunjucks", "uglify", "concat", "cssmin", "nunjucks-render", "copy"]);
+    grunt.registerTask('default', ["nunjucks", "sweet_js", "uglify", "concat", "cssmin", "nunjucks-render", "copy"]);
 };
