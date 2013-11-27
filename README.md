@@ -8,9 +8,39 @@ This application is under development.
 
 Firefox users should upgrade to Firefox 25 to get correct text rendering in the diagram view.
 
-Dependencies:
+Dependencies
+------------
+
 * [normalize.css](http://necolas.github.io/normalize.css/) (installed as vendor/normalize.css)
 * [jQuery](http://jquery.com/) (installed as vendor/jquery-2.0.3-min.js)
-* [Nunjucks](http://jlongster.github.io/nunjucks/) (installed as vendor/nunjucks.min.js)
+* [Nunjucks](http://jlongster.github.io/nunjucks/) (installed as vendor/nunjucks-slim.min.js)
 * [Snap.svg](http://snapsvg.io/) (installed as vendor/snap.svg-min.js)
 
+Building
+--------
+
+    sudo npm install -g grunt-cli
+    npm install
+    grunt
+
+Testing
+-------
+
+Run the local server:
+
+    grunt connect
+
+Connect to http://localhost:8000
+The port can be changed in the ``connect`` task in ``Gruntfile.js``.
+
+Deploying
+---------
+
+Upload to the remote server:
+
+    grunt rsync
+
+The host can be changed in the ``rsync`` task in ``Gruntfile.js``.
+
+Automata can be installed as a [packaged Open Web App](https://developer.mozilla.org/en-US/Apps/Developing/Packaged_apps)
+for the desktop and mobile Firefox browser.
