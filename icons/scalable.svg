@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="scalable.svg"
-   inkscape:export-filename="/home/gsavaton/Travail/Projets-Externes/Automata.git/icons/60.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/gsavaton/Travail/Projets-Externes/Automata.git/icons/128.png"
+   inkscape:export-xdpi="192"
+   inkscape:export-ydpi="192">
   <defs
      id="defs4">
     <linearGradient
@@ -161,7 +161,7 @@
        sodipodi:cy="30"
        sodipodi:rx="29"
        sodipodi:ry="29"
-       d="M 59,30 A 29,29 0 1 1 1,30 29,29 0 1 1 59,30 z"
+       d="M 59,30 C 59,46.016258 46.016258,59 30,59 13.983742,59 1,46.016258 1,30 1,13.983742 13.983742,1 30,1 46.016258,1 59,13.983742 59,30 z"
        transform="translate(0,992.36218)" />
     <path
        style="fill:#3b68b1;fill-opacity:0.42352941;stroke:none"
@@ -176,11 +176,11 @@
        sodipodi:cy="49"
        sodipodi:rx="6"
        sodipodi:ry="6"
-       d="m 81,49 a 6,6 0 1 1 -12,0 6,6 0 1 1 12,0 z"
+       d="m 81,49 c 0,3.313708 -2.686292,6 -6,6 -3.313708,0 -6,-2.686292 -6,-6 0,-3.313708 2.686292,-6 6,-6 3.313708,0 6,2.686292 6,6 z"
        transform="matrix(1.8333333,0,0,1.8333333,-103.74999,917.52885)" />
     <path
        transform="matrix(1.4791663,0,0,1.4791663,-97.187478,944.75803)"
-       d="m 81,49 a 6,6 0 1 1 -12,0 6,6 0 1 1 12,0 z"
+       d="m 81,49 c 0,3.313708 -2.686292,6 -6,6 -3.313708,0 -6,-2.686292 -6,-6 0,-3.313708 2.686292,-6 6,-6 3.313708,0 6,2.686292 6,6 z"
        sodipodi:ry="6"
        sodipodi:rx="6"
        sodipodi:cy="49"
@@ -196,11 +196,11 @@
        sodipodi:cy="49"
        sodipodi:rx="6"
        sodipodi:ry="6"
-       d="m 81,49 a 6,6 0 1 1 -12,0 6,6 0 1 1 12,0 z"
+       d="m 81,49 c 0,3.313708 -2.686292,6 -6,6 -3.313708,0 -6,-2.686292 -6,-6 0,-3.313708 2.686292,-6 6,-6 3.313708,0 6,2.686292 6,6 z"
        transform="matrix(0.70833348,0,0,0.70833348,-43.375012,997.40384)" />
     <path
        transform="translate(-25.500016,968.36217)"
-       d="m 81,49 a 6,6 0 1 1 -12,0 6,6 0 1 1 12,0 z"
+       d="m 81,49 c 0,3.313708 -2.686292,6 -6,6 -3.313708,0 -6,-2.686292 -6,-6 0,-3.313708 2.686292,-6 6,-6 3.313708,0 6,2.686292 6,6 z"
        sodipodi:ry="6"
        sodipodi:rx="6"
        sodipodi:cy="49"
@@ -216,7 +216,7 @@
        sodipodi:cy="49"
        sodipodi:rx="6"
        sodipodi:ry="6"
-       d="m 81,49 a 6,6 0 1 1 -12,0 6,6 0 1 1 12,0 z"
+       d="m 81,49 c 0,3.313708 -2.686292,6 -6,6 -3.313708,0 -6,-2.686292 -6,-6 0,-3.313708 2.686292,-6 6,-6 3.313708,0 6,2.686292 6,6 z"
        transform="matrix(0.41666667,0,0,0.41666667,22.25,1005.9455)" />
     <path
        style="fill:#d7ad00;fill-opacity:0.39320388;stroke:none;stroke-width:1.00000011999999994;stroke-opacity:1"
