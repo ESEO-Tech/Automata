@@ -1,0 +1,10 @@
+{
+    "name": "Automata",
+    "version": "13.11.271611",
+    "description": "A game to learn finite-state machines",
+    "package_path": "Automata.zip",
+    "developer": {
+        "name": "Guillaume Savaton",
+        "url": "http://guillaume.baierouge.fr"
+    }
+}

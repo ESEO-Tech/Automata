@@ -1,6 +1,22 @@
 module.exports = function(grunt) {
     var nunjucks = require('nunjucks');
     
+    grunt.registerMultiTask("nunjucks-render", function () {
+        var result = nunjucks.render(this.data.src, this.data.context);
+        grunt.file.write(this.data.dest, result);
+    });
+    
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-sweet.js');
+    grunt.loadNpmTasks("grunt-contrib-uglify");
+    grunt.loadNpmTasks("grunt-contrib-concat");
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks("grunt-contrib-cssmin");
+    grunt.loadNpmTasks("grunt-nunjucks");
+    grunt.loadNpmTasks("grunt-contrib-connect");
+    grunt.loadNpmTasks('grunt-zip');
+    grunt.loadNpmTasks("grunt-rsync");
+    
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         
@@ -100,8 +116,10 @@ module.exports = function(grunt) {
                     {src: "fonts/Heydings/*.ttf", dest: "dist/"},
                     {src: "vendor/*", dest: "dist/"},
                     {src: "index.html", dest: "dist/"},
-                    {src: "Automata.webapp", dest: "dist/"},
-                    {src: "icons/*.png", dest: "dist/"}
+                    {src: "manifest.webapp", dest: "dist/"},
+                    {src: "icons/*.png", dest: "dist/"},
+                    {src: "install.html", dest: "package/"},
+                    {src: "package.manifest", dest: "package/"}
                 ]
             }
         },
@@ -122,29 +140,22 @@ module.exports = function(grunt) {
             },
             dist: {
                 options: {
-                    src: "dist/",
+                    src: ["dist/", "package/"],
                     dest: "/home/GuillaumeSavaton/public_html/Automata/",
                     host: "GuillaumeSavaton@trame.eseo.fr",
                     syncDest: true,
                     recursive: true
                 }
             }
+        },
+        
+        zip: {
+            webapp: {
+                src: "dist/**/*",
+                dest: "package/Automata.zip",
+                cwd: "dist"
+            }
         }
-    });
-    
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-sweet.js');
-    grunt.loadNpmTasks("grunt-contrib-uglify");
-    grunt.loadNpmTasks("grunt-contrib-concat");
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks("grunt-contrib-cssmin");
-    grunt.loadNpmTasks("grunt-nunjucks");
-    grunt.loadNpmTasks("grunt-contrib-connect");
-    grunt.loadNpmTasks("grunt-rsync");
-    
-    grunt.registerMultiTask("nunjucks-render", function () {
-        var result = nunjucks.render(this.data.src, this.data.context);
-        grunt.file.write(this.data.dest, result);
     });
     
     var games = {
@@ -210,5 +221,5 @@ module.exports = function(grunt) {
         });
     }
     
-    grunt.registerTask('default', ["nunjucks", "concat", "sweet_js", "uglify", "cssmin", "nunjucks-render", "copy"]);
+    grunt.registerTask('default', ["nunjucks", "concat", "sweet_js", "uglify", "cssmin", "nunjucks-render", "copy", "zip"]);
 };

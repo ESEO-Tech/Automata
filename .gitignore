@@ -1,4 +1,5 @@
 vendor
 build
+package
 dist
 node_modules
