@@ -99,7 +99,9 @@ module.exports = function(grunt) {
                     {src: "fonts/Arsenal/*.otf", dest: "dist/"},
                     {src: "fonts/Heydings/*.ttf", dest: "dist/"},
                     {src: "vendor/*", dest: "dist/"},
-                    {src: "index.html", dest: "dist/"}
+                    {src: "index.html", dest: "dist/"},
+                    {src: "Automata.webapp", dest: "dist/"},
+                    {src: "icons/*.png", dest: "dist/"}
                 ]
             }
         },
@@ -115,6 +117,9 @@ module.exports = function(grunt) {
         },
         
         rsync: {
+            options: {
+                args: ["--verbose", "--update"]
+            },
             dist: {
                 options: {
                     src: "dist/",

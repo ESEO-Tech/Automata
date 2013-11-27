@@ -1,0 +1,15 @@
+{
+    "name": "Automata",
+    "version": "13.11.271611",
+    "description": "A game to learn finite-state machines",
+    "launch_path": "/index.html",
+    "icons": {
+        "60":  "icons/60.png"
+    },
+    "developer": {
+        "name": "Guillaume Savaton",
+        "url": "http://guillaume.baierouge.fr"
+    },
+    "default_locale": "en",
+    "orientation": ["landscape"]
+}
