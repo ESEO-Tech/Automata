@@ -103,8 +103,7 @@ namespace(this, "automata.model", function (exports) {
         },
         
         getTransitionToFire: function () {
-            for (var index = 0; index < this.outgoingTransitions.length; index ++) {
-                var transition = this.outgoingTransitions[index];
+            forEach(transition of this.outgoingTransitions) {
                 if (transition.canFire()) {
                     return transition;
                 }

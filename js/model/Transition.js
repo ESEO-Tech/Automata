@@ -71,8 +71,8 @@ namespace(this, "automata.model", function (exports) {
         },
         
         matchesPattern: function (pattern) {
-            for (var index = 0; index < this.inputs.length; index ++) {
-                if (this.inputs[index] !== "-" && pattern[index] !== "-" && this.inputs[index] !== pattern[index]) {
+            forEach (value, index of this.inputs) {
+                if (value !== "-" && pattern[index] !== "-" && value !== pattern[index]) {
                     return false;
                 }
             }
