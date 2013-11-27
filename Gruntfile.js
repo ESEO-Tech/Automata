@@ -4,6 +4,7 @@ module.exports = function(grunt) {
     grunt.registerMultiTask("nunjucks-render", function () {
         var result = nunjucks.render(this.data.src, this.data.context);
         grunt.file.write(this.data.dest, result);
+        grunt.log.writeln('File ' + this.data.dest + ' created.');
     });
     
     grunt.loadNpmTasks('grunt-contrib-jshint');
