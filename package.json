@@ -1,18 +1,24 @@
 {
-  "name": "Automata",
-  "version": "13.11.211034",
-  "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-jshint": "~0.7.2",
-    "grunt-contrib-nodeunit": "~0.2.0",
-    "grunt-contrib-uglify": "~0.2.7",
-    "nunjucks": "~1.0.0",
-    "grunt-nunjucks": "~0.1.0",
-    "grunt-contrib-cssmin": "~0.7.0",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-copy": "~0.4.1",
-    "grunt-sweet.js": "~0.1.1",
-    "grunt-rsync": "~0.2.1",
-    "grunt-contrib-connect": "~0.5.0"
-  }
+    "name": "Automata",
+    "version": "13.11.271611",
+    "author": "Guillaume Savaton",
+    "description": "A game to learn finite-state machines",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/senshu/Automata.git"
+    },
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-jshint": "~0.7.2",
+        "grunt-contrib-nodeunit": "~0.2.0",
+        "grunt-contrib-uglify": "~0.2.7",
+        "nunjucks": "~1.0.0",
+        "grunt-nunjucks": "~0.1.0",
+        "grunt-contrib-cssmin": "~0.7.0",
+        "grunt-contrib-concat": "~0.3.0",
+        "grunt-contrib-copy": "~0.4.1",
+        "grunt-sweet.js": "~0.1.1",
+        "grunt-rsync": "~0.2.1",
+        "grunt-contrib-connect": "~0.5.0"
+    }
 }
