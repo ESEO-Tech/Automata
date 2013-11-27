@@ -8,15 +8,15 @@ namespace(this, "automata.games.robot", function (exports) {
             key: "automata.games.robot.Diagonally",
             
             width: 600,
-            height: 400,
+            height: 600,
             
             walls: [],
             
             startX: 100,
             startY: 100,
             
-            goalX: 500,
-            goalY: 300,
+            goalX: 490,
+            goalY: 500,
             goalRadius: 15
         })
     };
