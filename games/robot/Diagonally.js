@@ -1,11 +1,11 @@
 
 namespace(this, "automata.games.robot", function (exports) {
     
-    exports.InTheOpenField = {
+    exports.Diagonally = {
         view: exports.WorldView,
         
         world: Object.create(exports.World).augment({
-            key: "automata.games.robot.InTheOpenField",
+            key: "automata.games.robot.Diagonally",
             
             width: 600,
             height: 400,

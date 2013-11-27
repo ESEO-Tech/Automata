@@ -159,15 +159,15 @@ module.exports = function(grunt) {
     });
     
     var games = {
-        "automata.games.robot.InTheOpenField": {
-            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/InTheOpenField.js'],
-            css: ['games/robot/WorldView.css'],
-            icon: "games/robot/InTheOpenField.icon.svg"
-        },
         "automata.games.robot.RightAndAhead": {
             js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/RightAndAhead.js'],
             css: ['games/robot/WorldView.css'],
             icon: "games/robot/RightAndAhead.icon.svg"
+        },
+        "automata.games.robot.Diagonally": {
+            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Diagonally.js'],
+            css: ['games/robot/WorldView.css'],
+            icon: "games/robot/Diagonally.icon.svg"
         },
         "automata.games.robot.Cornered": {
             js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Cornered.js'],
