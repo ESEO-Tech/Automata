@@ -94,13 +94,25 @@ module.exports = function(grunt) {
         },
         
         copy: {
-            "core-fonts": {
+            core: {
                 files: [
                     {src: "fonts/Arsenal/*.otf", dest: "dist/"},
                     {src: "fonts/Heydings/*.ttf", dest: "dist/"},
                     {src: "vendor/*", dest: "dist/"},
                     {src: "index.html", dest: "dist/"}
                 ]
+            }
+        },
+        
+        rsync: {
+            dist: {
+                options: {
+                    src: "dist/",
+                    dest: "/home/GuillaumeSavaton/public_html/Automata/",
+                    host: "GuillaumeSavaton@trame.eseo.fr",
+                    syncDest: true,
+                    recursive: true
+                }
             }
         }
     });
@@ -112,6 +124,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-nunjucks");
+    grunt.loadNpmTasks("grunt-rsync");
     
     grunt.registerMultiTask("nunjucks-render", function () {
         var result = nunjucks.render(this.data.src, this.data.context);
