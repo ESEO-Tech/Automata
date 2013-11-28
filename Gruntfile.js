@@ -115,7 +115,8 @@ module.exports = function(grunt) {
                     {src: "manifest.webapp", dest: "build/dist/"},
                     {src: "icons/*.png", dest: "build/dist/"},
                     {src: "install.html", dest: "build/pkg/"},
-                    {src: "package.manifest", dest: "build/pkg/"}
+                    {src: "package.manifest", dest: "build/pkg/"},
+                    {src: "js/webapp.js", dest: "build/dist/"}
                 ]
             }
         },
