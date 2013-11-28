@@ -1,10 +1,10 @@
 namespace(this, "automata.games.pushButton", function (exports) {
 
-    exports.Debouncer = {
+    exports.Counter = {
         view: exports.CounterWorldView,
     
         world: Object.create(exports.CounterWorld).augment({
-            key: "automata.games.pushButton.Debouncer"
+            key: "automata.games.pushButton.Counter"
         })
     };
 });

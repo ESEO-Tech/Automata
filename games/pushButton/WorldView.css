@@ -19,6 +19,8 @@
 }
 
 #world-view .counter {
+    border-radius: 0.5em;
+    padding: 0.5em 1em;
     background: rgb(0, 10, 20);
     color: rgb(0, 255, 50);
 }
