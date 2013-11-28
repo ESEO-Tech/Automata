@@ -155,63 +155,49 @@ module.exports = function(grunt) {
         }
     });
     
-    var games = {
-        "automata.games.robot.RightAndAhead": {
-            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/RightAndAhead.js'],
-            css: ['games/robot/WorldView.css'],
-            icon: "games/robot/RightAndAhead.icon.svg"
-        },
-        "automata.games.robot.Diagonally": {
-            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Diagonally.js'],
-            css: ['games/robot/WorldView.css'],
-            icon: "games/robot/Diagonally.icon.svg"
-        },
-        "automata.games.robot.Cornered": {
-            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Cornered.js'],
-            css: ['games/robot/WorldView.css'],
-            icon: "games/robot/Cornered.icon.svg"
-        },
-        "automata.games.robot.BehindTheWall": {
-            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/BehindTheWall.js'],
-            css: ['games/robot/WorldView.css'],
-            icon: "games/robot/BehindTheWall.icon.svg"
-        },
-        "automata.games.robot.Maze": {
-            js: ["macros/arrays.js", 'games/robot/World.js', 'games/robot/WorldView.js', 'games/robot/Maze.js'],
-            css: ['games/robot/WorldView.css'],
-            icon: "games/robot/Maze.icon.svg"
-        }
-    };
+    var categoryList = grunt.file.readJSON("games/list.json");
+    for (var catIndex = 0; catIndex < categoryList.contents.length; catIndex ++) {
+        var catDir = "games/" + categoryList.contents[catIndex];
+        var gamesList = grunt.file.readJSON(catDir + "/list.json");
+        for (var gameIndex = 0; gameIndex < gamesList.contents.length; gameIndex ++) {
+            var gameDir = catDir + "/" + gamesList.contents[gameIndex];
+            var gameData = grunt.file.readJSON(gameDir + "/game.json");
     
-    for (var key in games) {
-        grunt.config.set(["concat", key + "-js"], {
-            src: games[key].js,
-            dest: "build/tmp/" + key + ".concat.js"
-        });
-        grunt.config.set(["sweet_js", key], {
-            src:  "build/tmp/" + key + ".concat.js",
-            dest: "build/tmp/" + key + ".sweet.js"
-        });
-        grunt.config.set(["uglify", key], {
-            src:  "build/tmp/"   + key + ".sweet.js",
-            dest: "build/dist/js/" + key + ".min.js"
-        });
-
-        grunt.config.set(["cssmin", key], {
-            src:  games[key].css,
-            dest: "build/dist/css/" + key + ".min.css"
-        });
-
-        grunt.config.set(["nunjucks-render", key], {
-            src: "templates/game.tpl.html",
-            context: {key: key},
-            dest: "build/dist/" + key + ".html"
-        });
-
-        grunt.config.set(["copy", key], {
-            src: games[key].icon,
-            dest: "build/dist/icons/" + key + ".svg"
-        });
+            var gameKey = categoryList.id + "." + gamesList.id + "." + gameData.id;
+            
+            function rebase(fileName) {
+                return gameDir + "/" + fileName;
+            }
+            
+            grunt.config.set(["concat", gameKey + "-js"], {
+                src: gameData.js.map(rebase),
+                dest: "build/tmp/" + gameKey + ".concat.js"
+            });
+            grunt.config.set(["sweet_js", gameKey], {
+                src:  "build/tmp/" + gameKey + ".concat.js",
+                dest: "build/tmp/" + gameKey + ".sweet.js"
+            });
+            grunt.config.set(["uglify", gameKey], {
+                src:  "build/tmp/"   + gameKey + ".sweet.js",
+                dest: "build/dist/js/" + gameKey + ".min.js"
+            });
+            
+            grunt.config.set(["cssmin", gameKey], {
+                src:  gameData.css.map(rebase),
+                dest: "build/dist/css/" + gameKey + ".min.css"
+            });
+            
+            grunt.config.set(["nunjucks-render", gameKey], {
+                src: "templates/game.tpl.html",
+                context: {key: gameKey},
+                dest: "build/dist/" + gameKey + ".html"
+            });
+            
+            grunt.config.set(["copy", gameKey], {
+                src: rebase(gameData.icon),
+                dest: "build/dist/icons/" + gameKey + ".svg"
+            });
+        }
     }
     
     grunt.registerTask('default', ["nunjucks", "concat", "sweet_js", "uglify", "cssmin", "nunjucks-render", "copy", "zip"]);

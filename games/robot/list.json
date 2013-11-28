@@ -1,0 +1,11 @@
+{
+    "id": "robot",
+    "title": "Robots",
+    "contents": [
+        "RightAndAhead",
+        "Diagonally",
+        "Cornered",
+        "BehindTheWall",
+        "Maze"
+    ]
+}

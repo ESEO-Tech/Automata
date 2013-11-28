@@ -1,0 +1,14 @@
+{
+    "id": "RightAndAhead",
+    "title": "Right and Ahead",
+    "js": [
+        "../../../macros/arrays.js",
+        "../World.js",
+        "../WorldView.js",
+        "game.js"
+    ],
+    "css": [
+        "../WorldView.css"
+    ],
+    "icon": "icon.svg"
+}
