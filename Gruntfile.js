@@ -112,7 +112,6 @@ module.exports = function(grunt) {
                     {src: "fonts/Arsenal/*.otf", dest: "build/dist/"},
                     {src: "fonts/Heydings/*.ttf", dest: "build/dist/"},
                     {src: "vendor/*", dest: "build/dist/"},
-                    {src: "index.html", dest: "build/dist/"},
                     {src: "manifest.webapp", dest: "build/dist/"},
                     {src: "icons/*.png", dest: "build/dist/"},
                     {src: "install.html", dest: "build/pkg/"},
@@ -155,15 +154,25 @@ module.exports = function(grunt) {
         }
     });
     
+    var indexData = { categories: [] };
     var categoryList = grunt.file.readJSON("games/list.json");
     for (var catIndex = 0; catIndex < categoryList.contents.length; catIndex ++) {
         var catDir = "games/" + categoryList.contents[catIndex];
         var gamesList = grunt.file.readJSON(catDir + "/list.json");
+        var indexCatData = {
+            title: gamesList.title,
+            games: []
+        };
+        indexData.categories.push(indexCatData);
+
         for (var gameIndex = 0; gameIndex < gamesList.contents.length; gameIndex ++) {
             var gameDir = catDir + "/" + gamesList.contents[gameIndex];
             var gameData = grunt.file.readJSON(gameDir + "/game.json");
-    
             var gameKey = categoryList.id + "." + gamesList.id + "." + gameData.id;
+            indexCatData.games.push({
+                key: gameKey,
+                title: gameData.title
+            });
             
             function rebase(fileName) {
                 return gameDir + "/" + fileName;
@@ -199,6 +208,12 @@ module.exports = function(grunt) {
             });
         }
     }
+    
+    grunt.config.set(["nunjucks-render", "index"], {
+        src: "templates/index.tpl.html",
+        context: indexData,
+        dest: "build/dist/index.html"
+    });
     
     grunt.registerTask('default', ["nunjucks", "concat", "sweet_js", "uglify", "cssmin", "nunjucks-render", "copy", "zip"]);
 };

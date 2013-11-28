@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Automata</title>
+                
+        <link rel="stylesheet" href="css/automata.core.min.css">
+    </head>
+    <body>
+        <div id="main">
+            <div id="control-view">
+                <span class="group">Automata</span>
+            </div>
+            <div id="games-menu">
+                {% for cat in categories %}
+                    <h1>{{cat.title}}</h1>
+                    
+                    <ul>
+                        {% for game in cat.games %}
+                            <li><a href="{{game.key}}.html"><img src="icons/{{game.key}}.svg">{{game.title}}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+        </div>
+    </body>
+</html>
