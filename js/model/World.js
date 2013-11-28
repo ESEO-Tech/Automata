@@ -21,6 +21,10 @@ namespace(this, "automata.model", function (exports, globals) {
             this.fire("changed");
         },
         
+        onReset: function () {
+            // Abstract
+        },
+        
         getSensorValue: function (index) {
             return this.sensorValues[index];
         },

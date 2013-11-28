@@ -25,6 +25,7 @@
 }
 
 #games-menu ul li img {
+    width: 128px;
     background: rgb(240, 240, 240);
     border: none;
     border-radius: 15%;

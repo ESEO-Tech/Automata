@@ -1,0 +1,19 @@
+
+#world-view > div {
+    text-align: center;
+    padding: 2em;
+}
+
+#world-view .light {
+    border-radius: 50%;
+    padding: 0.5em 1em;
+}
+
+#world-view .light.on {
+    border: 1px solid rgb(255, 200, 0);
+    background: rgb(255, 230, 128);
+}
+
+#world-view .light.off {
+    background: rgb(220, 220, 220);
+}
