@@ -17,3 +17,8 @@
 #world-view .light.off {
     background: rgb(220, 220, 220);
 }
+
+#world-view .counter {
+    background: rgb(0, 10, 20);
+    color: rgb(0, 255, 50);
+}
