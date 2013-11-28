@@ -8,6 +8,10 @@ namespace(this, "automata.games.pushButton", function (exports) {
             {name: "C", desc: "Count"}
         ],
         
+        setButton: function (value) {
+            this.setSensorValue(0, value);
+        },
+        
         onReset: function () {
             this.counterValue = 0;
         },

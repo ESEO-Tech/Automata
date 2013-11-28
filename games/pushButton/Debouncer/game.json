@@ -5,6 +5,7 @@
         "../../../macros/arrays.js",
         "../Counter/World.js",
         "../Counter/WorldView.js",
+        "World.js",
         "game.js"
     ],
     "css": [
