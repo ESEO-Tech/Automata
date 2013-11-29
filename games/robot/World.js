@@ -43,7 +43,7 @@ namespace(this, "automata.games.robot", function (exports) {
         },
         
         onReset: function () {
-            this.robotMatrix = (new Snap.Matrix()).rotate(this.startAngle).translate(this.startX, this.startY);
+            this.robotMatrix = (new Snap.Matrix()).translate(this.startX, this.startY).rotate(this.startAngle);
         },
         
         onStep: function () {
