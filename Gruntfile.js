@@ -97,6 +97,7 @@ module.exports = function(grunt) {
             core: {
                 src: [
                     "css/main.css",
+                    "css/booleans.css",
                     "css/games-menu.css",
                     "css/TransitionTable.css",
                     "css/Diagram.css",
