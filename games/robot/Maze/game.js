@@ -12,7 +12,7 @@ namespace(this, "automata.games.robot", function (exports) {
             
             walls: [
                 // Vertical walls
-                [65,  5,    75, 255], [65,  293, 75,  399],
+                [65,  5,    75, 399],
                 [113, 101, 123, 159],
                 [161, 149, 171, 207], [161, 293, 171, 351],
                 [209, 245, 219, 351],
@@ -38,8 +38,9 @@ namespace(this, "automata.games.robot", function (exports) {
                 [65,  389, 651, 399]
             ],
             
-            startX: 30,
-            startY: 200,
+            startX: 95,
+            startY: 370,
+            startAngle: -90,
             
             goalX: 646,
             goalY: 82,
