@@ -17,6 +17,9 @@ namespace(this, "automata.games.pushButton", function (exports) {
                 })
                 .mouseup(function () {
                     world.setButton("0");
+                })
+                .mouseout(function () {
+                    world.setSensorValue(0, "0");
                 });
             
             world.addListener("changed", this.update, this);

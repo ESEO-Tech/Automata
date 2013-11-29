@@ -10,11 +10,13 @@ namespace(this, "automata.games.pushButton", function (exports) {
             container.html('<div><input type="button" value="Push"></div>\
                             <div><span class="light off">Off</span></div>');
             
-            $("input", container)
-                .mousedown(function () {
+            $("input", container).mousedown(function () {
                     world.setSensorValue(0, "1");
                 })
                 .mouseup(function () {
+                    world.setSensorValue(0, "0");
+                })
+                .mouseout(function () {
                     world.setSensorValue(0, "0");
                 });
             
