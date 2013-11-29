@@ -13,7 +13,7 @@ namespace(this, "automata.view", function (exports) {
             exports.View.init.call(this, model, container);
 
             model.addListener("createState",            this)
-                 .addListener("beforeRemoveState",      this)
+                 .addListener("afterRemoveState",       this)
                  .addListener("createTransition",       this)
                  .addListener("beforeRemoveTransition", this)
                  .addListener("afterRemoveTransition",  this)
@@ -103,7 +103,7 @@ namespace(this, "automata.view", function (exports) {
             return $("tr.state-" + state.id, this.root);
         },
         
-        beforeRemoveState: function (model, state) {
+        afterRemoveState: function (model, state) {
             this.getRowsForState(state).remove();
             $("option[value='" + state.id + "']", this.root).remove();
             
