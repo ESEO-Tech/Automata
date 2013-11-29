@@ -1,6 +1,6 @@
 {
     "name": "Automata",
-    "version": "13.11.271611",
+    "version": "13.11.290928",
     "description": "A game to learn finite-state machines",
     "package_path": "Automata.zip",
     "icons": {
