@@ -51,6 +51,11 @@
     font-size: 200%;
 }
 
+/*
+ * Trick for vertically centering elements:
+ * http://css-tricks.com/centering-in-the-unknown/
+ */
+
 #world-view .light div,
 #world-view .counter div {
     display: inline-block;
