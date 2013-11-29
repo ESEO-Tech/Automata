@@ -1,0 +1,25 @@
+
+/* ---------------------------------------------------------------------- *
+ * Boolean values
+ * ---------------------------------------------------------------------- */
+
+input.automata-bool, .automata-bool-0, .automata-bool-1 {
+    border: none;
+    border-radius: 30%;
+}
+
+input.automata-bool[value='-'] {
+    background: rgb(192, 192, 192);
+}
+
+input.automata-bool[value='0'], .automata-bool-0 {
+    background: rgb(192, 220, 255);
+}
+
+input.automata-bool[value='1'], .automata-bool-1 {
+    background: rgb(255, 192, 192);
+}
+
+span.automata-bool-0, span.automata-bool-1 {
+    padding: 0.3em 0.5em;
+}
