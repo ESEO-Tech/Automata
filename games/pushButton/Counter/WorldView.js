@@ -7,19 +7,20 @@ namespace(this, "automata.games.pushButton", function (exports) {
             
             this.world = world;
             
-            container.html('<div><input type="button" value="Push"></div>\
-                            <div><span class="counter">0</span></div>');
+            container.html('<button>B=<span class="automata-bool-0">0</span></button>\
+                            <div class="actuator">C=<span class="automata-bool-0">0</span></div>\
+                            <div class="counter"><div>0</div></div>');
             
             var self = this;
-            $("input", container)
+            $("button", container)
                 .mousedown(function () {
-                    world.setButton("1");
+                    self.setButton("1");
                 })
                 .mouseup(function () {
-                    world.setButton("0");
+                    self.setButton("0");
                 })
                 .mouseout(function () {
-                    world.setSensorValue(0, "0");
+                    self.setButton("0");
                 });
             
             world.addListener("changed", this.update, this);
@@ -27,8 +28,23 @@ namespace(this, "automata.games.pushButton", function (exports) {
             return this;
         },
         
+        setButton: function (value) {
+            this.world.setButton(value);
+            $("button span", this.container)
+                .removeClass()
+                .addClass("automata-bool-" + value)
+                .html(value);
+        },
+        
         update: function () {
-            $(".counter", this.container).html(this.world.counterValue);
+            var value = this.world.getActuatorValue(0);
+            
+            $(".actuator span", this.container)
+                .removeClass()
+                .addClass("automata-bool-" + value)
+                .html(value);
+
+            $(".counter div", this.container).html(this.world.counterValue);
         }
     });
 });

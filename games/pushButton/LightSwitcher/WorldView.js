@@ -7,17 +7,19 @@ namespace(this, "automata.games.pushButton", function (exports) {
             
             this.world = world;
             
-            container.html('<div><input type="button" value="Push"></div>\
-                            <div><span class="light off">Off</span></div>');
+            container.html('<button>B=<span class="automata-bool-0">0</span></button>\
+                            <div class="light off"><div>L=<span class="automata-bool-0">0</span></div>');
             
-            $("input", container).mousedown(function () {
-                    world.setSensorValue(0, "1");
+            var self = this;
+            $("button", container)
+                .mousedown(function () {
+                    self.setButton("1");
                 })
                 .mouseup(function () {
-                    world.setSensorValue(0, "0");
+                    self.setButton("0");
                 })
                 .mouseout(function () {
-                    world.setSensorValue(0, "0");
+                    self.setButton("0");
                 });
             
             world.addListener("changed", this.update, this);
@@ -25,10 +27,25 @@ namespace(this, "automata.games.pushButton", function (exports) {
             return this;
         },
         
+        setButton: function (value) {
+            this.world.setSensorValue(0, value);
+            $("button span", this.container)
+                .removeClass()
+                .addClass("automata-bool-" + value)
+                .html(value);
+        },
+        
         update: function () {
-            var cls = this.world.getActuatorValue(0) === "1" ? "on" : "off";
-            var text = this.world.getActuatorValue(0) === "1" ? "On" : "Off";
-            $(".light", this.container).removeClass("on off").addClass(cls).html(text);
+            var value = this.world.getActuatorValue(0);
+            
+            $(".light", this.container)
+                .removeClass("on off")
+                .addClass(value === "1" ? "on" : "off");
+            
+            $(".light span", this.container)
+                .removeClass()
+                .addClass("automata-bool-" + value)
+                .html(value);
         }
     });
 });
