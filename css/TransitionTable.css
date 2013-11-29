@@ -97,27 +97,6 @@
 }
 
 /* ---------------------------------------------------------------------- *
- * Boolean values
- * ---------------------------------------------------------------------- */
-
-.automata-TransitionTable .automata-bool {
-    border: none;
-    border-radius: 30%;
-}
-
-.automata-TransitionTable .automata-bool[value='-'] {
-    background: rgb(192, 192, 192);
-}
-
-.automata-TransitionTable .automata-bool[value='0'] {
-    background: rgb(192, 220, 255);
-}
-
-.automata-TransitionTable .automata-bool[value='1'] {
-    background: rgb(255, 192, 192);
-}
-
-/* ---------------------------------------------------------------------- *
  * Error markers
  * ---------------------------------------------------------------------- */
 
