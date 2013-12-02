@@ -2,6 +2,7 @@
     "id": "automata.games",
     "contents": [
         "pushButton",
-        "robot"
+        "robot",
+        "openTheGate"
     ]
 }

@@ -1,0 +1,14 @@
+{
+    "id": "LetMeIn",
+    "title": "Let me in",
+    "js": [
+        "../../../macros/arrays.js",
+        "../World.js",
+        "../WorldView.js",
+        "game.js"
+    ],
+    "css": [
+        "../WorldView.css"
+    ],
+    "icon": "icon.svg"
+}
