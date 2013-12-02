@@ -1,6 +1,6 @@
 {
     "name": "Automata",
-    "version": "13.11.290928",
+    "version": "{{version}}",
     "description": "A game to learn finite-state machines",
     "launch_path": "/index.html",
     "icons": {

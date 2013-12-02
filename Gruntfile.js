@@ -18,6 +18,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-zip');
     grunt.loadNpmTasks("grunt-rsync");
     
+    var version = grunt.template.today("yy.mm.ddHHMM");
+    
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         
@@ -113,13 +115,16 @@ module.exports = function(grunt) {
                     {src: "fonts/Arsenal/*.otf", dest: "build/dist/"},
                     {src: "fonts/Heydings/*.ttf", dest: "build/dist/"},
                     {src: "vendor/*", dest: "build/dist/"},
-                    {src: "manifest.webapp", dest: "build/dist/"},
                     {src: "icons/*.png", dest: "build/dist/"},
                     {src: "install.html", dest: "build/pkg/"},
-                    {src: "package.manifest", dest: "build/pkg/"},
                     {src: "js/webapp.js", dest: "build/dist/"}
                 ]
             }
+        },
+        
+        "nunjucks-render": {
+            "manifest.webapp":  {src: "manifest.webapp",  dest: "build/dist/manifest.webapp", context: {version: version}},
+            "package.manifest": {src: "package.manifest", dest: "build/pkg/package.manifest", context: {version: version}}
         },
         
         connect: {
