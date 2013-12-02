@@ -6,7 +6,14 @@ namespace(this, "automata.model", function (exports) {
         init: function (stateMachine) {
             exports.Model.init.call(this);
             
-            this.name = "State" + this.id;
+            var suffix = this.id;
+            do {
+                this.name = "State" + suffix;
+                suffix ++;
+            } while(stateMachine.states.some(function (state) {
+                return state.name === this.name;
+            }, this));
+            
             this.stateMachine = stateMachine;
             this.encoding = stateMachine.getStateVars().map(function () { return "0"; });
 
