@@ -1,6 +1,10 @@
 namespace(this, "automata.games.pushButton", function (exports) {
 
     exports.CounterWorld = Object.create(automata.model.World).augment({
+        timeStepMin: 10,
+        timeStepMax: 200,
+        timeStep: 20,
+        
         sensors:   [
             {name: "B",  desc: "Button"}
         ],
