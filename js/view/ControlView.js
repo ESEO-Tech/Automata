@@ -46,9 +46,11 @@ namespace(this, "automata.view", function (exports) {
                 self.moveRight();
             });
             
-            $("#control-speed", this.container).change(function () {
-                self.updateTimeStep();
-            });
+            $("#control-speed", this.container)
+                .val(10 - 10 * (this.model.timeStep - this.model.timeStepMin) / (this.model.timeStepMax - this.model.timeStepMin))
+                .change(function () {
+                    self.updateTimeStep();
+                });
         },
         
         start: function () {
