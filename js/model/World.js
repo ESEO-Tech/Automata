@@ -60,9 +60,10 @@ namespace(this, "automata.model", function (exports, globals) {
             while(timeElapsed >= this.timeStep && this.isRunning) {
                 this.actuatorValues = this.stateMachine.step();
                 this.onStep();
-                if (this.done()) {
+                var status = this.getStatus();
+                if (status.done) {
                     this.pause();
-                    this.fire("done");
+                    this.fire("done", status);
                 }
                 timeElapsed -= this.timeStep;
             }
@@ -86,14 +87,14 @@ namespace(this, "automata.model", function (exports, globals) {
         
         stop: function () {
             this.isRunning = false;
-            globals.clearInterval(this.clock);
+            globals.clearTimeout(this.clock);
             this.reset();
             this.fire("stop");
         },
 
-        done: function () {
+        getStatus: function () {
             // Abstract
-            return false;
+            return {done: false};
         },
         
         onStep: function () {

@@ -156,10 +156,15 @@ namespace(this, "automata.games.robot", function (exports) {
             }
         },
         
-        done: function () {
+        getStatus: function () {
             var goalDx = this.goalX - this.robotMatrix.e;
             var goalDy = this.goalY - this.robotMatrix.f;
-            return goalDx * goalDx + goalDy * goalDy <= this.goalRadius * this.goalRadius;
+            if (goalDx * goalDx + goalDy * goalDy <= this.goalRadius * this.goalRadius) {
+                return {done: true, status: "success"};
+            }
+            else {
+                return {done: false};
+            }
         }
     });
 });

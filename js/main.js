@@ -11,6 +11,14 @@ $(function () {
     sources[world.key + ".view.diagram"] = diagramView;
     var storage = Object.create(automata.storage.LocalStorage).init(sources);
 
+    world.addListener("done", function (w, data) {
+        var msg = "[" + data.status + "]";
+        if (data.message) {
+            msg += " " + data.message;
+        }
+        alert(msg);
+    });
+    
     function resize() {
         tableView.scale();
         diagramView.updateViewbox();

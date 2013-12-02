@@ -38,6 +38,9 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         onReset: function () {
             this.gateY = this.gateYMax;
             this.carX = this.carXMin;
+            
+            this.upAndDownAtTheSameTime = false;
+            this.crush = false;
         },
         
         onStep: function () {
@@ -73,6 +76,16 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             
             // Update vehicle sensor
             this.setSensorValue(3, (this.carX + this.catWidth >= this.vehicleSensorXMin && this.carX <= this.vehicleSensorXMax)? "1" : "0");
+
+            // Update problem indicators.
+            // The will stay true until the end.
+            if (this.getActuatorValue(0) === "1" && this.getActuatorValue(1)  === "1") {
+                this.upAndDownAtTheSameTime = true;
+            }
+            
+            if (this.getActuatorValue(1) === "1" && this.carX > this.gateX - this.carWidth && this.carX < this.gateX + this.gateWidth) {
+                this.crush = true;
+            }
         },
         
         problem: function () {
@@ -86,8 +99,27 @@ namespace(this, "automata.games.openTheGate", function (exports) {
                 this.getActuatorValue(1) === "1" && this.carX > this.gateX - this.carWidth && this.carX < this.gateX + this.gateWidth;
         },
         
-        done: function () {
-            return this.carX >= this.carXMax;
+        getStatus: function () {
+            if (this.crush) {
+                return {done: true, status: "error", message: "Do not close the gate when a car is passing through."};
+            }
+            else if (this.carX >= this.carXMax) {
+                if (this.upAndDownAtTheSameTime) {
+                    return {done: true, status: "warning", message: "Up and Down commands must not be active at the same time."};
+                }
+                else if (this.getActuatorValue(0) === "1" && this.getSensorValue(1) === "1") {
+                    return {done: true, status: "warning", message: "Turn the Up command off when the gate is open."};
+                }
+                else if (this.getActuatorValue(1) === "1" && this.getSensorValue(2) === "1") {
+                    return {done: true, status: "warning", message: "Turn the Down command off when the gate is closed."};
+                }
+                else {
+                    return {done: true, status: "success"};
+                }
+            }
+            else {
+                return {done: false};
+            }
         }
     });
 });
