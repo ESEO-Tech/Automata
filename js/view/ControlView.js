@@ -23,27 +23,31 @@ namespace(this, "automata.view", function (exports) {
             
             this.playButton = $("#control-play", this.container);
             
-            var model = this.model;
+            var self = this;
             this.playButton.click(function () {
-                if (model.isRunning) {
-                    model.pause();
+                if (self.model.isRunning) {
+                    self.model.pause();
                 }
                 else {
-                    model.start();
+                    self.updateTimeStep()
+                    self.model.start();
                 }
             });
             
             $("#control-stop", this.container).click(function () {
-                model.stop();
+                self.model.stop();
             });
             
-            var self = this;
             $("#control-left", this.container).click(function () {
                 self.moveLeft();
             });
             
             $("#control-right", this.container).click(function () {
                 self.moveRight();
+            });
+            
+            $("#control-speed", this.container).change(function () {
+                self.updateTimeStep();
             });
         },
         
@@ -53,6 +57,11 @@ namespace(this, "automata.view", function (exports) {
         
         pauseOrStop: function () {
             this.playButton.removeClass("running").val("P");
+        },
+        
+        updateTimeStep: function () {
+            var value = parseInt($("#control-speed", this.container).val())
+            this.model.timeStep = this.model.timeStepMin + (this.model.timeStepMax - this.model.timeStepMin) * (10 - value) / 10 ;
         },
         
         moveLeft: function () {

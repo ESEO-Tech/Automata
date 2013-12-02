@@ -2,6 +2,8 @@
 namespace(this, "automata.games.robot", function (exports) {
 
     exports.World = Object.create(automata.model.World).augment({
+        timeStepMax: 100,
+        
         sensors:   [
             {name: "WL",  desc: "Wall on the Left"},
             {name: "WR",  desc: "Wall on the right"},

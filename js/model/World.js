@@ -1,7 +1,9 @@
 
 namespace(this, "automata.model", function (exports, globals) {
     exports.World = Object.create(exports.Model).augment({
-        CLOCK_PERIOD_MS: 20,
+        timeStepMin: 1,
+        timeStepMax: 1000,
+        timeStep: 20,
         
         sensors: [],
         actuators: [],
@@ -50,19 +52,31 @@ namespace(this, "automata.model", function (exports, globals) {
             if (this.stateMachine.currentState) {
                 this.isRunning = true;
                 this.fire("start");
-                
+                this.step(this.timeStep);
+            }
+        },
+        
+        step: function (timeElapsed) {
+            while(timeElapsed >= this.timeStep && this.isRunning) {
+                this.actuatorValues = this.stateMachine.step();
+                this.onStep();
+                timeElapsed -= this.timeStep;
+            }
+            
+            this.fire("changed");
+
+            if (this.isRunning) {
+                var refTime = Date.now();
                 var self = this;
-                this.clock = globals.setInterval(function () {
-                    self.actuatorValues = self.stateMachine.step();
-                    self.onStep();
-                    self.fire("changed");
-                }, this.CLOCK_PERIOD_MS);
+                this.clock = globals.setTimeout(function () {
+                    self.step(Date.now() - refTime + timeElapsed);
+                }, this.timeStep);
             }
         },
         
         pause: function () {
             this.isRunning = false;
-            globals.clearInterval(this.clock);
+            globals.clearTimeout(this.clock);
             this.fire("pause");
         },
         
