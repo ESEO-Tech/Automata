@@ -68,7 +68,9 @@ namespace(this, "automata.view", function (exports) {
             state.addListener("changed", this.updateState, this);
             
             // Update target state selectors
-            $("<option>").val(state.id).text(state.name).appendTo($("td.target-state-name select", this.root));
+            $("td.target-state-name select", this.root).each(function () {
+                $("<option>").val(state.id).text(state.name).insertBefore($("option:last()", $(this)));
+            });
             
             // Create new row in the transition table
             var row = $(this.renderTemplate("state", {state: state, model: model})).insertBefore($("tr", this.root).last());
@@ -160,7 +162,11 @@ namespace(this, "automata.view", function (exports) {
             
             // Add handler for target state
             $("td.target-state-name select", transitionRow).change(function () {
-                transition.setTargetState(model.statesById[$(this).val()]);
+                var targetId = $(this).val();
+                if (targetId === "#NewState#") {
+                    targetId = model.createState().id;
+                }
+                transition.setTargetState(model.statesById[targetId]);
             });
             
             // Create a new row and move the "Add transition" button
