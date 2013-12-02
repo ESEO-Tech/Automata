@@ -1,0 +1,15 @@
+{
+    "id": "ThenCloseTheGate",
+    "title": "Then close the gate",
+    "js": [
+        "../../../macros/arrays.js",
+        "../World.js",
+        "../WorldView.js",
+        "World.js",
+        "game.js"
+    ],
+    "css": [
+        "../WorldView.css"
+    ],
+    "icon": "icon.svg"
+}

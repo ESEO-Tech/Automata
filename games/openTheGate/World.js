@@ -24,13 +24,13 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         
         carWidth: 80,
         carXMin: -80,
-        carXMax: 401,
+        carXMax: 421,
         carXStop: 160,
         carXStep: 2,
         carY: 190,
 
         vehicleSensorXMin: 270,
-        vehicleSensorXMax: 190,
+        vehicleSensorXMax: 290,
         
         width: 400,
         height: 300,
@@ -75,7 +75,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             this.setSensorValue(2, (this.gateY >= this.gateYMax)? "1" : "0");
             
             // Update vehicle sensor
-            this.setSensorValue(3, (this.carX + this.catWidth >= this.vehicleSensorXMin && this.carX <= this.vehicleSensorXMax)? "1" : "0");
+            this.setSensorValue(3, (this.carX + this.carWidth >= this.vehicleSensorXMin && this.carX <= this.vehicleSensorXMax)? "1" : "0");
 
             // Update problem indicators.
             // The will stay true until the end.

@@ -19,7 +19,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             this.paper.node.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
             // Draw floor and walls
-            this.paper.rect(0, 250, 400, 300).attr({fill: "grey"});
+            this.paper.rect(0, 250, 420, 300).attr({fill: "grey"});
             this.paper.rect(240, 0, 30, 150).attr({fill: "grey"});
 
             // Draw sensors            
@@ -68,7 +68,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             // Draw masks on the left and right of the scene
             // TODO: use a clip path
             this.paper.rect(-80, 0, 80, 300).attr({fill: "white"});
-            this.paper.rect(400, 0, 480, 300).attr({fill: "white"});
+            this.paper.rect(420, 0, 500, 300).attr({fill: "white"});
 
             this.update();
 
