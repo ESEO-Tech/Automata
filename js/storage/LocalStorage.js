@@ -11,6 +11,11 @@ namespace(this, "automata.storage", function (exports, globals) {
         
     exports.LocalStorage = automata.model.Object.create({
         
+        /*
+         * Configure a data storage with the given sources.
+         * Each source must implement methods fromObject end toObject
+         * as defined in automata.model.Object
+         */
         init: function(sources) {
             this.sources = sources;
             this.mapping = {};
@@ -26,6 +31,10 @@ namespace(this, "automata.storage", function (exports, globals) {
             return this;
         },
 
+        /*
+         * Load all sources from the data store.
+         * Returns true on success.
+         */
         load: function () {
             var success = false;
             if (supportsLocalStorage()) {
@@ -46,6 +55,9 @@ namespace(this, "automata.storage", function (exports, globals) {
             return success;
         },
         
+        /*
+         * Save all sources to the data store.
+         */
         save: function (source) {
             if (supportsLocalStorage()) {
                 for (var key in this.sources) {
