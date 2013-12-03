@@ -15,6 +15,7 @@ namespace(this, "automata.view", function (exports) {
         },
         
         show: function (world, status) {
+            this.container.empty();
             $(this.renderTemplate("main", status)).appendTo(this.container);
             this.container.attr("class", "visible");
             
