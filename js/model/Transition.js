@@ -2,9 +2,10 @@
 namespace(this, "automata.model", function (exports) {
     "use strict";
 
-    exports.Transition = Object.create(exports.Model).augment({
+    exports.Transition = exports.Object.create({
+        
         init: function (sourceState, targetState) {
-            exports.Model.init.call(this);
+            exports.Object.init.call(this);
 
             this.sourceState = sourceState;
             this.targetState = targetState;

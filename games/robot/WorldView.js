@@ -1,10 +1,10 @@
 
 namespace(this, "automata.games.robot", function (exports) {
 
-    exports.WorldView = Object.create(automata.model.Model).augment({
+    exports.WorldView = automata.model.Object.create({
        
         init: function (world, container) {
-            automata.model.Model.init.call(this);
+            automata.model.Object.init.call(this);
             
             this.world = world;
             

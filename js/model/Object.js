@@ -4,7 +4,10 @@ namespace(this, "automata.model", function (exports, globals) {
 
     var creationCount = 0;
     
-    exports.Model = {
+    exports.Object = {
+        /*
+         * Initialize the current object.
+         */
         init: function () {
             this.listeners = {};
             this.id = String(creationCount);
@@ -12,27 +15,27 @@ namespace(this, "automata.model", function (exports, globals) {
             return this;
         },
         
-        createListenerRecord: function (event, a, b) {
-            if (typeof b === "undefined") {
-                if (typeof a === "function") {
-                    return {
-                        callback: a,
-                        receiver: globals
-                    };
-                }
-                else {
-                    return {
-                        callback: a[event],
-                        receiver: a
-                    };
-                }
+        /*
+         * Create a new object with the current object as prototype.
+         *
+         * Optionally augment the new object with the given properties.
+         */
+        create: function (properties) {
+            return Object.create(this).augment(properties || {});
+        },
+        
+        get proto() {
+            return Object.getPrototypeOf(this);
+        },
+        
+        /*
+         * Augment the current object with the properties of the given object.
+         */
+        augment: function (properties) {
+            for (var p in properties) {
+                this[p] = properties[p];
             }
-            else {
-                return {
-                    callback: a,
-                    receiver: b
-                };
-            }
+            return this;
         },
         
         /*
@@ -51,14 +54,19 @@ namespace(this, "automata.model", function (exports, globals) {
             if (!(event in this.listeners)) {
                 this.listeners[event] = [];
             }
-            this.listeners[event].push(this.createListenerRecord(event, a, b));
+            this.listeners[event].push(this.makeListenerRecord(event, a, b));
             return this;
         },
         
+        /*
+         * Remove a listener for a given event.
+         *
+         * This method accepts the same arguments as addListener.
+         */
         removeListener: function (event, a, b) {
             if (event in this.listeners) {
                 var listeners = this.listeners[event];
-                var record = this.createListenerRecord(event, a, b);
+                var record = this.makeListenerRecord(event, a, b);
                 for (var i = 0; i < listeners.length;) {
                     if (listeners[i].callback === record.callback && listeners[i].receiver === record.receiver) {
                         listeners.splice(i, 1);
@@ -87,11 +95,30 @@ namespace(this, "automata.model", function (exports, globals) {
             return this;
         },
         
-        augment: function (properties) {
-            for (var p in properties) {
-                this[p] = properties[p];
+        /*
+         * Returns an event listener definition object.
+         */
+        makeListenerRecord: function (event, a, b) {
+            if (typeof b === "undefined") {
+                if (typeof a === "function") {
+                    return {
+                        callback: a,
+                        receiver: globals
+                    };
+                }
+                else {
+                    return {
+                        callback: a[event],
+                        receiver: a
+                    };
+                }
             }
-            return this;
+            else {
+                return {
+                    callback: a,
+                    receiver: b
+                };
+            }
         }
     };
 });

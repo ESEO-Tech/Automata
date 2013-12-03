@@ -2,9 +2,10 @@
 namespace(this, "automata.model", function (exports) {
     "use strict";
 
-    exports.StateMachine = Object.create(exports.Model).augment({
+    exports.StateMachine = exports.Object.create({
+        
         init: function (world) {
-            exports.Model.init.call(this);
+            exports.Object.init.call(this);
             
             this.world = world;
             
@@ -54,7 +55,7 @@ namespace(this, "automata.model", function (exports) {
         },
         
         createState: function () {
-            var state = Object.create(exports.State).init(this);
+            var state = exports.State.create().init(this);
             this.states.push(state);
             this.statesById[state.id] = state;
             
@@ -87,7 +88,7 @@ namespace(this, "automata.model", function (exports) {
         },
     
         createTransition: function (sourceState, targetState) {
-            var transition = Object.create(exports.Transition).init(sourceState, targetState);
+            var transition = exports.Transition.create().init(sourceState, targetState);
             this.transitions.push(transition);
             this.transitionsById[transition.id] = transition;
 

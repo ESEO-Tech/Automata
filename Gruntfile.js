@@ -62,7 +62,7 @@ module.exports = function(grunt) {
                     'js/main.js',
                     'js/shims/*.js',
                     
-                    'js/model/Model.js',
+                    'js/model/Object.js',
                     'js/view/View.js',
 
                     'js/model/State.js',

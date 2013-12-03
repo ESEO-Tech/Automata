@@ -1,15 +1,15 @@
 $(function () {
-    var world       = Object.create(automata.game.world).init();
-    var worldView   = Object.create(automata.game.view).init(world, $("#world-view"));
-    var tableView   = Object.create(automata.view.TransitionTable).init(world.stateMachine, $("#table-view"));
-    var controlView = Object.create(automata.view.ControlView).init(world, $("#control-view"));
-    var diagramView = Object.create(automata.view.Diagram).init(world.stateMachine, $("#diagram-view"));
+    var world       = automata.game.world.create().init();
+    var worldView   = automata.game.view.create().init(world, $("#world-view"));
+    var tableView   = automata.view.TransitionTable.create().init(world.stateMachine, $("#table-view"));
+    var controlView = automata.view.ControlView.create().init(world, $("#control-view"));
+    var diagramView = automata.view.Diagram.create().init(world.stateMachine, $("#diagram-view"));
     
     var sources = {};
     sources[world.key + ".model"]        = world.stateMachine;
     sources[world.key + ".view.table"]   = tableView;
     sources[world.key + ".view.diagram"] = diagramView;
-    var storage = Object.create(automata.storage.LocalStorage).init(sources);
+    var storage = automata.storage.LocalStorage.create().init(sources);
 
     world.addListener("done", function (w, data) {
         var msg = "[" + data.status + "]";

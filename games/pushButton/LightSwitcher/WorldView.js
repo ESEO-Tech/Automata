@@ -1,9 +1,9 @@
 namespace(this, "automata.games.pushButton", function (exports) {
 
-    exports.LightSwitcherWorldView = Object.create(automata.model.Model).augment({
+    exports.LightSwitcherWorldView = automata.model.Object.create({
        
         init: function (world, container) {
-            automata.model.Model.init.call(this);
+            automata.model.Object.init.call(this);
             
             this.world = world;
             

@@ -1,11 +1,12 @@
+
 namespace(this, "automata.view", function (exports) {
     "use strict";
 
-    exports.View = Object.create(automata.model.Model).augment({
+    exports.View = automata.model.Object.create({
         templates: {},
         
         init: function (model, container) {
-            automata.model.Model.init.call(this);
+            automata.model.Object.init.call(this);
 
             this.model = model;
             

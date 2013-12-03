@@ -2,9 +2,10 @@
 namespace(this, "automata.model", function (exports) {
     "use strict";
 
-    exports.State = Object.create(exports.Model).augment({
+    exports.State = exports.Object.create({
+        
         init: function (stateMachine) {
-            exports.Model.init.call(this);
+            exports.Object.init.call(this);
             
             var suffix = this.id;
             do {

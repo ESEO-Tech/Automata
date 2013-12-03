@@ -1,9 +1,10 @@
+
 namespace(this, "automata.games.pushButton", function (exports) {
 
-    exports.CounterWorldView = Object.create(automata.model.Model).augment({
+    exports.CounterWorldView = automata.model.Object.create({
        
         init: function (world, container) {
-            automata.model.Model.init.call(this);
+            automata.model.Object.init.call(this);
             
             this.world = world;
             

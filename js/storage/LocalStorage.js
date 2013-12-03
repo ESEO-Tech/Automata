@@ -9,7 +9,8 @@ namespace(this, "automata.storage", function (exports, globals) {
         }
     }
         
-    exports.LocalStorage = {
+    exports.LocalStorage = automata.model.Object.create({
+        
         init: function(sources) {
             this.sources = sources;
             this.mapping = {};
@@ -52,5 +53,5 @@ namespace(this, "automata.storage", function (exports, globals) {
                 }
             }
         }
-    };
+    });
 });

@@ -2,7 +2,7 @@
 namespace(this, "automata.view", function (exports) {
     "use strict";
 
-    exports.TransitionTable = Object.create(exports.View).augment({
+    exports.TransitionTable = exports.View.create().augment({
         templates: {
             main:       "templates/TransitionTable-main.tpl.html",
             state:      "templates/TransitionTable-state.tpl.html",

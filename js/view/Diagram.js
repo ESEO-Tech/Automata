@@ -8,7 +8,7 @@ namespace(this, "automata.view", function (exports) {
     var TRANSITION_HANDLE_FACTOR = 6;
     var ZOOM_FACTOR = 1.05;
 
-    exports.Diagram = Object.create(exports.View).augment({
+    exports.Diagram = exports.View.create().augment({
         templates: {
             main: "templates/Diagram-main.tpl.svg"
         },        

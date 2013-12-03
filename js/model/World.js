@@ -1,6 +1,7 @@
 
 namespace(this, "automata.model", function (exports, globals) {
-    exports.World = Object.create(exports.Model).augment({
+    
+    exports.World = exports.Object.create({
         timeStepMin: 1,
         timeStepMax: 1000,
         timeStep: 20,
@@ -9,8 +10,8 @@ namespace(this, "automata.model", function (exports, globals) {
         actuators: [],
         
         init: function () {
-            exports.Model.init.call(this);
-            this.stateMachine = Object.create(exports.StateMachine).init(this);
+            exports.Object.init.call(this);
+            this.stateMachine = exports.StateMachine.create().init(this);
             this.reset();
             return this;
         },

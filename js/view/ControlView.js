@@ -1,7 +1,7 @@
 namespace(this, "automata.view", function (exports) {
     "use strict";
 
-    exports.ControlView = Object.create(exports.View).augment({
+    exports.ControlView = exports.View.create().augment({
         templates: {
             main: "templates/ControlView-main.tpl.html"
         },
