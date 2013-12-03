@@ -27,6 +27,7 @@ namespace(this, "automata.storage", function (exports, globals) {
         },
 
         load: function () {
+            var success = false;
             if (supportsLocalStorage()) {
                 for (var key in this.sources) {
                     this.sources[key].removeListener("changed", this.save, this);
@@ -35,12 +36,14 @@ namespace(this, "automata.storage", function (exports, globals) {
                     if (key in globals.localStorage) {
                         console.log("Loading: " + key);
                         this.sources[key].fromObject(JSON.parse(globals.localStorage[key]), this.mapping);
+                        success = true;
                     }
                 }
                 for (key in this.sources) {
                     this.sources[key].addListener("changed", this.save, this);
                 }
             }
+            return success;
         },
         
         save: function (source) {
