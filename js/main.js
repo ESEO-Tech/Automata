@@ -4,6 +4,8 @@ $(function () {
     var tableView   = automata.view.TransitionTable.create().init(world.stateMachine, $("#table-view"));
     var controlView = automata.view.ControlView.create().init(world, $("#control-view"));
     var diagramView = automata.view.Diagram.create().init(world.stateMachine, $("#diagram-view"));
+    var helpView    = automata.view.HelpView.create().init(world, $("#help-view"));
+    var scoreView   = automata.view.ScoreView.create().init(world, $("#score-view"));
     
     var sources = {};
     sources[world.key + ".model"]        = world.stateMachine;
@@ -11,14 +13,6 @@ $(function () {
     sources[world.key + ".view.diagram"] = diagramView;
     var storage = automata.storage.LocalStorage.create().init(sources);
 
-    world.addListener("done", function (w, data) {
-        var msg = "[" + data.status + "]";
-        if (data.message) {
-            msg += " " + data.message;
-        }
-        alert(msg);
-    });
-    
     function resize() {
         tableView.scale();
         diagramView.updateViewbox();

@@ -2,10 +2,6 @@ namespace(this, "automata.view", function (exports) {
     "use strict";
 
     exports.ControlView = exports.View.create().augment({
-        templates: {
-            main: "templates/ControlView-main.tpl.html"
-        },
-        
         init: function (model, container) {
             exports.View.init.call(this, model, container);
             
@@ -19,8 +15,6 @@ namespace(this, "automata.view", function (exports) {
         },
         
         render: function () {
-            $(this.renderTemplate("main", this.model)).appendTo(this.container);
-            
             this.playButton = $("#control-play", this.container);
             
             var self = this;
@@ -51,6 +45,10 @@ namespace(this, "automata.view", function (exports) {
                 .change(function () {
                     self.updateTimeStep();
                 });
+            
+            $("#control-help", this.container).click(function () {
+                self.model.fire("help");
+            });
         },
         
         start: function () {

@@ -72,6 +72,8 @@ module.exports = function(grunt) {
                     
                     'js/view/TransitionTable.js',
                     'js/view/ControlView.js',
+                    'js/view/HelpView.js',
+                    'js/view/ScoreView.js',
                     'js/view/Diagram.js',
                     
                     'js/storage/LocalStorage.js',
@@ -103,6 +105,8 @@ module.exports = function(grunt) {
                     "css/games-menu.css",
                     "css/TransitionTable.css",
                     "css/Diagram.css",
+                    "css/Score.css",
+                    "css/Help.css",
                     "css/Control.css"
                 ],
                 dest: "build/dist/css/automata.core.min.css"
@@ -175,7 +179,9 @@ module.exports = function(grunt) {
         for (var gameIndex = 0; gameIndex < gamesList.contents.length; gameIndex ++) {
             var gameDir = catDir + "/" + gamesList.contents[gameIndex];
             var gameData = grunt.file.readJSON(gameDir + "/game.json");
+            var gameHelp = gameData.help ? grunt.file.read(gameDir + "/" + gameData.help) : "";
             var gameKey = categoryList.id + "." + gamesList.id + "." + gameData.id;
+            
             indexCatData.games.push({
                 key: gameKey,
                 title: gameData.title
@@ -205,7 +211,11 @@ module.exports = function(grunt) {
             
             grunt.config.set(["nunjucks-render", gameKey], {
                 src: "templates/game.tpl.html",
-                context: {key: gameKey},
+                context: {
+                    key: gameKey,
+                    title: gameData.title,
+                    content: gameHelp
+                },
                 dest: "build/dist/" + gameKey + ".html"
             });
             

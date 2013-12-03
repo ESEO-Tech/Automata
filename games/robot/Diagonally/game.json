@@ -10,5 +10,6 @@
     "css": [
         "../WorldView.css"
     ],
+    "help": "help.html",
     "icon": "icon.svg"
 }

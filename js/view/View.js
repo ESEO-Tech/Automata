@@ -14,7 +14,6 @@ namespace(this, "automata.view", function (exports) {
                 this.container = container;
             }
 
-            container.empty();
             this.render();
             
             return this;

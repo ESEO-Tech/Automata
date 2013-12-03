@@ -1,0 +1,123 @@
+
+<p>Program the robot to find the orange circle.</p>
+
+<p><strong>Tip:</strong> Execute the following sequence:</p>
+
+<ul>
+    <li>Turn right until heading south (use the <em>End of Rotation</em> (EOR) sensor).</li>
+    <li>Go ahead.</li>
+</ul>
+
+<h2>Sensors</h2>
+
+<table>
+    <tr>
+        <th rowspan="2">
+            WL<br>
+            (Wall on the <strong>Left</strong>)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>There is a wall on the <strong>left</strong> side of the robot</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>There is no obstacle on the <strong>left</strong> side of the robot</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            WR<br>
+            (Wall on the <strong>Right</strong>)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>There is a wall on the <strong>right</strong> side of the robot</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>There is no obstacle on the <strong>right</strong> side of the robot</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            WA<br>
+            (Wall <strong>Ahead</strong>)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>There is a wall <strong>in front of</strong> the robot</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>There is no obstacle <strong>in front of</strong> the robot</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            EOR<br>
+            (End Of Rotation)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The robot is oriented along the North-South or East-West axis</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>The robot has an intermediate orientation</td>
+    </tr>
+</table>
+
+<h2>Actuators</h2>
+
+<table>
+    <tr>
+        <th rowspan="2">
+            LF<br>
+            (Left wheel Forward)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The left wheel turns in the forward direction</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No effect</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            LB<br>
+            (Left wheel Backward)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The left wheel turns in the backward direction</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No effect</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            RF<br>
+            (Right wheel Forward)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The right wheel turns in the forward direction</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No effect</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            RB<br>
+            (Right wheel Backward)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The right wheel turns in the backward direction</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No effect</td>
+    </tr>
+</table>
+
+<p>Setting both <em>Forward</em> and <em>Backward</em> at the same time for the same wheel has no effect.</p>

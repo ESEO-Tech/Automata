@@ -8,6 +8,7 @@ body {
     padding: 0;
     overflow: hidden;
     font-size: large;
+    font-family: Arsenal, sans-serif;
 }
 
 #main {
@@ -49,6 +50,36 @@ body {
 #table-view {
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+#score-view, #help-view {
+    position: absolute;
+    left: 2em;
+    top: calc(-100% + 5em);
+    width: calc(100% - 4em);
+    height: calc(100% - 5em);
+    
+    background:         linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 250, 240, 1) 5em);
+    background:    -moz-linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 250, 240, 1) 5em);
+    background: -webkit-linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 250, 240, 1) 5em);
+    
+    box-shadow: 0 1px 4px 0 rgb(128, 128, 128);
+
+    transition-property: top;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+}
+
+#help-view.visible, #score-view.visible {
+    top: 0em;
+}
+
+.control {
+    font-family: "Heydings Controls";
+}
+
+.icon {
+    font-family: "Heydings Icons";
 }
 
 .entering-left-pane, .leaving-left-pane {

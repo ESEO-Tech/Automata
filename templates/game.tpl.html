@@ -22,10 +22,35 @@
     </head>
     <body>
         <div id="main">
-            <div id="control-view"></div>
+            <div id="control-view">
+                <!-- P: Play, S: Stop, u: Pause -->
+                <span class="group">
+                    <a class="icon" href="index.html">H</a>
+                </span>
+                <span class="group">
+                    <input class="control" type="button" id="control-play" value="P" title="Play/Pause">
+                    <input class="control" type="button" id="control-stop" value="S" title="Stop">
+                    Speed: <input type="range" id="control-speed" value="20" min="0" max="10" step="1" title="Speed">
+                </span>
+                <span class="group">
+                    <input class="control" type="button" id="control-left" value="<">
+                    <input class="control" type="button" id="control-right" value=">">
+                </span>
+                <span class="group">
+                    <input class="icon" type="button" id="control-help" value="l" title="Help">
+                </span>
+            </div>
             <div id="world-view" class="left-pane"></div>
             <div id="table-view" class="right-pane"></div>
             <div id="diagram-view" class="hidden"></div>
+            <div id="help-view">
+                <div>
+                    <h1>{{title}}</h1>
+                    <div>{{content}}</div>
+                </div>
+                <input class="control" type="button" value="X" title="Close">
+            </div>
+            <div id="score-view"></div>
         </div>
     </body>
 </html>
