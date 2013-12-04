@@ -1,7 +1,8 @@
 
 #score-view > div {
     display: inline-block;
-    vertical-align: middle;    
+    vertical-align: middle;
+    text-align: center;
 }
 
 #score-view:before {
