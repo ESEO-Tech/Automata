@@ -18,3 +18,11 @@
     bottom: 0.5em;
     left: 1em;
 }
+
+#score-view .score-status {
+    font-size: 300%;
+}
+
+#score-view .score-message {
+    font-size: 200%;
+}

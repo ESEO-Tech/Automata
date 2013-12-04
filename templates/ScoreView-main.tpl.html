@@ -1,5 +1,10 @@
 <div>
-    <div class="score-status">{{status}}</div>
+    <div class="score-status icon">
+        {%   if status == "success" %} 8
+        {% elif status == "warning" %} !
+        {% elif status == "error"   %} 2
+        {% endif %}
+    </div>
     <div class="score-message">{{message}}</div>
     <div>
         <input class="control" type="button" value="X" title="Close">
