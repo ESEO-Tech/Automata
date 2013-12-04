@@ -3,6 +3,7 @@
     display: inline-block;
     vertical-align: middle;
     text-align: center;
+    width: 100%;
 }
 
 #score-view:before {
@@ -10,4 +11,10 @@
     display: inline-block;
     height: 100%;
     vertical-align: middle;
+}
+
+#score-view input[value='X'] {
+    position: absolute;
+    bottom: 0.5em;
+    left: 1em;
 }
