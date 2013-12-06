@@ -34,7 +34,7 @@ namespace(this, "automata.view", function (exports) {
             return this;
         },
         
-        toObject: function () {
+        toStorable: function () {
             var result = {
                 x: this.x,
                 y: this.y,
@@ -62,7 +62,7 @@ namespace(this, "automata.view", function (exports) {
             return result;
         },
         
-        fromObject: function (obj, mapping) {
+        fromStorable: function (obj, mapping) {
             this.x = obj.x;
             this.y = obj.y;
             this.zoom = obj.zoom;

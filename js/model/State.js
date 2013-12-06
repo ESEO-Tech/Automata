@@ -24,14 +24,14 @@ namespace(this, "automata.model", function (exports) {
             return this;
         },
         
-        toObject: function () {
+        toStorable: function () {
             return {
                 name: this.name,
                 encoding: this.encoding
             };
         },
         
-        fromObject: function (obj) {
+        fromStorable: function (obj) {
             this.name = obj.name;
             this.encoding = obj.encoding;
             this.fire("changed");

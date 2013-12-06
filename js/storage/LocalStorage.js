@@ -13,7 +13,7 @@ namespace(this, "automata.storage", function (exports, globals) {
         
         /*
          * Configure a data storage with the given sources.
-         * Each source must implement methods fromObject end toObject
+         * Each source must implement methods fromStorable end toStorable
          * as defined in automata.model.Object
          */
         init: function(sources) {
@@ -44,7 +44,7 @@ namespace(this, "automata.storage", function (exports, globals) {
                 for (key in this.sources) {
                     if (key in globals.localStorage) {
                         console.log("Loading: " + key);
-                        this.sources[key].fromObject(JSON.parse(globals.localStorage[key]), this.mapping);
+                        this.sources[key].fromStorable(JSON.parse(globals.localStorage[key]), this.mapping);
                         success = true;
                     }
                 }
@@ -56,17 +56,27 @@ namespace(this, "automata.storage", function (exports, globals) {
         },
         
         /*
-         * Save all sources to the data store.
+         * Save the given source to the data store.
+         * If no source is specified, all sources are saved.
          */
         save: function (source) {
             if (supportsLocalStorage()) {
                 for (var key in this.sources) {
-                    if (this.sources[key] === source) {
+                    if (typeof source === "undefined" || this.sources[key] === source) {
                         console.log("Saving: " + key);
-                        globals.localStorage[key] = JSON.stringify(source.toObject());
+                        globals.localStorage[key] = JSON.stringify(source.toStorable());
                     }
                 }
             }
+        },
+        
+        toBlobURL: function () {
+            var data = {};
+            for (var key in this.sources) {
+                data[key] = this.sources[key].toStorable();
+            }
+            var blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+            return URL.createObjectURL(blob);
         }
     });
 });

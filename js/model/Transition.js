@@ -20,7 +20,7 @@ namespace(this, "automata.model", function (exports) {
             return this;
         },
         
-        toObject: function () {
+        toStorable: function () {
             return {
                 sourceStateId: this.sourceState.id,
                 targetStateId: this.targetState.id,
@@ -29,7 +29,7 @@ namespace(this, "automata.model", function (exports) {
             };
         },
         
-        fromObject: function (obj) {
+        fromStorable: function (obj) {
             this.inputs = obj.inputs;
             this.outputs = obj.outputs;
             this.fire("changed");

@@ -24,3 +24,7 @@
 #control-view .group {
     margin: 0 1em;
 }
+
+#control-view .export {
+    visibility: hidden;
+}

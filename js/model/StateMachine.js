@@ -20,27 +20,27 @@ namespace(this, "automata.model", function (exports) {
             return this;
         },
         
-        toObject: function () {
+        toStorable: function () {
             var result = {
                 states: {},
                 transitions: {}
             };
             for (var sid in this.statesById) {
-                result.states[sid] = this.statesById[sid].toObject();
+                result.states[sid] = this.statesById[sid].toStorable();
             }
             for (var tid in this.transitionsById) {
-                result.transitions[tid] = this.transitionsById[tid].toObject();
+                result.transitions[tid] = this.transitionsById[tid].toStorable();
             }
             return result;
         },
         
-        fromObject: function (obj, mapping) {
+        fromStorable: function (obj, mapping) {
             for (var sid in obj.states) {
-                mapping[sid] = this.createState().fromObject(obj.states[sid]);
+                mapping[sid] = this.createState().fromStorable(obj.states[sid]);
             }
             for (var tid in obj.transitions) {
                 var tobj = obj.transitions[tid];
-                mapping[tid] = this.createTransition(mapping[tobj.sourceStateId], mapping[tobj.targetStateId]).fromObject(tobj);
+                mapping[tid] = this.createTransition(mapping[tobj.sourceStateId], mapping[tobj.targetStateId]).fromStorable(tobj);
             }
             return this;
         },

@@ -26,6 +26,17 @@ $(function () {
     var storage = automata.storage.LocalStorage.create().init(sources);
     var loaded = storage.load();
     
+    $(window).on("hashchange", function () {
+        switch (window.location.hash) {
+            case "#export":
+                $("#control-view .export").attr("href", storage.toBlobURL())[0].click();
+                break;
+            
+            case "#import":
+                // TODO
+        }
+    });
+    
     // If no record exists for this game, we assume the user has never
     // played this game before and we show the instructions pane.
     if (!loaded) {

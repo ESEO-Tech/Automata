@@ -38,6 +38,15 @@ namespace(this, "automata.model", function (exports, globals) {
             return this;
         },
         
+        toStorable: function () {
+            return {};
+        },
+        
+        fromStorable: function (obj) {
+            // Abstract
+            return this;
+        },
+        
         /*
          * Add a listener for a given event.
          *
