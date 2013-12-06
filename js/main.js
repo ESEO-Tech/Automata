@@ -19,23 +19,40 @@ $(function () {
 
     // Configure the data storage for the current game
     // and attempt to load the saved data.
-    var sources = {};
-    sources[world.key + ".model"]        = world.stateMachine;
-    sources[world.key + ".view.table"]   = tableView;
-    sources[world.key + ".view.diagram"] = diagramView;
-    var storage = automata.storage.LocalStorage.create().init(sources);
+    var storage = automata.storage.LocalStorage.create().init()
+        .addSource(world.key + ".model", world.stateMachine)
+        .addSource(world.key + ".view.table", tableView)
+        .addSource(world.key + ".view.diagram", diagramView);
     var loaded = storage.load();
     
-    $(window).on("hashchange", function () {
+    function handleHash() {
         switch (window.location.hash) {
             case "#export":
                 $("#control-view .export").attr("href", storage.toBlobURL())[0].click();
                 break;
             
             case "#import":
-                // TODO
+                $("#control-view .import").change(function () {
+                    storage.fromFile(this.files[0]);
+                }).click();
+                break;
+
+            case "#to-base64":
+                alert(storage.toBase64());
+                break;
+                
+            default:
+                if (window.location.hash.match(/^#from-base64:/)) {
+                    storage.fromBase64(window.location.hash.slice(13));
+                }
+                else {
+                    console.log("Invalid hash");
+                }
         }
-    });
+    }
+    
+    handleHash();
+    $(window).on("hashchange", handleHash);
     
     // If no record exists for this game, we assume the user has never
     // played this game before and we show the instructions pane.

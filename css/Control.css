@@ -25,6 +25,7 @@
     margin: 0 1em;
 }
 
-#control-view .export {
-    visibility: hidden;
+#control-view .export,
+#control-view .import {
+    display: none;
 }

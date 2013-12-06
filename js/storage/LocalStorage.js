@@ -12,25 +12,21 @@ namespace(this, "automata.storage", function (exports, globals) {
     exports.LocalStorage = automata.model.Object.create({
         
         /*
-         * Configure a data storage with the given sources.
-         * Each source must implement methods fromStorable end toStorable
-         * as defined in automata.model.Object
+         * Configure a data storage.
          */
-        init: function(sources) {
-            this.sources = sources;
+        init: function() {
+            // this.sources is an array to enforce ordering during load operations
+            this.sources = [];
             this.mapping = {};
-            
-            if (supportsLocalStorage()) {
-                for (var key in sources) {
-                    sources[key].addListener("changed", this.save, this);
-                }
-            }
-            else {
-                throw "HTML5 storage not supported.";
-            }
             return this;
         },
 
+        addSource: function (key, source) {
+            this.sources.push({key: key, source: source});
+            source.addListener("changed", this.save, this);
+            return this;
+        },
+        
         /*
          * Load all sources from the data store.
          * Returns true on success.
@@ -38,18 +34,18 @@ namespace(this, "automata.storage", function (exports, globals) {
         load: function () {
             var success = false;
             if (supportsLocalStorage()) {
-                for (var key in this.sources) {
-                    this.sources[key].removeListener("changed", this.save, this);
+                forEach (item of this.sources) {
+                    item.source.removeListener("changed", this.save, this);
                 }
-                for (key in this.sources) {
-                    if (key in globals.localStorage) {
-                        console.log("Loading: " + key);
-                        this.sources[key].fromStorable(JSON.parse(globals.localStorage[key]), this.mapping);
+                forEach (item of this.sources) {
+                    if (item.key in globals.localStorage) {
+                        console.log("Loading: " + item.key);
+                        item.source.fromStorable(JSON.parse(globals.localStorage[item.key]), this.mapping);
                         success = true;
                     }
                 }
-                for (key in this.sources) {
-                    this.sources[key].addListener("changed", this.save, this);
+                forEach (item of this.sources) {
+                    item.source.addListener("changed", this.save, this);
                 }
             }
             return success;
@@ -61,22 +57,62 @@ namespace(this, "automata.storage", function (exports, globals) {
          */
         save: function (source) {
             if (supportsLocalStorage()) {
-                for (var key in this.sources) {
-                    if (typeof source === "undefined" || this.sources[key] === source) {
-                        console.log("Saving: " + key);
-                        globals.localStorage[key] = JSON.stringify(source.toStorable());
+                forEach (item of this.sources) {
+                    if (typeof source === "undefined" || item.source === source) {
+                        console.log("Saving: " + item.key);
+                        globals.localStorage[item.key] = JSON.stringify(source.toStorable());
                     }
                 }
             }
         },
         
-        toBlobURL: function () {
+        toJSON: function () {
             var data = {};
-            for (var key in this.sources) {
-                data[key] = this.sources[key].toStorable();
+            forEach (item of this.sources) {
+                data[item.key] = item.source.toStorable();
             }
-            var blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+            return JSON.stringify(data);
+        },
+        
+        fromJSON: function (json) {
+            var data = JSON.parse(json);
+            forEach (item of this.sources) {
+                item.source.removeListener("changed", this.save, this);
+            }
+            forEach (item of this.sources) {
+                if (item.key in data) {
+                    console.log("Importing: " + item.key);
+                    item.source.fromStorable(data[item.key], this.mapping);
+                }
+            }
+            forEach (item of this.sources) {
+                item.source.addListener("changed", this.save, this);
+            }
+            return this;
+        },
+        
+        toBlobURL: function () {
+            var blob = new Blob([this.toJSON()], {type: "application/json"});
             return URL.createObjectURL(blob);
+        },
+        
+        fromFile: function (file) {
+            var reader = new FileReader();
+            var self = this;
+            reader.onload = function () {
+                self.fromJSON(this.result);
+            };
+            
+            reader.readAsText(file);
+            return this;
+        },
+        
+        toBase64: function () {
+            return globals.btoa(unescape(encodeURIComponent(this.toJSON())));
+        },
+        
+        fromBase64: function (base64) {
+            return this.fromJSON(decodeURIComponent(escape(globals.atob(base64))));
         }
     });
 });
