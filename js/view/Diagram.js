@@ -86,28 +86,18 @@ namespace(this, "automata.view", function (exports) {
         createState: function (model, state) {
             state.addListener("changed", this.updateState, this);
             this.createStateView(state);
-            this.fire("changed");
+            this.layout();
         },
 
         afterRemoveState: function (model, state) {
             this.stateViews[state.id].group.remove();
             delete this.stateViews[state.id];
-            this.updateResetView();
-            this.fire("changed");
+            this.layout();
         },
         
         updateState: function (state) {
             this.updateStateView(state);
-
-            // If the size of the state view has changed,
-            // we need to redraw all transition paths to/from the given state
-            forEach(transition of state.incomingTransitions) {
-                this.updateTransitionPath(transition);
-            }
-            forEach(transition of state.outgoingTransitions) {
-                this.updateTransitionPath(transition);
-            }
-            this.fire("changed");
+            this.layout();
         },
 
         createTransition: function (model, transition) {
@@ -119,15 +109,20 @@ namespace(this, "automata.view", function (exports) {
             else {
                 this.createTransitionView(transition);
             }
-            
+
             // Update source state view if Moore actions have changed
-            this.updateState(transition.sourceState);
+            this.updateStateView(transition.sourceState);
+
+            this.layout();
         },
         
         afterRemoveTransition: function (model, transition) {
             this.removeTransitionViewIfUnused(transition);
+
             // Update source state view if Moore actions have changed
-            this.updateState(transition.sourceState);
+            this.updateStateView(transition.sourceState);
+
+            this.layout();
         },
         
         updateTransition: function (transition) {
@@ -159,12 +154,19 @@ namespace(this, "automata.view", function (exports) {
             // Update incoming and outgoing transition paths if Moore actions have changed.
             // Update outgoing transition conditions if conditions have changed.
             forEach(ot of transition.sourceState.outgoingTransitions) {
-                this.updateTransitionPath(ot);
                 this.updateTransitionText(ot);
             }
-            forEach(it of transition.sourceState.incomingTransitions) {
-                this.updateTransitionPath(it);
+
+            this.layout();
+        },
+        
+        layout: function () {
+            this.updateResetView();
+
+            forEach(transition of this.model.transitions) {
+                this.updateTransitionPath(transition);
             }
+
             this.fire("changed");
         },
         
