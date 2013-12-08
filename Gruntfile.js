@@ -91,6 +91,10 @@ module.exports = function(grunt) {
         },
         
         uglify: {
+            options: {
+                mangle: false,
+                beautify: true
+            },
             core: {
                 src: "<%= sweet_js.core.dest %>",
                 dest: 'build/dist/js/automata.core.min.js'

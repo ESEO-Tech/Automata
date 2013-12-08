@@ -8,6 +8,9 @@ namespace(this, "automata.view", function (exports) {
     var TRANSITION_HANDLE_FACTOR = 6;
     var ZOOM_FACTOR = 1.05;
 
+    var DEFAULT_SPRING_FACTOR = 0.01;
+    var LAYOUT_DECAY = 0.9;
+    
     exports.Diagram = exports.View.create().augment({
         templates: {
             main: "templates/Diagram-main.tpl.svg"
@@ -17,8 +20,12 @@ namespace(this, "automata.view", function (exports) {
             exports.View.init.call(this, model, container);
 
             this.model = model;
-            this.stateViews = {};
-            this.transitionViews = {};
+            
+            this.stateViews = [];
+            this.stateViewsById = {};
+            
+            this.transitionViews = [];
+            this.transitionViewsById = {};
             this.transitionViewsByStates = {};
 
             this.x = 0;
@@ -43,16 +50,16 @@ namespace(this, "automata.view", function (exports) {
                 transitions: {}
             };
             
-            for (var sid in this.stateViews) {
-                var stateView = this.stateViews[sid];
+            for (var sid in this.stateViewsById) {
+                var stateView = this.stateViewsById[sid];
                 result.states[sid] = {
                     x: stateView.x,
                     y: stateView.y
                 };
             }
             
-            for (var tid in this.transitionViews) {
-                var transitionView = this.transitionViews[tid];
+            for (var tid in this.transitionViewsById) {
+                var transitionView = this.transitionViewsById[tid];
                 result.transitions[tid] = {
                     x: transitionView.x,
                     y: transitionView.y
@@ -69,13 +76,13 @@ namespace(this, "automata.view", function (exports) {
             this.updateViewbox();
             
             for (var sid in obj.states) {
-                if (sid in mapping && mapping[sid].id in this.stateViews) {
+                if (sid in mapping && mapping[sid].id in this.stateViewsById) {
                     this.putStateView(mapping[sid], obj.states[sid].x, obj.states[sid].y);
                 }
             }
             
             for (var tid in obj.transitions) {
-                if (tid in mapping && mapping[tid].id in this.transitionViews) {
+                if (tid in mapping && mapping[tid].id in this.transitionViewsById) {
                     this.putTransitionHandle(mapping[tid], obj.transitions[tid].x, obj.transitions[tid].y);
                 }
             }
@@ -90,8 +97,10 @@ namespace(this, "automata.view", function (exports) {
         },
 
         afterRemoveState: function (model, state) {
-            this.stateViews[state.id].group.remove();
-            delete this.stateViews[state.id];
+            var view = this.stateViewsById[state.id];
+            view.group.remove();
+            this.stateViews.splice(this.stateViews.indexOf(view), 1);
+            delete this.stateViewsById[state.id];
             this.layout();
         },
         
@@ -104,7 +113,8 @@ namespace(this, "automata.view", function (exports) {
             transition.addListener("changed", this.updateTransition, this);
             var viewIdByStates = this.getViewIdByStates(transition);
             if (viewIdByStates in this.transitionViewsByStates) {
-                this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates];
+                var view = this.transitionViewsById[transition.id] = this.transitionViewsByStates[viewIdByStates];
+                view.transitions.push(transition);
             }
             else {
                 this.createTransitionView(transition);
@@ -128,7 +138,7 @@ namespace(this, "automata.view", function (exports) {
         updateTransition: function (transition) {
             var viewIdByStates = this.getViewIdByStates(transition);
             var viewByStates = this.transitionViewsByStates[viewIdByStates];
-            var viewByTransition = this.transitionViews[transition.id];
+            var viewByTransition = this.transitionViewsById[transition.id];
             
             if (viewByStates !== viewByTransition) {
                 // It the target state has changed, check if the view
@@ -138,7 +148,8 @@ namespace(this, "automata.view", function (exports) {
                 // If no view exists for the updated transition ends,
                 // create a new transition view
                 if (viewByStates) {
-                    this.transitionViews[transition.id] = viewByStates;
+                    this.transitionViewsById[transition.id] = viewByStates;
+                    viewByStates.transitions.push(transition);
                 }
                 else {
                     viewByStates = this.createTransitionView(transition);
@@ -163,13 +174,89 @@ namespace(this, "automata.view", function (exports) {
         layoutStep: function () {
             var done = true;
             
-            // TODO compute new position
-            this.updateResetView();
-
-            forEach(transition of this.model.transitions) {
-                this.updateTransitionPath(transition);
+            var defaultSpringLength = 0;
+            
+            // Speed decay, to reduce oscillations
+            forEach (v1 of this.stateViews) {
+                v1.vx *= LAYOUT_DECAY;
+                v1.vy *= LAYOUT_DECAY;
+                var l = 4 * (v1.width + v1.height);
+                if (l > defaultSpringLength) {
+                    defaultSpringLength = l;
+                }
+            }
+            
+            forEach (v1 of this.transitionViews) {
+                v1.vx *= LAYOUT_DECAY;
+                v1.vy *= LAYOUT_DECAY;
+            }
+            
+            function updateSpeeds(v1, x1, y1, v2, x2, y2, l, factor) {
+                var dx = x2 - x1;
+                var dy = y2 - y1;
+                var d = Math.sqrt(dx * dx + dy * dy);
+                if (d !== 0) {
+                    var f = factor * (d - l) / d;
+                    v1.vx += f * dx;
+                    v1.vy += f * dy;
+                    v2.vx -= f * dx;
+                    v2.vy -= f * dy;
+                }
+            }
+            
+            forEach (v1, i1 of this.stateViews) {
+                var x1 = v1.x + v1.width / 2;
+                var y1 = v1.y + v1.height / 2;
+                
+                // Compute forces between pairs of states
+                forEach (v2, i2 of this.stateViews) {
+                    if (i2 > i1) {
+                        updateSpeeds(v1, x1, y1,
+                                     v2, v2.x + v2.width / 2, v2.y + v2.height / 2,
+                                     defaultSpringLength, DEFAULT_SPRING_FACTOR);
+                    }
+                }
+                
+                // Compute forces between states and transitions
+                forEach (v2 of this.transitionViews) {
+                    if (v2.transitions[0].sourceState === v1.state && v2.transitions[0].targetState === v1.state) {
+                        updateSpeeds(v1, x1, y1, v2, v2.x, v2.y, v1.width, DEFAULT_SPRING_FACTOR);
+                    }
+                    else if (v2.transitions[0].sourceState === v1.state || v2.transitions[0].targetState === v1.state) {
+                        updateSpeeds(v1, x1, y1, v2, v2.x, v2.y, v1.width + v1.height, DEFAULT_SPRING_FACTOR);
+                    }
+                    else {
+                        updateSpeeds(v1, x1, y1, v2, v2.x, v2.y, defaultSpringLength, DEFAULT_SPRING_FACTOR / 100);
+                    }
+                }
+                
+                if (v1.vx >= 0.5 || v1.vy >=0.5) {
+                    done = false;
+                }
+                
+                this.putStateView(v1.state, v1.x + v1.vx, v1.y + v1.vy);
             }
 
+            forEach (v1, i1 of this.transitionViews) {
+                forEach (v2, i2 of this.transitionViews) {
+                    if (i2 > i1) {
+                        if (v1.transitions[0].sourceState === v2.transitions[0].sourceState && v1.transitions[0].targetState === v2.transitions[0].targetState ||
+                            v1.transitions[0].sourceState === v2.transitions[0].targetState && v1.transitions[0].targetState === v2.transitions[0].sourceState) {
+                            updateSpeeds(v1, v1.x, v1.y, v2, v2.x, v2.y, Math.max((v1.width + v2.width + v1.height + v2.height) / 2, 4 * TRANSITION_RADIUS), 2 * DEFAULT_SPRING_FACTOR);
+                        }
+                        else {
+                            updateSpeeds(v1, v1.x, v1.y, v2, v2.x, v2.y, defaultSpringLength, DEFAULT_SPRING_FACTOR / 100);
+                        }
+                    }
+                }
+
+                if (v1.vx >= 0.5 || v1.vy >=0.5) {
+                    done = false;
+                }
+                
+                this.putTransitionHandle(v1.transitions[0], v1.x + v1.vx, v1.y + v1.vy);
+            }
+            
             if (done) {
                 this.fire("changed");
             }
@@ -289,7 +376,8 @@ namespace(this, "automata.view", function (exports) {
         },
         
         createStateView: function (state) {
-            var view = this.stateViews[state.id] = {
+            var view = this.stateViewsById[state.id] = {
+                state:     state,
                 x:         0,
                 y:         0,
                 vx:        0,
@@ -302,7 +390,8 @@ namespace(this, "automata.view", function (exports) {
                 separator: this.paper.line(0, 0, 0, 0),
                 group:     this.paper.g().attr({"class": "state"})
             };
-
+            this.stateViews.push(view);
+            
             view.group.add(view.rect, view.name, view.actions, view.separator);
 
             // Set vertical position of state name
@@ -355,7 +444,7 @@ namespace(this, "automata.view", function (exports) {
                     evt.preventDefault();
                 },
                 function onEnd(evt) {
-                    this.fire("changed");
+                    this.layout();
                     evt.stopPropagation();
                     evt.preventDefault();
                 },
@@ -363,7 +452,7 @@ namespace(this, "automata.view", function (exports) {
         },
         
         putStateView: function (state, x, y) {
-            var view = this.stateViews[state.id];
+            var view = this.stateViewsById[state.id];
             view.x = x;
             view.y = y;
             view.group.transform("translate(" + x + "," + y + ")");
@@ -382,7 +471,7 @@ namespace(this, "automata.view", function (exports) {
         },
         
         updateStateView: function (state) {
-            var view = this.stateViews[state.id];
+            var view = this.stateViewsById[state.id];
             
             // Replace empty strings with non-breaking spaces to ensure correct bounding box in Webkit
             view.name.attr({text: state.name || "\u2000"});
@@ -402,7 +491,7 @@ namespace(this, "automata.view", function (exports) {
         updateResetView: function () {
             var state = this.model.states[0];
             if (state) {
-                var view = this.stateViews[state.id];
+                var view = this.stateViewsById[state.id];
                 this.resetView.transform("translate(" + (view.x + view.width / 2 - 4 * TRANSITION_RADIUS) + "," +
                                                         (view.y                  - 4 * TRANSITION_RADIUS) + ")");
             }
@@ -411,7 +500,8 @@ namespace(this, "automata.view", function (exports) {
         createTransitionView: function (transition) {
             var viewIdByStates = this.getViewIdByStates(transition);
 
-            var view = this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates] = {
+            var view = this.transitionViewsById[transition.id] = this.transitionViewsByStates[viewIdByStates] = {
+                transitions: [transition],
                 x:      0,
                 y:      0,
                 vx:     0,
@@ -424,6 +514,7 @@ namespace(this, "automata.view", function (exports) {
                 textHandleGroup: this.paper.g(),
                 group:  this.paper.g().attr({"class": "transition"})
             };
+            this.transitionViews.push(view);
 
             view.textHandleGroup.add(view.text, view.handle);
             view.group.add(view.path, view.textHandleGroup);
@@ -438,7 +529,7 @@ namespace(this, "automata.view", function (exports) {
         },
         
         putTransitionHandle: function (transition, x, y) {
-            var view = this.transitionViews[transition.id];
+            var view = this.transitionViewsById[transition.id];
             view.x = x;
             view.y = y;
             view.handle.attr({cx: x, cy: y});
@@ -448,10 +539,10 @@ namespace(this, "automata.view", function (exports) {
         },
         
         updateTransitionHandle: function (transition) {
-            var view = this.transitionViews[transition.id];
+            var view = this.transitionViewsById[transition.id];
 
-            var sourceView = this.stateViews[transition.sourceState.id];
-            var targetView = this.stateViews[transition.targetState.id];
+            var sourceView = this.stateViewsById[transition.sourceState.id];
+            var targetView = this.stateViewsById[transition.targetState.id];
             
             if (transition.sourceState === transition.targetState) {
                 view.x = sourceView.x + sourceView.width + sourceView.height;
@@ -467,7 +558,7 @@ namespace(this, "automata.view", function (exports) {
         },
         
         updateTransitionText: function (transition) {
-            var view = this.transitionViews[transition.id];
+            var view = this.transitionViewsById[transition.id];
 
             view.text.selectAll("tspan.term").forEach(function (ts) {
                 ts.remove();
@@ -485,6 +576,7 @@ namespace(this, "automata.view", function (exports) {
             forEach(tr of transitions) {
                 var termSpan = this.paper.el("tspan").attr({"class": "term"});
                 
+                // This is a workaround for the fact that tspan.getBBox().height==0
                 var dy = parseFloat(getComputedStyle(termSpan.node, null).getPropertyValue("font-size"));
                 if (hasTerms) {
                     dy *= 1.5;
@@ -521,6 +613,7 @@ namespace(this, "automata.view", function (exports) {
                 if (hasInputs || hasActions) {
                     view.text.add(termSpan);
 
+                    // This is a workaround for the fact that tspan.getBBox().width==0
                     var l = termSpan.node.getComputedTextLength();
                     if (l > view.width) {
                         view.width = l;
@@ -536,9 +629,8 @@ namespace(this, "automata.view", function (exports) {
         },
         
         moveTransitionText: function (transition) {
-            var view = this.transitionViews[transition.id];
+            var view = this.transitionViewsById[transition.id];
             var x = view.x + 2 * TRANSITION_RADIUS;
-            console.log(view.width + " " + view.height);
             var y = view.y - view.height / 2;
 
             view.text.attr({x: x, y: y});
@@ -546,10 +638,10 @@ namespace(this, "automata.view", function (exports) {
         },
         
         updateTransitionPath: function (transition) {
-            var view = this.transitionViews[transition.id];
+            var view = this.transitionViewsById[transition.id];
             
-            var sourceView = this.stateViews[transition.sourceState.id];
-            var targetView = this.stateViews[transition.targetState.id];
+            var sourceView = this.stateViewsById[transition.sourceState.id];
+            var targetView = this.stateViewsById[transition.targetState.id];
 
             // Compute coordinates of source and target state views
             var sourceCenter = {
@@ -571,8 +663,8 @@ namespace(this, "automata.view", function (exports) {
             }
             else {
                 tangentVector = {
-                    x: 0,
-                    y: sourceView.height
+                    x: - view.y + sourceCenter.y,
+                    y:   view.x - sourceCenter.x
                 };
             }
             
@@ -610,21 +702,14 @@ namespace(this, "automata.view", function (exports) {
         },
         
         removeTransitionViewIfUnused: function (transition) {
-            var viewByTransition = this.transitionViews[transition.id];
-
-            // Find whether another transition uses the same view as the given transition
-            var obsolete = true;
-            for (var tid in this.transitionViews) {
-                if (tid !== transition.id && this.transitionViews[tid] === viewByTransition) {
-                    obsolete = false;
-                    break;
-                }
-            }
+            var viewByTransition = this.transitionViewsById[transition.id];
+            viewByTransition.transitions.splice(viewByTransition.transitions.indexOf(transition), 1);
             
             // If no other transition uses the current transition view,
             // remove it from the DOM and from the dictionary of transition by states
-            if (obsolete) {
+            if (viewByTransition.transitions.length === 0) {
                 viewByTransition.group.remove();
+                this.transitionViews.splice(this.transitionViews.indexOf(viewByTransition), 1);
                 for (var sid in this.transitionViewsByStates) {
                     if (this.transitionViewsByStates[sid] === viewByTransition) {
                         delete this.transitionViewsByStates[sid];
@@ -633,13 +718,13 @@ namespace(this, "automata.view", function (exports) {
                 }
             }
             
-            delete this.transitionViews[transition.id];
+            delete this.transitionViewsById[transition.id];
         },
         
         currentStateChanged: function (model, state) {
             this.paper.selectAll(".state").attr({"class": "state"});
             if (state) {
-                this.stateViews[state.id].group.attr({"class": "state current"});
+                this.stateViewsById[state.id].group.attr({"class": "state current"});
             }
         }
     });
