@@ -160,14 +160,32 @@ namespace(this, "automata.view", function (exports) {
             this.layout();
         },
         
-        layout: function () {
+        layoutStep: function () {
+            var done = true;
+            
+            // TODO compute new position
             this.updateResetView();
 
             forEach(transition of this.model.transitions) {
                 this.updateTransitionPath(transition);
             }
 
-            this.fire("changed");
+            if (done) {
+                this.fire("changed");
+            }
+            
+            return !done;
+        },
+        
+        layout: function () {
+            var self = this;
+            function step() {
+                if (self.layoutStep()) {
+                    requestAnimationFrame(step);
+                }
+            }
+
+            requestAnimationFrame(step);
         },
         
         render: function () {
@@ -274,6 +292,8 @@ namespace(this, "automata.view", function (exports) {
             var view = this.stateViews[state.id] = {
                 x:         0,
                 y:         0,
+                vx:        0,
+                vy:        0,
                 width:     0,
                 height:    0,
                 rect:      this.paper.rect(0, 0, 0, 0, STATE_RADIUS, STATE_RADIUS).attr({filter: this.shadow}),
@@ -394,13 +414,19 @@ namespace(this, "automata.view", function (exports) {
             var view = this.transitionViews[transition.id] = this.transitionViewsByStates[viewIdByStates] = {
                 x:      0,
                 y:      0,
+                vx:     0,
+                vy:     0,
+                width:  0,
+                height: 0,
                 handle: this.paper.circle(0, 0, TRANSITION_RADIUS).attr({filter: this.shadow}),
                 path:   this.paper.path().attr({markerEnd: this.paper.select("#arrow-head")}),
                 text:   this.paper.text(""),
+                textHandleGroup: this.paper.g(),
                 group:  this.paper.g().attr({"class": "transition"})
             };
 
-            view.group.add(view.path, view.text, view.handle);
+            view.textHandleGroup.add(view.text, view.handle);
+            view.group.add(view.path, view.textHandleGroup);
 
             this.updateTransitionHandle(transition);
             this.updateTransitionPath(transition);
@@ -452,13 +478,18 @@ namespace(this, "automata.view", function (exports) {
             var transitions = transition.sourceState.getTransitionsToState(transition.targetState);
             var mooreActions = transition.sourceState.getMooreActions();
             
+            view.height = 0;
+            view.width = 0;
+            
             var hasTerms = false;
             forEach(tr of transitions) {
                 var termSpan = this.paper.el("tspan").attr({"class": "term"});
                 
+                var dy = parseFloat(getComputedStyle(termSpan.node, null).getPropertyValue("font-size"));
                 if (hasTerms) {
-                    termSpan.attr({"#text": "+", dy: "1.5em"});
+                    dy *= 1.5;
                 }
+                termSpan.attr({"#text": "+", dy: dy + "px"});
 
                 var hasInputs = false;
                 forEach(value, index of tr.inputs) {
@@ -488,8 +519,16 @@ namespace(this, "automata.view", function (exports) {
                 }
                 
                 if (hasInputs || hasActions) {
-                    hasTerms = true;
                     view.text.add(termSpan);
+
+                    var l = termSpan.node.getComputedTextLength();
+                    if (l > view.width) {
+                        view.width = l;
+                    }
+
+                    view.height += dy;
+
+                    hasTerms = true;
                 }
             }
             
@@ -499,7 +538,8 @@ namespace(this, "automata.view", function (exports) {
         moveTransitionText: function (transition) {
             var view = this.transitionViews[transition.id];
             var x = view.x + 2 * TRANSITION_RADIUS;
-            var y = view.y - view.text.getBBox().height / 2; // FIXME getBBox().height returns 0
+            console.log(view.width + " " + view.height);
+            var y = view.y - view.height / 2;
 
             view.text.attr({x: x, y: y});
             view.text.selectAll("tspan.term").attr({x: x});
