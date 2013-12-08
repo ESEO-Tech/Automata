@@ -35,13 +35,19 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             this.paper.text(255, 270, "C");
             this.paper.text(280, 270, "V");
             
+            function makeCar(paper, color) {
+                return paper.group(
+                    paper.path("m10,50 l60,0 c5,0 10,-5 10,-10 0,-10 -40,-20 -60,-20 -15,0 -20,10 -20,20 0,5 5,10 10,10 z").attr({fill: color}),
+                    paper.path("m40,35 c10,0 20,0 20,-5 0,-2 -15,-7 -25,-7 -5,0 0,10 5,12 z").attr({fill: "rgb(54,84,110)"}),
+                    paper.circle(20, 50, 7).attr({fill: "grey", stroke: "black", strokeWidth: 4}),
+                    paper.circle(60, 50, 7).attr({fill: "grey", stroke: "black", strokeWidth: 4})
+                );
+            }
             // Draw the car
-            this.carView = this.paper.group(
-                this.paper.path("m10,50 l60,0 c5,0 10,-5 10,-10 0,-10 -40,-20 -60,-20 -15,0 -20,10 -20,20 0,5 5,10 10,10 z").attr({fill: "rgb(114,197,9)"}),
-                this.paper.path("m40,35 c10,0 20,0 20,-5 0,-2 -15,-7 -25,-7 -5,0 0,10 5,12 z").attr({fill: "rgb(54,84,110)"}),
-                this.paper.circle(20, 50, 7).attr({fill: "grey", stroke: "black", strokeWidth: 4}),
-                this.paper.circle(60, 50, 7).attr({fill: "grey", stroke: "black", strokeWidth: 4})
-            );
+            this.carViews = [
+                makeCar(this.paper, "rgb(255,114,255)"),
+                makeCar(this.paper, "rgb(114,197,9)")
+            ];
             
             // Draw the gate
             this.actuatorViews = new Array(2);
@@ -85,7 +91,10 @@ namespace(this, "automata.games.openTheGate", function (exports) {
                 view.attr({"class": this.world.actuatorValues[index] === "1" ? "active" : "inactive"});
             }
             
-            this.carView.attr({transform: "translate(" + this.world.carX + "," + this.world.carY + ")"});
+            forEach (view, index of this.carViews) {
+                view.attr({transform: "translate(" + this.world.carX[index] + "," + this.world.carY + ")"});
+            }
+
             this.gateView.attr({transform: "translate(" + this.world.gateX + "," + this.world.gateY + ")"});
             this.problemView.attr({"class": (this.world.problem() ? "visible" : "invisible")});
         }

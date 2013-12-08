@@ -37,7 +37,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         
         onReset: function () {
             this.gateY = this.gateYMax;
-            this.carX = this.carXMin;
+            this.carX = [this.carXMin, this.carXMin];
             
             this.upAndDownAtTheSameTime = false;
             this.crush = false;
@@ -48,24 +48,24 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             // * before reaching the "Open" button (carXStop),
             // * through the the gate, if the gate is open,
             // * after the gate.
-            if(this.carX < this.carXStop ||
-               (this.carX >= this.carXStop && this.carX < this.gateX + this.gateWidth && this.gateY < this.gateYOpen) ||
-               (this.carX >= this.gateX + this.gateWidth && this.carX < this.carXMax))
-                this.carX += this.carXStep;
+            if(this.carX[0] < this.carXStop ||
+               (this.carX[0] >= this.carXStop && this.carX[0] < this.gateX + this.gateWidth && this.gateY < this.gateYOpen) ||
+               (this.carX[0] >= this.gateX + this.gateWidth && this.carX[0] < this.carXMax))
+                this.carX[0] += this.carXStep;
             
             // Update gate position according to open and close commands.
             // * The gate moves up when the Open command is on
-            // * The gate moves down than the Close command is on and the car is not passing
+            // * The gate moves down when the Close command is on and no car is passing
             if(this.getActuatorValue(0) === "1" && this.getActuatorValue(1) === "0" && this.gateY > this.gateYMin) {
                 this.gateY -= this.gateYStep;
             }
             if(this.getActuatorValue(0) === "0" && this.getActuatorValue(1) === "1" && this.gateY < this.gateYMax &&
-               (this.carX < this.gateX - this.carWidth || this.carX > this.gateX + this.gateWidth || this.gateY < this.gateYOpen)) {
+               (this.carX[0] < this.gateX - this.carWidth || this.carX[0] > this.gateX + this.gateWidth || this.gateY < this.gateYOpen)) {
                 this.gateY += this.gateYStep;
             }
             
             // Push the button when the car is in front of the gate until the gate starts to open
-            if(this.carX >= this.carXStop && this.carX <= this.carXStop + this.carXStep && this.gateY >= this.gateYMax)
+            if(this.carX[0] >= this.carXStop && this.carX[0] <= this.carXStop + this.carXStep && this.gateY >= this.gateYMax)
                 this.setSensorValue(0, "1");
             else
                 this.setSensorValue(0, "0");
@@ -75,7 +75,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             this.setSensorValue(2, (this.gateY >= this.gateYMax)? "1" : "0");
             
             // Update vehicle sensor
-            this.setSensorValue(3, (this.carX + this.carWidth >= this.vehicleSensorXMin && this.carX <= this.vehicleSensorXMax)? "1" : "0");
+            this.setSensorValue(3, (this.carX[0] + this.carWidth >= this.vehicleSensorXMin && this.carX[0] <= this.vehicleSensorXMax)? "1" : "0");
 
             // Update problem indicators.
             // The will stay true until the end.
@@ -83,7 +83,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
                 this.upAndDownAtTheSameTime = true;
             }
             
-            if (this.getActuatorValue(1) === "1" && this.carX > this.gateX - this.carWidth && this.carX < this.gateX + this.gateWidth) {
+            if (this.getActuatorValue(1) === "1" && this.carX[0] > this.gateX - this.carWidth && this.carX[0] < this.gateX + this.gateWidth) {
                 this.crush = true;
             }
         },
@@ -96,14 +96,14 @@ namespace(this, "automata.games.openTheGate", function (exports) {
                 // Moving the gate up and down at the same time
                 this.getActuatorValue(0) === "1" && this.getActuatorValue(1)  === "1" ||
                 // Moving the gate down while a vehicle is passing
-                this.getActuatorValue(1) === "1" && this.carX > this.gateX - this.carWidth && this.carX < this.gateX + this.gateWidth;
+                this.getActuatorValue(1) === "1" && this.carX[0] > this.gateX - this.carWidth && this.carX[0] < this.gateX + this.gateWidth;
         },
         
         getStatus: function () {
             if (this.crush) {
                 return {done: true, status: "error", message: "Do not close the gate when a car is passing through."};
             }
-            else if (this.carX >= this.carXMax) {
+            else if (this.carX[0] >= this.carXMax) {
                 if (this.upAndDownAtTheSameTime) {
                     return {done: true, status: "warning", message: "Up and Down commands must not be active at the same time."};
                 }
