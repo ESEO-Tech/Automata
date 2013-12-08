@@ -23,11 +23,12 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         gateX: 250,
         
         carWidth: 80,
-        carXMin: [-80, -480],
+        carXMin: [-80, -480, -680, -880],
         carXMax: 421,
         carXStop: 160,
         carXStep: 2,
         carY: 190,
+        carCount: 4,
 
         vehicleSensorXMin: 270,
         vehicleSensorXMax: 290,
@@ -125,7 +126,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             if (this.crush) {
                 return {done: true, status: "error", message: "Do not close the gate when a car is passing through."};
             }
-            else if (this.carsPassed === this.carXMin.length) {
+            else if (this.carsPassed === this.carCount) {
                 if (this.upAndDownAtTheSameTime) {
                     return {done: true, status: "warning", message: "Up and Down commands must not be active at the same time."};
                 }

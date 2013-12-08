@@ -46,7 +46,9 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             // Draw the car
             this.carViews = [
                 makeCar(this.paper, "rgb(255,114,255)"),
-                makeCar(this.paper, "rgb(114,197,9)")
+                makeCar(this.paper, "rgb(114,197,9)"),
+                makeCar(this.paper, "rgb(100,170,220)"),
+                makeCar(this.paper, "rgb(255,200,0)")
             ];
             
             // Draw the gate
