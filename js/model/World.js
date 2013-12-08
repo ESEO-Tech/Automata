@@ -47,7 +47,7 @@ namespace(this, "automata.model", function (exports, globals) {
         },
         
         start: function () {
-            if (!this.stateMachine.currentState) {
+            if (!this.stateMachine.currentState || this.getStatus().done) {
                 this.reset();
             }
             if (this.stateMachine.currentState) {
