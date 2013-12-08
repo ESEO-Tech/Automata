@@ -5,7 +5,9 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         view: exports.WorldView,
         
         world: Object.create(exports.World).augment({
-            key: "automata.games.openTheGate.LetMeIn"
+            key: "automata.games.openTheGate.LetMeIn",
+            
+            carCount: 1
         })
     };
 });

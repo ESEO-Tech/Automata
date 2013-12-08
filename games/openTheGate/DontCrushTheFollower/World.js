@@ -3,7 +3,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
 
     exports.DontCrushTheFollowerWorld = Object.create(exports.World).augment({
 
-        carXMin: [-80, -280, -680, -880],
+        carXMin: [-80, -220, -500, -630],
 
         getStatus: function () {
             var status = exports.World.getStatus.call(this);
