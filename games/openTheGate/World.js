@@ -23,7 +23,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         gateX: 250,
         
         carWidth: 80,
-        carXMin: [-80, -480, -680, -880],
+        carXMin: [-80, -480, -880, -1280],
         carXMax: 421,
         carXStop: 160,
         carXStep: 2,
