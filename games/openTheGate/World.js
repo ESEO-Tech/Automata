@@ -40,6 +40,8 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             this.gateY = this.gateYMax;
             this.carX = this.carXMin.slice();
             
+            this.buttonHasBeenPressed = false;
+            this.gateOpeningBeforeButtonPressed = false;
             this.carsPassed = 0;
             this.gateForcedOpen = false;
             this.gateForcedClosed = false;
@@ -48,7 +50,6 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         },
         
         onStep: function () {
-            
             // Update gate position according to open and close commands.
             // * The gate moves up when the Open command is on
             // * The gate moves down when the Close command is on and no car is passing
@@ -56,6 +57,9 @@ namespace(this, "automata.games.openTheGate", function (exports) {
                 this.upAndDownAtTheSameTime = true;
             }
             else if(this.getActuatorValue(0) === "1") {
+                if (!this.buttonHasBeenPressed) {
+                    this.gateOpeningBeforeButtonPressed = true;
+                }
                 if (this.gateY > this.gateYMin) {
                     this.gateY -= this.gateYStep;
                 }
@@ -66,6 +70,9 @@ namespace(this, "automata.games.openTheGate", function (exports) {
             else if(this.getActuatorValue(1) === "1") {
                 if (this.gateY < this.gateYMax && !this.crush) {
                     this.gateY += this.gateYStep;
+                    if (this.gateY >= this.gateYOpen) {
+                        this.buttonHasBeenPressed = false;
+                    }
                 }
                 else {
                     this.gateForcedClosed = true;
@@ -100,8 +107,9 @@ namespace(this, "automata.games.openTheGate", function (exports) {
                 }
                 
                 // Push the button when the car is in front of the gate until the gate starts to open
-                if(x >= this.carXStop && x <= this.carXStop + this.carXStep && this.gateY >= this.gateYMax) {
+                if(x >= this.carXStop && x <= this.carXStop + this.carXStep && this.gateY >= this.gateYOpen) {
                     this.setSensorValue(0, "1");
+                    this.buttonHasBeenPressed = true;
                 }
                 
                 // Detect car crushing under gate
@@ -117,7 +125,8 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         },
         
         problem: function () {
-            return this.gateForcedOpen ||
+            return this.gateOpeningBeforeButtonPressed ||
+                this.gateForcedOpen ||
                 this.gateForcedClosed ||
                 this.upAndDownAtTheSameTime ||
                 this.crush;
@@ -126,6 +135,9 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         getStatus: function () {
             if (this.crush) {
                 return {done: true, status: "error", message: "Do not close the gate when a car is passing through."};
+            }
+            else if (this.gateOpeningBeforeButtonPressed) {
+                return {done: true, status: "error", message: "The gate started opening before the button was pressed."};
             }
             else if (this.carsPassed === this.carCount) {
                 if (this.upAndDownAtTheSameTime) {
