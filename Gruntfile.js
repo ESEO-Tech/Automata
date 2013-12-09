@@ -92,8 +92,8 @@ module.exports = function(grunt) {
         
         uglify: {
             options: {
-                mangle: false,
-                beautify: true
+                //mangle: false,
+                //beautify: true
             },
             core: {
                 src: "<%= sweet_js.core.dest %>",
