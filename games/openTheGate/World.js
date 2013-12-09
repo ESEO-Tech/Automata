@@ -48,9 +48,10 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         },
         
         onStep: function () {
+            
             // Update gate position according to open and close commands.
             // * The gate moves up when the Open command is on
-            // * The gate moves down when the Close command is on and no door has been crushed
+            // * The gate moves down when the Close command is on and no car is passing
             if (this.getActuatorValue(0) === "1" && this.getActuatorValue(1)  === "1") {
                 this.upAndDownAtTheSameTime = true;
             }
@@ -116,7 +117,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
         },
         
         problem: function () {
-            return this.gateForceOpen ||
+            return this.gateForcedOpen ||
                 this.gateForcedClosed ||
                 this.upAndDownAtTheSameTime ||
                 this.crush;
@@ -130,7 +131,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
                 if (this.upAndDownAtTheSameTime) {
                     return {done: true, status: "warning", message: "Up and Down commands must not be active at the same time."};
                 }
-                else if (this.gateForceOpen) {
+                else if (this.gateForcedOpen) {
                     return {done: true, status: "warning", message: "Turn the Up command off when the gate is open."};
                 }
                 else if (this.gateForcedClosed) {
