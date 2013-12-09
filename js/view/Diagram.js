@@ -580,9 +580,11 @@ namespace(this, "automata.view", function (exports) {
                 var dy = parseFloat(getComputedStyle(termSpan.node, null).getPropertyValue("font-size"));
                 if (hasTerms) {
                     dy *= 1.5;
+                    termSpan.attr({"#text": "+"});
                 }
-                termSpan.attr({"#text": "+", dy: dy + "px"});
 
+                termSpan.attr({dy: dy + "px"});
+                    
                 var hasInputs = false;
                 forEach(value, index of tr.inputs) {
                     if (value !== "-") {
