@@ -1,14 +1,3 @@
-.automata-robot-wall {
-    fill: black;
-}
-
-.automata-robot .chassis {
-    fill: #264370;
-}
-
-.automata-robot .eye {
-    fill: #3A69B0;
-}
 
 .automata-robot .inactive {
     fill: #aaa;
@@ -16,8 +5,4 @@
 
 .automata-robot .active {
     fill: red;
-}
-
-.automata-robot-goal {
-    fill: orange;
 }

@@ -19,11 +19,11 @@ namespace(this, "automata.games.robot", function (exports) {
             this.paper.node.setAttribute("preserveAspectRatio", "xMidYMid meet");
             
             // Draw goal
-            this.paper.circle(world.goalX, world.goalY, world.goalRadius).attr({"class": "automata-robot-goal"});
+            this.paper.circle(world.goalX, world.goalY, world.goalRadius).attr({fill: "orange"});
             
             // Draw walls
             forEach(wall of world.walls) {
-                this.paper.rect(wall[0], wall[1], wall[2] - wall[0], wall[3] - wall[1]).attr({"class": "automata-robot-wall"});
+                this.paper.rect(wall[0], wall[1], wall[2] - wall[0], wall[3] - wall[1]).attr({fill: "black", stroke: "none"});
             }
             
             // Draw robot
@@ -31,9 +31,16 @@ namespace(this, "automata.games.robot", function (exports) {
                 return this.paper.circle(p.x, p.y, world.sensorRadius);
             }, this);
 
+            var r = world.robotRadius;
             this.robotView = this.paper.g(
-                this.paper.circle(0, 0, world.robotRadius).attr({"class": "chassis"}),
-                this.paper.circle(world.robotRadius / 2, 0, world.robotRadius / 3).attr({"class": "eye"}),
+                this.paper.circle(0, 0, world.robotRadius).attr({fill: "rgb(38, 67, 112)"}),
+                this.paper.circle(world.robotRadius * 0.25, 0, world.robotRadius * 0.75).attr({fill: "rgb(51, 91, 149)"}),
+                this.paper.path("m " + (r/2) + "," + (-r/2) +
+                                " c " + (r/4) + ",0 " + (3*r/8) + "," + (r/4) + " " + (3*r/8) + "," + (r/2) +
+                                " 0," + (r/4) + " " + (-r/8) + "," + (r/2) + " " + (-3*r/8) + "," + (r/2) +
+                                " " + (-r/4) + ",0 0," + (-r/4) + " 0," + (-r/2) +
+                                " 0," + (-r/4) + " " + (-r/4) + "," + (-r/2) + " 0," + (-r/2) +
+                                " z").attr({fill: "rgb(173, 194, 227)"}),
                 this.sensorViews[0], this.sensorViews[1], this.sensorViews[2]
             ).attr({"class": "automata-robot"});
 
