@@ -107,7 +107,7 @@ namespace(this, "automata.games.openTheGate", function (exports) {
                 }
                 
                 // Push the button when the car is in front of the gate until the gate starts to open
-                if(x >= this.carXStop && x <= this.carXStop + this.carXStep && this.gateY >= this.gateYOpen) {
+                if(x >= this.carXStop && x <= this.carXStop + this.carXStep && this.gateY >= this.gateYOpen && !this.buttonHasBeenPressed) {
                     this.setSensorValue(0, "1");
                     this.buttonHasBeenPressed = true;
                 }
