@@ -5,7 +5,7 @@ $(function () {
     var mozApps = window.navigator.mozApps;
     
     function addInstallButton() {
-        $('<span class="group"><input type="button" value="l" title="Install"></span>')
+        $('<span class="group"><input type="button" class="control" value="l" title="Install"></span>')
             .appendTo($("#control-view"))
             .click(install);
     }
