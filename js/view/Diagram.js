@@ -1,4 +1,5 @@
-namespace(this, "automata.view", function (exports) {
+
+namespace("automata.view", function (exports) {
     "use strict";
 
     var STATE_RADIUS = 20;

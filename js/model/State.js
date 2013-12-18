@@ -1,5 +1,5 @@
 
-namespace(this, "automata.model", function (exports) {
+namespace("automata.model", function (exports) {
     "use strict";
 
     exports.State = exports.Object.create({

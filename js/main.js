@@ -1,3 +1,4 @@
+
 $(function () {
     var world       = automata.game.world.create().init();
     var worldView   = automata.game.view.create().init(world, $("#world-view"));

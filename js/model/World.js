@@ -1,5 +1,5 @@
 
-namespace(this, "automata.model", function (exports, globals) {
+namespace("automata.model", function (exports, env) {
     
     exports.World = exports.Object.create({
         timeStepMin: 1,
@@ -74,7 +74,7 @@ namespace(this, "automata.model", function (exports, globals) {
             if (this.isRunning) {
                 var refTime = Date.now();
                 var self = this;
-                this.clock = globals.setTimeout(function () {
+                this.clock = env.setTimeout(function () {
                     self.step(Date.now() - refTime + timeElapsed);
                 }, this.timeStep);
             }
@@ -82,13 +82,13 @@ namespace(this, "automata.model", function (exports, globals) {
         
         pause: function () {
             this.isRunning = false;
-            globals.clearTimeout(this.clock);
+            env.clearTimeout(this.clock);
             this.fire("pause");
         },
         
         stop: function () {
             this.isRunning = false;
-            globals.clearTimeout(this.clock);
+            env.clearTimeout(this.clock);
             this.reset();
             this.fire("stop");
         },

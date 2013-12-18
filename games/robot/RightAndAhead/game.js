@@ -1,5 +1,5 @@
 
-namespace(this, "automata.games.robot", function (exports) {
+namespace("automata.games.robot", function (exports) {
     
     exports.RightAndAhead = {
         view: exports.WorldView,

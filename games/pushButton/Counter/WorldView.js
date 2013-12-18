@@ -1,5 +1,5 @@
 
-namespace(this, "automata.games.pushButton", function (exports) {
+namespace("automata.games.pushButton", function (exports) {
 
     exports.CounterWorldView = automata.model.Object.create({
        

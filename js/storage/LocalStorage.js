@@ -1,8 +1,9 @@
-namespace(this, "automata.storage", function (exports, globals) {
+
+namespace("automata.storage", function (exports, env) {
     
     function supportsLocalStorage() {
         try {
-            return "localStorage" in globals && globals.localStorage !== null;
+            return "localStorage" in env && env.localStorage !== null;
         }
         catch(e){
             return false;
@@ -38,9 +39,9 @@ namespace(this, "automata.storage", function (exports, globals) {
                     item.source.removeListener("changed", this.save, this);
                 }
                 forEach (item of this.sources) {
-                    if (item.key in globals.localStorage) {
+                    if (item.key in env.localStorage) {
                         console.log("Loading: " + item.key);
-                        item.source.fromStorable(JSON.parse(globals.localStorage[item.key]), this.mapping);
+                        item.source.fromStorable(JSON.parse(env.localStorage[item.key]), this.mapping);
                         success = true;
                     }
                 }
@@ -60,7 +61,7 @@ namespace(this, "automata.storage", function (exports, globals) {
                 forEach (item of this.sources) {
                     if (typeof source === "undefined" || item.source === source) {
                         console.log("Saving: " + item.key);
-                        globals.localStorage[item.key] = JSON.stringify(source.toStorable());
+                        env.localStorage[item.key] = JSON.stringify(source.toStorable());
                     }
                 }
             }
@@ -108,11 +109,11 @@ namespace(this, "automata.storage", function (exports, globals) {
         },
         
         toBase64: function () {
-            return globals.btoa(unescape(encodeURIComponent(this.toJSON())));
+            return env.btoa(unescape(encodeURIComponent(this.toJSON())));
         },
         
         fromBase64: function (base64) {
-            return this.fromJSON(decodeURIComponent(escape(globals.atob(base64))));
+            return this.fromJSON(decodeURIComponent(escape(env.atob(base64))));
         }
     });
 });

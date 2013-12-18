@@ -1,12 +1,27 @@
+/** @namespace automata */
 
-namespace(this, "automata.model", function (exports, globals) {
+/**
+ * @namespace model
+ * @memberof automata
+ */
+namespace("automata.model", function (exports, env) {
     "use strict";
 
     var creationCount = 0;
     
+    /**
+     * @class Object
+     * @memberof automata.model
+     */
     exports.Object = {
-        /*
+        /**
          * Initialize the current object.
+         *
+         * @method init
+         * @memberof automata.model.Object
+         * @public
+         * @instance
+         * @return The current object
          */
         init: function () {
             this.listeners = {};
@@ -15,10 +30,17 @@ namespace(this, "automata.model", function (exports, globals) {
             return this;
         },
         
-        /*
+        /**
          * Create a new object with the current object as prototype.
          *
-         * Optionally augment the new object with the given properties.
+         * Optionally augment the new Object with the given properties.
+         *
+         * @method create
+         * @memberof automata.model.Object
+         * @public
+         * @instance
+         * @param {Object} [properties] - An object with the properties to add to the new object
+         * @return The new object
          */
         create: function (properties) {
             return Object.create(this).augment(properties || {});
@@ -112,7 +134,7 @@ namespace(this, "automata.model", function (exports, globals) {
                 if (typeof a === "function") {
                     return {
                         callback: a,
-                        receiver: globals
+                        receiver: env
                     };
                 }
                 else {

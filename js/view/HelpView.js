@@ -1,4 +1,5 @@
-namespace(this, "automata.view", function (exports) {
+
+namespace("automata.view", function (exports) {
     "use strict";
 
     exports.HelpView = exports.View.create().augment({

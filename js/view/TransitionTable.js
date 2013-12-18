@@ -1,5 +1,5 @@
 
-namespace(this, "automata.view", function (exports) {
+namespace("automata.view", function (exports) {
     "use strict";
 
     exports.TransitionTable = exports.View.create().augment({

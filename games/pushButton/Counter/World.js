@@ -1,4 +1,5 @@
-namespace(this, "automata.games.pushButton", function (exports) {
+
+namespace("automata.games.pushButton", function (exports) {
 
     exports.CounterWorld = Object.create(automata.model.World).augment({
         timeStepMin: 10,

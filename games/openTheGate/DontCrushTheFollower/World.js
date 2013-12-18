@@ -1,5 +1,5 @@
 
-namespace(this, "automata.games.openTheGate", function (exports) {
+namespace("automata.games.openTheGate", function (exports) {
 
     exports.DontCrushTheFollowerWorld = Object.create(exports.World).augment({
 

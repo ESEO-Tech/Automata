@@ -1,5 +1,5 @@
 
-namespace(this, "automata.games.pushButton", function (exports) {
+namespace("automata.games.pushButton", function (exports) {
 
     exports.DebouncerWorld = Object.create(exports.CounterWorld).augment({
         BOUNCE_COUNTER_MAX: 4,

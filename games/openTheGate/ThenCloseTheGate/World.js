@@ -1,5 +1,5 @@
 
-namespace(this, "automata.games.openTheGate", function (exports) {
+namespace("automata.games.openTheGate", function (exports) {
     exports.ThenCloseTheGateWorld = Object.create(exports.World).augment({
         getStatus: function () {
             var status = exports.World.getStatus.call(this);
