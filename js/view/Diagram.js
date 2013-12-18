@@ -1,4 +1,9 @@
+/** @namespace automata */
 
+/**
+ * @namespace view
+ * @memberof automata
+ */
 namespace("automata.view", function (exports) {
     "use strict";
 
@@ -12,6 +17,12 @@ namespace("automata.view", function (exports) {
     var DEFAULT_SPRING_FACTOR = 0.01;
     var LAYOUT_DECAY = 0.9;
     
+    /**
+     * @class Diagram
+     * @memberof automata.view
+     *
+     * @todo Add documentation
+     */
     exports.Diagram = exports.View.create().augment({
         templates: {
             main: "templates/Diagram-main.tpl.svg"

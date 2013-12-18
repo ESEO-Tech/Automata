@@ -1,7 +1,6 @@
 {
     "id": "automata.games",
     "contents": [
-        "pushButton",
         "robot",
         "openTheGate"
     ]

@@ -7,21 +7,30 @@
 namespace("automata.model", function (exports, env) {
     "use strict";
 
+    /**
+     * The number of objects created so far.
+     *
+     * This counter is used for computing unique object ids.
+     *
+     * @memberof automata.model
+     * @private
+     * @type {!number}
+     */
     var creationCount = 0;
     
     /**
      * @class Object
      * @memberof automata.model
+     *
+     * @abstract
      */
     exports.Object = {
         /**
          * Initialize the current object.
          *
-         * @method init
          * @memberof automata.model.Object
-         * @public
-         * @instance
-         * @return The current object
+         *
+         * @return {automata.model.Object} The current object.
          */
         init: function () {
             this.listeners = {};
@@ -33,25 +42,36 @@ namespace("automata.model", function (exports, env) {
         /**
          * Create a new object with the current object as prototype.
          *
-         * Optionally augment the new Object with the given properties.
+         * Optionally augment the new Object with the given properties
+         * (see {@link automata.model.Object#augment}).
          *
-         * @method create
          * @memberof automata.model.Object
-         * @public
-         * @instance
-         * @param {Object} [properties] - An object with the properties to add to the new object
-         * @return The new object
+         *
+         * @param {Object} [properties] - An object with the properties to add to the new object.
+         * @return {automata.model.Object} The new object.
          */
         create: function (properties) {
             return Object.create(this).augment(properties || {});
         },
         
+        /**
+         * The prototype of the current object.
+         *
+         * @memberof automata.model.Object
+         *
+         * @type {Object|automata.model.Object}
+         */
         get proto() {
             return Object.getPrototypeOf(this);
         },
         
-        /*
+        /**
          * Augment the current object with the properties of the given object.
+         *
+         * @memberof automata.model.Object
+         *
+         * @param {Object} [properties] - An object with the properties to add to the new object.
+         * @return {automata.model.Object} The current object.
          */
         augment: function (properties) {
             for (var p in properties) {
@@ -60,26 +80,53 @@ namespace("automata.model", function (exports, env) {
             return this;
         },
         
+        /**
+         * Convert the current object into an object suitable for storage.
+         *
+         * @memberof automata.model.Object
+         * @abstract
+         *
+         * @return {Object} A storable representation of the current object.
+         */
         toStorable: function () {
             return {};
         },
         
+        /**
+         * Initialize the current object from the given storable object.
+         *
+         * @memberof automata.model.Object
+         * @abstract
+         *
+         * @param {!Object} obj - A storable representation of the current object.
+         * @return {automata.model.Object} The current object.
+         */
         fromStorable: function (obj) {
-            // Abstract
             return this;
         },
         
-        /*
+        /**
          * Add a listener for a given event.
          *
+         * The example below shows three usage scenarios for this method.
+         *
+         * ```
          * model.addListener("anEvent", aFunction, anObject);
-         *    emitter.fire("anEvent", ...) -> anObject.aFunction(emitter, ...);
+         * model.fire("anEvent", ...) -> anObject.aFunction(model, ...);
          *
          * model.addListener("anEvent", anObject);
-         *    emitter.fire("anEvent", ...) -> anObject.anEvent(emitter, ...);
+         * model.fire("anEvent", ...) -> anObject.anEvent(model, ...);
          *
          * model.addListener("anEvent", aFunction);
-         *    emitter.fire("anEvent", ...) -> aFunction(emitter, ...);
+         * model.fire("anEvent", ...) -> aFunction(model, ...);
+         * ```
+         *
+         * @memberof automata.model.Object
+         *
+         * @param {string}   event      - The name of the event to listen.
+         * @param {function} [callback] - The function to call when the event is fired (defaults to the function that matches the event name in the callback receiver).
+         * @param {Object}   [receiver] - The context object of the callback (defaults to the global object).
+         * @return {automata.model.Object} The current object.
          */
         addListener: function (event, a, b) {
             if (!(event in this.listeners)) {
@@ -89,10 +136,17 @@ namespace("automata.model", function (exports, env) {
             return this;
         },
         
-        /*
+        /**
          * Remove a listener for a given event.
          *
-         * This method accepts the same arguments as addListener.
+         * This method accepts the same arguments as {@link automata.model.Object#addListener}.
+         *
+         * @memberof automata.model.Object
+         *
+         * @param {string}   event      - The name of the event to listen.
+         * @param {function} [callback] - The function to call when the event is fired (defaults to the function that matches the event name in the callback receiver).
+         * @param {Object}   [receiver] - The context object of the callback (defaults to the global object).
+         * @return {automata.model.Object} The current object.
          */
         removeListener: function (event, a, b) {
             if (event in this.listeners) {
@@ -110,10 +164,13 @@ namespace("automata.model", function (exports, env) {
             return this;
         },
         
-        /*
+        /**
          * Fire an event.
          *
-         * fire("anEvent", ...) -> receiver.callback(emitter, ...)
+         * @memberof automata.model.Object
+         *
+         * @param {string} event - The name of the event to fire.
+         * @return {automata.model.Object} The current object.
          */
         fire: function (event) {
             if (event in this.listeners) {
@@ -128,8 +185,16 @@ namespace("automata.model", function (exports, env) {
             return this;
         },
         
-        /*
+        /**
          * Returns an event listener definition object.
+         *
+         * @memberof automata.model.Object
+         * @private
+         *
+         * @param {string}   event      - The name of the event to listen.
+         * @param {function} [callback] - The function to call when the event is fired (defaults to the function that matches the event name in the callback receiver).
+         * @param {Object}   [receiver] - The context object of the callback (defaults to the global object).
+         * @return {Object} A listener definition.
          */
         makeListenerRecord: function (event, a, b) {
             if (typeof b === "undefined") {

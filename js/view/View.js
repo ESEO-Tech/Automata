@@ -1,7 +1,20 @@
+/** @namespace automata */
 
+/**
+ * @namespace view
+ * @memberof automata
+ */
 namespace("automata.view", function (exports) {
     "use strict";
 
+    /**
+     * @class View
+     * @memberof automata.view
+     *
+     * @abstract
+     *
+     * @todo Add documentation
+     */
     exports.View = automata.model.Object.create({
         templates: {},
         

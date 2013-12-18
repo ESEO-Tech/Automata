@@ -1,7 +1,18 @@
+/** @namespace automata */
 
+/**
+ * @namespace view
+ * @memberof automata
+ */
 namespace("automata.view", function (exports) {
     "use strict";
 
+    /**
+     * @class ScoreView
+     * @memberof automata.view
+     *
+     * @todo Add documentation
+     */
     exports.ScoreView = exports.View.create().augment({
         templates: {
             main: "templates/ScoreView-main.tpl.html"

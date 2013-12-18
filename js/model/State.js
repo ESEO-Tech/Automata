@@ -1,7 +1,18 @@
+/** @namespace automata */
 
+/**
+ * @namespace model
+ * @memberof automata
+ */
 namespace("automata.model", function (exports) {
     "use strict";
 
+    /**
+     * @class State
+     * @memberof automata.model
+     *
+     * @todo Add documentation
+     */
     exports.State = exports.Object.create({
         
         init: function (stateMachine) {

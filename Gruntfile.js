@@ -48,7 +48,7 @@ module.exports = function(grunt) {
         jsdoc: {
             core: {
                 options: {
-                    destination: "build/doc",
+                    destination: "build/doc/",
                     configure: "jsdoc-conf.json"
                 },
                 src: [

@@ -1,6 +1,18 @@
+/** @namespace automata */
+
+/**
+ * @namespace view
+ * @memberof automata
+ */
 namespace("automata.view", function (exports) {
     "use strict";
 
+    /**
+     * @class ControlView
+     * @memberof automata.view
+     *
+     * @todo Add documentation
+     */
     exports.ControlView = exports.View.create().augment({
         init: function (model, container) {
             exports.View.init.call(this, model, container);

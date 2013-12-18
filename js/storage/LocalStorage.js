@@ -1,4 +1,9 @@
+/** @namespace automata */
 
+/**
+ * @namespace storage
+ * @memberof automata
+ */
 namespace("automata.storage", function (exports, env) {
     
     function supportsLocalStorage() {
@@ -10,6 +15,12 @@ namespace("automata.storage", function (exports, env) {
         }
     }
         
+    /**
+     * @class LocalStorage
+     * @memberof automata.storage
+     *
+     * @todo Add documentation
+     */
     exports.LocalStorage = automata.model.Object.create({
         
         /*

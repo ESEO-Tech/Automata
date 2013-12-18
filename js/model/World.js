@@ -1,6 +1,18 @@
 
+/** @namespace automata */
+
+/**
+ * @namespace model
+ * @memberof automata
+ */
 namespace("automata.model", function (exports, env) {
     
+    /**
+     * @class World
+     * @memberof automata.model
+     *
+     * @todo Add documentation
+     */
     exports.World = exports.Object.create({
         timeStepMin: 1,
         timeStepMax: 1000,

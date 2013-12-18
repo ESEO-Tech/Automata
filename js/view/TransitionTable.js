@@ -1,7 +1,18 @@
+/** @namespace automata */
 
+/**
+ * @namespace view
+ * @memberof automata
+ */
 namespace("automata.view", function (exports) {
     "use strict";
 
+    /**
+     * @class TransitionTable
+     * @memberof automata.view
+     *
+     * @todo Add documentation
+     */
     exports.TransitionTable = exports.View.create().augment({
         templates: {
             main:       "templates/TransitionTable-main.tpl.html",
