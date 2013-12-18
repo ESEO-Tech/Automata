@@ -19,6 +19,14 @@ namespace("automata.model", function (exports, env) {
     var creationCount = 0;
     
     /**
+     * Base object.
+     *
+     * This object provides the following features:
+     *
+     *    - Unique ids.
+     *    - Helpers for prototype-based inheritance.
+     *    - Event handling.
+     *
      * @class Object
      * @memberof automata.model
      *
