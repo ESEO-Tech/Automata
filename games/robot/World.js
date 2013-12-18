@@ -140,7 +140,8 @@ namespace("automata.games.robot", function (exports) {
             }
             
             // Update sensors
-            forEach(sensor, sensorIndex of this.sensorPoints) {
+            for (var sensorIndex = 0; sensorIndex < this.sensorPoints.length; sensorIndex ++) {
+                var sensor = this.sensorPoints[sensorIndex];
                 var sx = this.robotMatrix.x(sensor.x, sensor.y);
                 var sy = this.robotMatrix.y(sensor.x, sensor.y);
                 for (var wallIndex = 0; wallIndex < this.walls.length; wallIndex ++) {

@@ -111,7 +111,8 @@ namespace("automata.model", function (exports) {
         },
         
         getTransitionToFire: function () {
-            forEach(transition of this.outgoingTransitions) {
+            for (var i = 0; i < this.outgoingTransitions.length; i ++) {
+                var transition = this.outgoingTransitions[i];
                 if (transition.canFire()) {
                     return transition;
                 }

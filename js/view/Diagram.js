@@ -165,8 +165,8 @@ namespace("automata.view", function (exports) {
 
             // Update incoming and outgoing transition paths if Moore actions have changed.
             // Update outgoing transition conditions if conditions have changed.
-            forEach(ot of transition.sourceState.outgoingTransitions) {
-                this.updateTransitionText(ot);
+            for (var i = 0; i < transition.sourceState.outgoingTransitions.length; i ++) {
+                this.updateTransitionText(transition.sourceState.outgoingTransitions[i]);
             }
 
             this.layout();
@@ -178,7 +178,8 @@ namespace("automata.view", function (exports) {
             var defaultSpringLength = 0;
             
             // Speed decay, to reduce oscillations
-            forEach (v1 of this.stateViews) {
+            for (var i1 = 0; i1 < this.stateViews.length; i1 ++) {
+                var v1 = this.stateViews[i1];
                 v1.vx *= LAYOUT_DECAY;
                 v1.vy *= LAYOUT_DECAY;
                 var l = 4 * (v1.width + v1.height);
@@ -187,7 +188,8 @@ namespace("automata.view", function (exports) {
                 }
             }
             
-            forEach (v1 of this.transitionViews) {
+            for (var i1 = 0; i1 < this.transitionViews.length; i1 ++) {
+                var v1 = this.transitionViews[i1];
                 v1.vx *= LAYOUT_DECAY;
                 v1.vy *= LAYOUT_DECAY;
             }
@@ -205,21 +207,22 @@ namespace("automata.view", function (exports) {
                 }
             }
             
-            forEach (v1, i1 of this.stateViews) {
+            for (var i1 = 0; i1 < this.stateViews.length; i1 ++) {
+                var v1 = this.stateViews[i1];
                 var x1 = v1.x + v1.width / 2;
                 var y1 = v1.y + v1.height / 2;
                 
                 // Compute forces between pairs of states
-                forEach (v2, i2 of this.stateViews) {
-                    if (i2 > i1) {
-                        updateSpeeds(v1, x1, y1,
-                                     v2, v2.x + v2.width / 2, v2.y + v2.height / 2,
-                                     defaultSpringLength, DEFAULT_SPRING_FACTOR);
-                    }
+                for (var i2 = i1 + 1; i2 < this.stateViews.length; i2 ++) {
+                    var v2 = this.stateViews[i2];
+                    updateSpeeds(v1, x1, y1,
+                                 v2, v2.x + v2.width / 2, v2.y + v2.height / 2,
+                                 defaultSpringLength, DEFAULT_SPRING_FACTOR);
                 }
                 
                 // Compute forces between states and transitions
-                forEach (v2 of this.transitionViews) {
+                for (var i2 = 0; i2 < this.transitionViews.length; i2 ++) {
+                    var v2 = this.transitionViews[i2];
                     if (v2.transitions[0].sourceState === v1.state && v2.transitions[0].targetState === v1.state) {
                         updateSpeeds(v1, x1, y1, v2, v2.x, v2.y, v1.width, DEFAULT_SPRING_FACTOR);
                     }
@@ -238,16 +241,16 @@ namespace("automata.view", function (exports) {
                 this.putStateView(v1.state, v1.x + v1.vx, v1.y + v1.vy);
             }
 
-            forEach (v1, i1 of this.transitionViews) {
-                forEach (v2, i2 of this.transitionViews) {
-                    if (i2 > i1) {
-                        if (v1.transitions[0].sourceState === v2.transitions[0].sourceState && v1.transitions[0].targetState === v2.transitions[0].targetState ||
-                            v1.transitions[0].sourceState === v2.transitions[0].targetState && v1.transitions[0].targetState === v2.transitions[0].sourceState) {
-                            updateSpeeds(v1, v1.x, v1.y, v2, v2.x, v2.y, Math.max((v1.width + v2.width + v1.height + v2.height) / 2, 4 * TRANSITION_RADIUS), 2 * DEFAULT_SPRING_FACTOR);
-                        }
-                        else {
-                            updateSpeeds(v1, v1.x, v1.y, v2, v2.x, v2.y, defaultSpringLength, DEFAULT_SPRING_FACTOR / 100);
-                        }
+            for (var i1 = 0; i1 < this.transitionViews.length; i1 ++) {
+                var v1 = this.transitionViews[i1];
+                for (var i2 = i1 + 1; i2 < this.transitionViews.length; i2 ++) {
+                    var v2 = this.transitionViews[i2];
+                    if (v1.transitions[0].sourceState === v2.transitions[0].sourceState && v1.transitions[0].targetState === v2.transitions[0].targetState ||
+                        v1.transitions[0].sourceState === v2.transitions[0].targetState && v1.transitions[0].targetState === v2.transitions[0].sourceState) {
+                        updateSpeeds(v1, v1.x, v1.y, v2, v2.x, v2.y, Math.max((v1.width + v2.width + v1.height + v2.height) / 2, 4 * TRANSITION_RADIUS), 2 * DEFAULT_SPRING_FACTOR);
+                    }
+                    else {
+                        updateSpeeds(v1, v1.x, v1.y, v2, v2.x, v2.y, defaultSpringLength, DEFAULT_SPRING_FACTOR / 100);
                     }
                 }
 
@@ -421,7 +424,8 @@ namespace("automata.view", function (exports) {
 
             this.setDraggable(view, "group", function (x, y) {
                 this.putStateView(state, x, y);
-                forEach(transition of state.outgoingTransitions) {
+                for (var i = 0; i < state.outgoingTransitions.length; i ++) {
+                    var transition = state.outgoingTransitions[i];
                     if (transition.targetState === state) {
                         this.updateTransitionHandle(transition);
                         this.updateTransitionPath(transition);
@@ -458,11 +462,11 @@ namespace("automata.view", function (exports) {
             view.y = y;
             view.group.transform("translate(" + x + "," + y + ")");
 
-            forEach(transition of state.incomingTransitions) {
-                this.updateTransitionPath(transition);
+            for (var i = 0; i < state.incomingTransitions.length; i ++) {
+                this.updateTransitionPath(state.incomingTransitions[i]);
             }
-            forEach(transition of state.outgoingTransitions) {
-                this.updateTransitionPath(transition);
+            for (var i = 0; i < state.outgoingTransitions.length; i ++) {
+                this.updateTransitionPath(state.outgoingTransitions[i]);
             }
 
             if (state === this.model.states[0]) {
@@ -574,7 +578,9 @@ namespace("automata.view", function (exports) {
             view.width = 0;
             
             var hasTerms = false;
-            forEach(tr of transitions) {
+            for (var i = 0; i < transitions.length; i ++) {
+                var tr = transitions[i];
+                
                 var termSpan = this.paper.el("tspan").attr({"class": "term"});
                 
                 // This is a workaround for the fact that tspan.getBBox().height==0
@@ -587,10 +593,11 @@ namespace("automata.view", function (exports) {
                 termSpan.attr({dy: dy + "px"});
                     
                 var hasInputs = false;
-                forEach(value, index of tr.inputs) {
+                for (var j = 0; j < tr.inputs.length; j ++) {
+                    var value = tr.inputs[j];
                     if (value !== "-") {
                         var inputSpan = this.paper.el("tspan").attr({"class": "automata-bool-" + value});
-                        inputSpan.attr({"#text": sensors[index].name});
+                        inputSpan.attr({"#text": sensors[j].name});
                         if (hasInputs) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": "."}));
                         }
@@ -600,8 +607,8 @@ namespace("automata.view", function (exports) {
                 }
                 
                 var hasActions = false;
-                forEach(value, index of tr.outputs) {
-                    if (value === "1" && mooreActions.indexOf(actuators[index].name) === -1) {
+                for (var j = 0; j < tr.outputs.length; j ++) {
+                    if (tr.outputs[j] === "1" && mooreActions.indexOf(actuators[j].name) === -1) {
                         if (hasActions) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": ", "}));
                         }
@@ -609,7 +616,7 @@ namespace("automata.view", function (exports) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": " / "}));
                             hasActions = true;
                         }
-                        termSpan.add(this.paper.el("tspan").attr({"#text": actuators[index].name}));
+                        termSpan.add(this.paper.el("tspan").attr({"#text": actuators[j].name}));
                     }
                 }
                 

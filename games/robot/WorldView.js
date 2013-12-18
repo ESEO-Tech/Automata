@@ -22,7 +22,8 @@ namespace("automata.games.robot", function (exports) {
             this.paper.circle(world.goalX, world.goalY, world.goalRadius).attr({fill: "orange"});
             
             // Draw walls
-            forEach(wall of world.walls) {
+            for (var i = 0; i < world.walls.length; i ++) {
+                var wall = world.walls[i];
                 this.paper.rect(wall[0], wall[1], wall[2] - wall[0], wall[3] - wall[1]).attr({fill: "black", stroke: "none"});
             }
             
@@ -52,9 +53,10 @@ namespace("automata.games.robot", function (exports) {
         },
         
         update: function () {
-            forEach(view, index of this.sensorViews) {
-                var cls = this.world.sensorValues[index] === "1" ? "active" : "inactive";
-                view.attr({"class": cls});
+            for (var i = 0; i < this.sensorViews.length; i ++) {
+                this.sensorViews[i].attr({
+                    "class": this.world.sensorValues[i] === "1" ? "active" : "inactive"
+                });
             }
             this.robotView.transform(this.world.robotMatrix);
         }

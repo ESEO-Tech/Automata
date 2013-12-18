@@ -86,15 +86,15 @@ namespace("automata.games.openTheGate", function (exports) {
         },
         
         update: function () {
-            forEach(view, index of this.sensorViews) {
-                view.attr({"class": this.world.sensorValues[index] === "1" ? "active" : "inactive"});
+            for (var i = 0; i < this.sensorViews.length; i ++) {
+                this.sensorViews[i].attr({"class": this.world.sensorValues[i] === "1" ? "active" : "inactive"});
             }
-            forEach(view, index of this.actuatorViews) {
-                view.attr({"class": this.world.actuatorValues[index] === "1" ? "active" : "inactive"});
+            for (var i = 0; i < this.actuatorViews.length; i ++) {
+                this.actuatorViews[i].attr({"class": this.world.actuatorValues[i] === "1" ? "active" : "inactive"});
             }
             
-            forEach (view, index of this.carViews) {
-                view.attr({transform: "translate(" + this.world.carX[index] + "," + this.world.carY + ")"});
+            for (var i = 0; i < this.carViews.length; i ++) {
+                this.carViews[i].attr({transform: "translate(" + this.world.carX[i] + "," + this.world.carY + ")"});
             }
 
             this.gateView.attr({transform: "translate(" + this.world.gateX + "," + this.world.gateY + ")"});

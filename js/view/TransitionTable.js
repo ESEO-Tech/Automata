@@ -216,7 +216,8 @@ namespace("automata.view", function (exports) {
         },
         
         showNonDeterministicTransitions: function (state) {
-            forEach(transition of state.outgoingTransitions) {
+            for (var i = 0; i < state.outgoingTransitions.length; i ++) {
+                var transition = state.outgoingTransitions[i];
                 var index = transition.getIndex();
                 var row = this.getRowsForState(state).slice(index, index + 1);
                 if (transition.isNonDeterministic()) {

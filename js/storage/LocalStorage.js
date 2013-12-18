@@ -35,18 +35,20 @@ namespace("automata.storage", function (exports, env) {
         load: function () {
             var success = false;
             if (supportsLocalStorage()) {
-                forEach (item of this.sources) {
-                    item.source.removeListener("changed", this.save, this);
+                var sourceIndex;
+                for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                    this.sources[sourceIndex].source.removeListener("changed", this.save, this);
                 }
-                forEach (item of this.sources) {
+                for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                    var item = this.sources[sourceIndex];
                     if (item.key in env.localStorage) {
                         console.log("Loading: " + item.key);
                         item.source.fromStorable(JSON.parse(env.localStorage[item.key]), this.mapping);
                         success = true;
                     }
                 }
-                forEach (item of this.sources) {
-                    item.source.addListener("changed", this.save, this);
+                for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                    this.sources[sourceIndex].source.addListener("changed", this.save, this);
                 }
             }
             return success;
@@ -58,7 +60,8 @@ namespace("automata.storage", function (exports, env) {
          */
         save: function (source) {
             if (supportsLocalStorage()) {
-                forEach (item of this.sources) {
+                for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                    var item = this.sources[sourceIndex];
                     if (typeof source === "undefined" || item.source === source) {
                         console.log("Saving: " + item.key);
                         env.localStorage[item.key] = JSON.stringify(source.toStorable());
@@ -69,7 +72,8 @@ namespace("automata.storage", function (exports, env) {
         
         toJSON: function () {
             var data = {};
-            forEach (item of this.sources) {
+            for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                var item = this.sources[sourceIndex];
                 data[item.key] = item.source.toStorable();
             }
             return JSON.stringify(data);
@@ -77,17 +81,18 @@ namespace("automata.storage", function (exports, env) {
         
         fromJSON: function (json) {
             var data = JSON.parse(json);
-            forEach (item of this.sources) {
-                item.source.removeListener("changed", this.save, this);
+            for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                this.sources[sourceIndex].source.removeListener("changed", this.save, this);
             }
-            forEach (item of this.sources) {
+            for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                var item = this.sources[sourceIndex];
                 if (item.key in data) {
                     console.log("Importing: " + item.key);
                     item.source.fromStorable(data[item.key], this.mapping);
                 }
             }
-            forEach (item of this.sources) {
-                item.source.addListener("changed", this.save, this);
+            for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                this.sources[sourceIndex].source.addListener("changed", this.save, this);
             }
             return this;
         },

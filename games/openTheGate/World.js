@@ -89,7 +89,9 @@ namespace("automata.games.openTheGate", function (exports) {
             
             var carsMove = true;
             
-            forEach (x, index of this.carX) {
+            for (var index = 0; index < this.carX.length; index ++) {
+                var x = this.carX[index];
+                
                 // Update car position. A car can move:
                 // * before reaching the "Open" button (carXStop),
                 // * through the the gate, if the gate is open,

@@ -117,9 +117,11 @@ namespace("automata.model", function (exports, env) {
          */
         fire: function (event) {
             if (event in this.listeners) {
+                var listeners = this.listeners[event];
                 var args = Array.prototype.slice.call(arguments, 1);
                 args.unshift(this);
-                forEach(listener of this.listeners[event]) {
+                for (var i = 0; i < listeners.length; i ++) {
+                    var listener = listeners[i];
                     listener.callback.apply(listener.receiver, args);
                 }
             }
