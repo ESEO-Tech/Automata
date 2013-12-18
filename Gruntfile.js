@@ -8,15 +8,14 @@ module.exports = function(grunt) {
     });
     
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-sweet.js');
     grunt.loadNpmTasks("grunt-contrib-uglify");
-    grunt.loadNpmTasks("grunt-contrib-concat");
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-nunjucks");
     grunt.loadNpmTasks("grunt-contrib-connect");
     grunt.loadNpmTasks('grunt-zip');
     grunt.loadNpmTasks("grunt-rsync");
+    grunt.loadNpmTasks('grunt-jsdoc');
     
     var version = grunt.template.today("yy.mm.ddHHMM");
     
@@ -46,6 +45,19 @@ module.exports = function(grunt) {
             ]
         },
         
+        jsdoc: {
+            core: {
+                options: {
+                    destination: "build/doc",
+                    configure: "jsdoc-conf.json"
+                },
+                src: [
+                    "js/**/*.js",
+                    "games/**/*.js"
+                ]
+            }
+        },
+        
         nunjucks: {
             core: {
                 src: "templates/*",
@@ -53,8 +65,12 @@ module.exports = function(grunt) {
             }
         },
         
-        concat: {
-            "core-js": {
+        uglify: {
+            options: {
+                //mangle: false,
+                //beautify: true
+            },
+            core: {
                 src: [
                     "macros/arrays.js",
                     
@@ -79,24 +95,6 @@ module.exports = function(grunt) {
                     'js/storage/LocalStorage.js',
                     "<%= nunjucks.core.dest %>"
                 ],
-                dest: 'build/tmp/automata.core.concat.js'
-            }
-        },
-        
-        sweet_js: {
-            core: {
-                src: "<%= concat['core-js'].dest %>",
-                dest: 'build/tmp/automata.core.sweet.js'
-            }
-        },
-        
-        uglify: {
-            options: {
-                //mangle: false,
-                //beautify: true
-            },
-            core: {
-                src: "<%= sweet_js.core.dest %>",
                 dest: 'build/dist/js/automata.core.min.js'
             }
         },
@@ -195,16 +193,8 @@ module.exports = function(grunt) {
                 return gameDir + "/" + fileName;
             }
             
-            grunt.config.set(["concat", gameKey + "-js"], {
-                src: gameData.js.map(rebase),
-                dest: "build/tmp/" + gameKey + ".concat.js"
-            });
-            grunt.config.set(["sweet_js", gameKey], {
-                src:  "build/tmp/" + gameKey + ".concat.js",
-                dest: "build/tmp/" + gameKey + ".sweet.js"
-            });
             grunt.config.set(["uglify", gameKey], {
-                src:  "build/tmp/"   + gameKey + ".sweet.js",
+                src: gameData.js.map(rebase),
                 dest: "build/dist/js/" + gameKey + ".min.js"
             });
             
@@ -236,5 +226,5 @@ module.exports = function(grunt) {
         dest: "build/dist/index.html"
     });
     
-    grunt.registerTask('default', ["nunjucks", "concat", "sweet_js", "uglify", "cssmin", "nunjucks-render", "copy", "zip"]);
+    grunt.registerTask('default', ["nunjucks", "uglify", "cssmin", "nunjucks-render", "copy", "zip"]);
 };
