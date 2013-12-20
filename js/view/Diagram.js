@@ -327,20 +327,18 @@ namespace("automata.view", function (exports) {
             }
             
             function onMouseUp(evt) {
-                self.fire("changed");
-                
                 if (evt.button === 0) {
+                    self.fire("changed");
+                
                     $(document.documentElement).off("mouseup", onMouseUp);
                     $(document.documentElement).off("mousemove", onMouseMove);
-                }
                 
-                evt.preventDefault();
-                evt.stopPropagation();
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                }
             }
             
             function onWheel(evt) {
-                evt.stopPropagation();
-                evt.preventDefault();
                 if (!evt) {
                     evt = window.event;
                 }
@@ -364,6 +362,9 @@ namespace("automata.view", function (exports) {
                 self.x += self.getWidth()  * (1 - f) / 2;
                 self.y += self.getHeight() * (1 - f) / 2;
                 self.updateViewbox();
+
+                evt.stopPropagation();
+                evt.preventDefault();
             }
         
             function onDoubleClick(evt) {
@@ -374,6 +375,9 @@ namespace("automata.view", function (exports) {
                 self.x = bb.x - (w / self.zoom - bb.width) / 2;
                 self.y = bb.y - (h / self.zoom - bb.height) / 2;
                 self.updateViewbox();
+
+                evt.preventDefault();
+                evt.stopPropagation();
             }
             
             this.paper.mousedown(onMouseDown).dblclick(onDoubleClick);
