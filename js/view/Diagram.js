@@ -24,6 +24,7 @@ namespace("automata.view", function (exports) {
      * @todo Add documentation
      */
     exports.Diagram = exports.View.create().augment({
+        
         templates: {
             main: "templates/Diagram-main.tpl.svg"
         },        
@@ -364,8 +365,16 @@ namespace("automata.view", function (exports) {
                 self.y += self.getHeight() * (1 - f) / 2;
                 self.updateViewbox();
             }
+        
+            function onDoubleClick(evt) {
+                var bb = self.paper.node.getBBox();
+                self.zoom = Math.min(self.getWidth() / bb.width, self.getHeight() / bb.height);
+                self.x = bb.x;
+                self.y = bb.y;
+                self.updateViewbox();
+            }
             
-            this.paper.mousedown(onMouseDown);
+            this.paper.mousedown(onMouseDown).dblclick(onDoubleClick);
             this.paper.node.addEventListener("DOMMouseScroll", onWheel, false); // Mozilla
             this.paper.node.onmousewheel = onWheel;
         },
