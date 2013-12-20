@@ -367,10 +367,12 @@ namespace("automata.view", function (exports) {
             }
         
             function onDoubleClick(evt) {
+                var w = self.getWidth();
+                var h = self.getHeight();
                 var bb = self.paper.node.getBBox();
-                self.zoom = Math.min(self.getWidth() / bb.width, self.getHeight() / bb.height);
-                self.x = bb.x;
-                self.y = bb.y;
+                self.zoom = Math.min(w / bb.width, h / bb.height);
+                self.x = bb.x - (w / self.zoom - bb.width) / 2;
+                self.y = bb.y - (h / self.zoom - bb.height) / 2;
                 self.updateViewbox();
             }
             
