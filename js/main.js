@@ -1,5 +1,7 @@
 
 $(function () {
+    "use strict";
+
     var world       = automata.game.world.create().init();
     var worldView   = automata.game.view.create().init(world, $("#world-view"));
     var tableView   = automata.view.TransitionTable.create().init(world.stateMachine, $("#table-view"));
@@ -7,7 +9,7 @@ $(function () {
     var diagramView = automata.view.Diagram.create().init(world.stateMachine, $("#diagram-view"));
     var helpView    = automata.view.HelpView.create().init(world, $("#help-view"));
     var scoreView   = automata.view.ScoreView.create().init(world, $("#score-view"));
-    
+
     // When the window is resized, scale the content of
     // the table view and update the diagram viewbox.
     function resize() {
@@ -25,13 +27,13 @@ $(function () {
         .addSource(world.key + ".view.table", tableView)
         .addSource(world.key + ".view.diagram", diagramView);
     var loaded = storage.load();
-    
+
     function handleHash() {
         switch (window.location.hash) {
             case "#export":
                 $("#control-view .export").attr("href", storage.toBlobURL())[0].click();
                 break;
-            
+
             case "#import":
                 $("#control-view .import").change(function () {
                     storage.fromFile(this.files[0]);
@@ -41,7 +43,7 @@ $(function () {
             case "#to-base64":
                 alert(storage.toBase64());
                 break;
-                
+
             default:
                 if (window.location.hash.match(/^#from-base64:/)) {
                     storage.fromBase64(window.location.hash.slice(13));
@@ -51,10 +53,10 @@ $(function () {
                 }
         }
     }
-    
+
     handleHash();
     $(window).on("hashchange", handleHash);
-    
+
     // If no record exists for this game, we assume the user has never
     // played this game before and we show the instructions pane.
     if (!loaded) {

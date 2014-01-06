@@ -1,5 +1,6 @@
 
 namespace("automata.games.openTheGate", function (exports) {
+    "use strict";
 
     exports.DontCrushTheFollowerWorld = Object.create(exports.World).augment({
 

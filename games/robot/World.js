@@ -1,9 +1,10 @@
 
 namespace("automata.games.robot", function (exports) {
+    "use strict";
 
     exports.World = Object.create(automata.model.World).augment({
         timeStepMax: 100,
-        
+
         sensors:   [
             {name: "WL",  desc: "Wall on the Left"},
             {name: "WR",  desc: "Wall on the right"},
@@ -19,13 +20,13 @@ namespace("automata.games.robot", function (exports) {
 
         width: 100,
         height: 100,
-        
+
         walls: [],
-        
+
         robotRadius: 10,
         sensorFactor: 1.4,
         stepDistance: 1,
-        
+
         startX: 0,
         startY: 0,
         startAngle: 0,
@@ -33,7 +34,7 @@ namespace("automata.games.robot", function (exports) {
         goalX: 0,
         goalY: 0,
         goalRadius: 10,
-        
+
         init: function () {
             this.sensorRadius = this.robotRadius / 4;
             this.sensorPoints = [
@@ -43,14 +44,14 @@ namespace("automata.games.robot", function (exports) {
             ];
             return automata.model.World.init.call(this);
         },
-        
+
         onReset: function () {
             this.robotMatrix = (new Snap.Matrix()).translate(this.startX, this.startY).rotate(this.startAngle);
         },
-        
+
         onStep: function () {
             this.sensorValues = ["0", "0", "0", "0"];
-            
+
             // Compute next coordinates
             var leftDir = 0;
             if (this.actuatorValues[0] === "1") {
@@ -96,24 +97,24 @@ namespace("automata.games.robot", function (exports) {
                     return y1 >= wy1 && y1 <= wy2 || y2 >= wy1 && y2 <= wy2;
                 }
             }
-            
+
             var collision =
                 intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, 0,           0, this.height) ||
                 intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, this.width,  0, this.height) ||
                 intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, 0,           0, this.width)  ||
                 intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, this.height, 0, this.width);
-            
-            for (var wallIndex = 0; wallIndex < this.walls.length; wallIndex ++) {
-                var w = this.walls[wallIndex];
-                if (intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, w[0], w[1], w[3]) ||
-                    intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, w[2], w[1], w[3]) ||
-                    intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, w[1], w[0], w[2]) ||
-                    intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, w[3], w[0], w[2])) {
+
+            for (var collisionWallIndex = 0; collisionWallIndex < this.walls.length; collisionWallIndex ++) {
+                var cw = this.walls[collisionWallIndex];
+                if (intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, cw[0], cw[1], cw[3]) ||
+                    intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, cw[2], cw[1], cw[3]) ||
+                    intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, cw[1], cw[0], cw[2]) ||
+                    intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, cw[3], cw[0], cw[2])) {
                     collision = true;
                     break;
                 }
             }
-            
+
             if (!collision) {
                 if (leftDir !== rightDir && (nextMatrix.a === 0 || nextMatrix.a * this.robotMatrix.a < 0 ||
                                              nextMatrix.b === 0 || nextMatrix.b * this.robotMatrix.b < 0)) {
@@ -138,25 +139,25 @@ namespace("automata.games.robot", function (exports) {
 
                 this.robotMatrix = nextMatrix;
             }
-            
+
             // Update sensors
             for (var sensorIndex = 0; sensorIndex < this.sensorPoints.length; sensorIndex ++) {
                 var sensor = this.sensorPoints[sensorIndex];
                 var sx = this.robotMatrix.x(sensor.x, sensor.y);
                 var sy = this.robotMatrix.y(sensor.x, sensor.y);
-                for (var wallIndex = 0; wallIndex < this.walls.length; wallIndex ++) {
-                    var w = this.walls[wallIndex];
-                    if (intersect(sx, sy, this.sensorRadius, w[0], w[1], w[3]) ||
-                        intersect(sx, sy, this.sensorRadius, w[2], w[1], w[3]) ||
-                        intersect(sy, sx, this.sensorRadius, w[1], w[0], w[2]) ||
-                        intersect(sy, sx, this.sensorRadius, w[3], w[0], w[2])) {
+                for (var sensorWallIndex = 0; sensorWallIndex < this.walls.length; sensorWallIndex ++) {
+                    var sw = this.walls[sensorWallIndex];
+                    if (intersect(sx, sy, this.sensorRadius, sw[0], sw[1], sw[3]) ||
+                        intersect(sx, sy, this.sensorRadius, sw[2], sw[1], sw[3]) ||
+                        intersect(sy, sx, this.sensorRadius, sw[1], sw[0], sw[2]) ||
+                        intersect(sy, sx, this.sensorRadius, sw[3], sw[0], sw[2])) {
                         this.sensorValues[sensorIndex] = "1";
                         break;
                     }
                 }
             }
         },
-        
+
         getStatus: function () {
             var goalDx = this.goalX - this.robotMatrix.e;
             var goalDy = this.goalY - this.robotMatrix.f;

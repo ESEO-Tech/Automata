@@ -1,12 +1,16 @@
+/* jshint node:true */
+
 module.exports = function(grunt) {
+    "use strict";
+
     var nunjucks = require('nunjucks');
-    
+
     grunt.registerMultiTask("nunjucks-render", function () {
         var result = nunjucks.render(this.data.src, this.data.context);
         grunt.file.write(this.data.dest, result);
         grunt.log.writeln('File ' + this.data.dest + ' created.');
     });
-    
+
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -16,35 +20,22 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-zip');
     grunt.loadNpmTasks("grunt-rsync");
     grunt.loadNpmTasks('grunt-jsdoc');
-    
+
     var version = grunt.template.today("yy.mm.ddHHMM");
-    
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        
+
         jshint: {
             options: {
-                undef: true,
-                unused: true,
-                newcap: false,
-                
-                browser: true,
-                devel: true,
-                jquery: true,
-                
-                globals: {
-                    namespace: true,
-                    automata: true,
-                    Snap: true,
-                    nunjucks: true
-                }
+                jshintrc: true
             },
             all: [
                 "js/**/*.js",
                 "games/**/*.js"
             ]
         },
-        
+
         jsdoc: {
             core: {
                 options: {
@@ -57,14 +48,14 @@ module.exports = function(grunt) {
                 ]
             }
         },
-        
+
         nunjucks: {
             core: {
                 src: "templates/*",
                 dest: "build/tmp/automata.templates.js"
             }
         },
-        
+
         uglify: {
             options: {
                 //mangle: false,
@@ -73,11 +64,11 @@ module.exports = function(grunt) {
             core: {
                 src: [
                     "macros/arrays.js",
-                    
+
                     'js/namespace.js',
                     'js/main.js',
                     'js/shims/*.js',
-                    
+
                     'js/model/Object.js',
                     'js/view/View.js',
 
@@ -85,20 +76,20 @@ module.exports = function(grunt) {
                     'js/model/Transition.js',
                     'js/model/StateMachine.js',
                     'js/model/World.js',
-                    
+
                     'js/view/TransitionTable.js',
                     'js/view/ControlView.js',
                     'js/view/HelpView.js',
                     'js/view/ScoreView.js',
                     'js/view/Diagram.js',
-                    
+
                     'js/storage/LocalStorage.js',
                     "<%= nunjucks.core.dest %>"
                 ],
                 dest: 'build/dist/js/automata.core.min.js'
             }
         },
-        
+
         cssmin: {
             core: {
                 src: [
@@ -114,7 +105,7 @@ module.exports = function(grunt) {
                 dest: "build/dist/css/automata.core.min.css"
             }
         },
-        
+
         copy: {
             core: {
                 files: [
@@ -127,12 +118,12 @@ module.exports = function(grunt) {
                 ]
             }
         },
-        
+
         "nunjucks-render": {
             "manifest.webapp":  {src: "manifest.webapp",  dest: "build/dist/manifest.webapp", context: {version: version}},
             "package.manifest": {src: "package.manifest", dest: "build/pkg/package.manifest", context: {version: version}}
         },
-        
+
         connect: {
             server: {
                 options: {
@@ -142,7 +133,7 @@ module.exports = function(grunt) {
                 }
             }
         },
-        
+
         rsync: {
             options: {
                 args: ["--verbose", "--update"]
@@ -157,7 +148,7 @@ module.exports = function(grunt) {
                 }
             }
         },
-        
+
         zip: {
             webapp: {
                 src: "build/dist/**/*",
@@ -166,7 +157,19 @@ module.exports = function(grunt) {
             }
         }
     });
-    
+
+    function rebase(dir, fileName) {
+        var cRebase = function (cFileName) {
+            return dir + "/" + cFileName;
+        };
+        if (fileName === undefined){
+            return cRebase;
+        }
+        else {
+            return cRebase(fileName);
+        }
+    }
+
     var indexData = { categories: [] };
     var categoryList = grunt.file.readJSON("games/list.json");
     for (var catIndex = 0; catIndex < categoryList.contents.length; catIndex ++) {
@@ -183,26 +186,22 @@ module.exports = function(grunt) {
             var gameData = grunt.file.readJSON(gameDir + "/game.json");
             var gameHelp = gameData.help ? grunt.file.read(gameDir + "/" + gameData.help) : "";
             var gameKey = categoryList.id + "." + gamesList.id + "." + gameData.id;
-            
+
             indexCatData.games.push({
                 key: gameKey,
                 title: gameData.title
             });
-            
-            function rebase(fileName) {
-                return gameDir + "/" + fileName;
-            }
-            
+
             grunt.config.set(["uglify", gameKey], {
-                src: gameData.js.map(rebase),
+                src: gameData.js.map(rebase(gameDir)),
                 dest: "build/dist/js/" + gameKey + ".min.js"
             });
-            
+
             grunt.config.set(["cssmin", gameKey], {
-                src:  gameData.css.map(rebase),
+                src:  gameData.css.map(rebase(gameDir)),
                 dest: "build/dist/css/" + gameKey + ".min.css"
             });
-            
+
             grunt.config.set(["nunjucks-render", gameKey], {
                 src: "templates/game.tpl.html",
                 context: {
@@ -212,19 +211,19 @@ module.exports = function(grunt) {
                 },
                 dest: "build/dist/" + gameKey + ".html"
             });
-            
+
             grunt.config.set(["copy", gameKey], {
-                src: rebase(gameData.icon),
+                src: rebase(gameDir, gameData.icon),
                 dest: "build/dist/icons/" + gameKey + ".svg"
             });
         }
     }
-    
+
     grunt.config.set(["nunjucks-render", "index"], {
         src: "templates/index.tpl.html",
         context: indexData,
         dest: "build/dist/index.html"
     });
-    
+
     grunt.registerTask('default', ["nunjucks", "uglify", "cssmin", "nunjucks-render", "copy", "zip"]);
 };

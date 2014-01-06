@@ -1,5 +1,6 @@
 
 namespace("automata.games.openTheGate", function (exports) {
+    "use strict";
 
     exports.LetMeIn = {
         view: exports.WorldView,

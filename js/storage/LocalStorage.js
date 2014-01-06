@@ -5,7 +5,8 @@
  * @memberof automata
  */
 namespace("automata.storage", function (exports, env) {
-    
+    "use strict";
+
     function supportsLocalStorage() {
         try {
             return "localStorage" in env && env.localStorage !== null;
@@ -14,7 +15,7 @@ namespace("automata.storage", function (exports, env) {
             return false;
         }
     }
-        
+
     /**
      * @class LocalStorage
      * @memberof automata.storage
@@ -22,7 +23,7 @@ namespace("automata.storage", function (exports, env) {
      * @todo Add documentation
      */
     exports.LocalStorage = automata.model.Object.create({
-        
+
         /*
          * Configure a data storage.
          */
@@ -38,7 +39,7 @@ namespace("automata.storage", function (exports, env) {
             source.addListener("changed", this.save, this);
             return this;
         },
-        
+
         /*
          * Load all sources from the data store.
          * Returns true on success.
@@ -64,14 +65,14 @@ namespace("automata.storage", function (exports, env) {
             }
             return success;
         },
-        
+
         /*
          * Save the given source to the data store.
          * If no source is specified, all sources are saved.
          */
         save: function (source) {
             if (supportsLocalStorage()) {
-                for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                for (var sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
                     var item = this.sources[sourceIndex];
                     if (typeof source === "undefined" || item.source === source) {
                         console.log("Saving: " + item.key);
@@ -80,18 +81,19 @@ namespace("automata.storage", function (exports, env) {
                 }
             }
         },
-        
+
         toJSON: function () {
             var data = {};
-            for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+            for (var sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
                 var item = this.sources[sourceIndex];
                 data[item.key] = item.source.toStorable();
             }
             return JSON.stringify(data);
         },
-        
+
         fromJSON: function (json) {
             var data = JSON.parse(json);
+            var sourceIndex;
             for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
                 this.sources[sourceIndex].source.removeListener("changed", this.save, this);
             }
@@ -107,29 +109,29 @@ namespace("automata.storage", function (exports, env) {
             }
             return this;
         },
-        
+
         toBlobURL: function () {
             var blob = new Blob([this.toJSON()], {type: "application/json"});
             return URL.createObjectURL(blob);
         },
-        
+
         fromFile: function (file) {
             var reader = new FileReader();
             var self = this;
             reader.onload = function () {
                 self.fromJSON(this.result);
             };
-            
+
             reader.readAsText(file);
             return this;
         },
-        
+
         toBase64: function () {
-            return env.btoa(unescape(encodeURIComponent(this.toJSON())));
+            return env.btoa(env.unescape(encodeURIComponent(this.toJSON())));
         },
-        
+
         fromBase64: function (base64) {
-            return this.fromJSON(decodeURIComponent(escape(env.atob(base64))));
+            return this.fromJSON(decodeURIComponent(env.escape(env.atob(base64))));
         }
     });
 });

@@ -1,5 +1,6 @@
 
 namespace("automata.games.robot", function (exports) {
+    "use strict";
     
     exports.Cornered = {
         view: exports.WorldView,

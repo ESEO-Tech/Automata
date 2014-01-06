@@ -1,5 +1,6 @@
 
 namespace("automata.games.robot", function (exports) {
+    "use strict";
 
     exports.Maze = {
         view: exports.WorldView,

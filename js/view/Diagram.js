@@ -16,7 +16,7 @@ namespace("automata.view", function (exports) {
 
     var DEFAULT_SPRING_FACTOR = 0.01;
     var LAYOUT_DECAY = 0.9;
-    
+
     /**
      * @class Diagram
      * @memberof automata.view
@@ -24,19 +24,19 @@ namespace("automata.view", function (exports) {
      * @todo Add documentation
      */
     exports.Diagram = exports.View.create().augment({
-        
+
         templates: {
             main: "templates/Diagram-main.tpl.svg"
-        },        
-        
+        },
+
         init: function (model, container) {
             exports.View.init.call(this, model, container);
 
             this.model = model;
-            
+
             this.stateViews = [];
             this.stateViewsById = {};
-            
+
             this.transitionViews = [];
             this.transitionViewsById = {};
             this.transitionViewsByStates = {};
@@ -44,7 +44,7 @@ namespace("automata.view", function (exports) {
             this.x = 0;
             this.y = 0;
             this.zoom = 1;
-            
+
             model.addListener("createState", this)
                  .addListener("afterRemoveState", this)
                  .addListener("createTransition", this)
@@ -53,7 +53,7 @@ namespace("automata.view", function (exports) {
 
             return this;
         },
-        
+
         toStorable: function () {
             var result = {
                 x: this.x,
@@ -62,7 +62,7 @@ namespace("automata.view", function (exports) {
                 states: {},
                 transitions: {}
             };
-            
+
             for (var sid in this.stateViewsById) {
                 var stateView = this.stateViewsById[sid];
                 result.states[sid] = {
@@ -70,7 +70,7 @@ namespace("automata.view", function (exports) {
                     y: stateView.y
                 };
             }
-            
+
             for (var tid in this.transitionViewsById) {
                 var transitionView = this.transitionViewsById[tid];
                 result.transitions[tid] = {
@@ -78,31 +78,31 @@ namespace("automata.view", function (exports) {
                     y: transitionView.y
                 };
             }
-            
+
             return result;
         },
-        
+
         fromStorable: function (obj, mapping) {
             this.x = obj.x;
             this.y = obj.y;
             this.zoom = obj.zoom;
             this.updateViewbox();
-            
+
             for (var sid in obj.states) {
                 if (sid in mapping && mapping[sid].id in this.stateViewsById) {
                     this.putStateView(mapping[sid], obj.states[sid].x, obj.states[sid].y);
                 }
             }
-            
+
             for (var tid in obj.transitions) {
                 if (tid in mapping && mapping[tid].id in this.transitionViewsById) {
                     this.putTransitionHandle(mapping[tid], obj.transitions[tid].x, obj.transitions[tid].y);
                 }
             }
-            
+
             return this;
         },
-        
+
         createState: function (model, state) {
             state.addListener("changed", this.updateState, this);
             this.createStateView(state);
@@ -116,7 +116,7 @@ namespace("automata.view", function (exports) {
             delete this.stateViewsById[state.id];
             this.layout();
         },
-        
+
         updateState: function (state) {
             this.updateStateView(state);
             this.layout();
@@ -138,7 +138,7 @@ namespace("automata.view", function (exports) {
 
             this.layout();
         },
-        
+
         afterRemoveTransition: function (model, transition) {
             this.removeTransitionViewIfUnused(transition);
 
@@ -147,17 +147,17 @@ namespace("automata.view", function (exports) {
 
             this.layout();
         },
-        
+
         updateTransition: function (transition) {
             var viewIdByStates = this.getViewIdByStates(transition);
             var viewByStates = this.transitionViewsByStates[viewIdByStates];
             var viewByTransition = this.transitionViewsById[transition.id];
-            
+
             if (viewByStates !== viewByTransition) {
                 // It the target state has changed, check if the view
                 // for the given transition should be removed
                 this.removeTransitionViewIfUnused(transition);
-                
+
                 // If no view exists for the updated transition ends,
                 // create a new transition view
                 if (viewByStates) {
@@ -167,11 +167,11 @@ namespace("automata.view", function (exports) {
                 else {
                     viewByStates = this.createTransitionView(transition);
                 }
-                
+
                 // Confirm the change of view for the given transition
                 viewByTransition = viewByStates;
             }
-            
+
             // Update source state view if Moore actions have changed
             this.updateStateView(transition.sourceState);
 
@@ -183,29 +183,29 @@ namespace("automata.view", function (exports) {
 
             this.layout();
         },
-        
+
         layoutStep: function () {
             var done = true;
-            
+
             var defaultSpringLength = 0;
-            
+
             // Speed decay, to reduce oscillations
-            for (var i1 = 0; i1 < this.stateViews.length; i1 ++) {
-                var v1 = this.stateViews[i1];
-                v1.vx *= LAYOUT_DECAY;
-                v1.vy *= LAYOUT_DECAY;
-                var l = 4 * (v1.width + v1.height);
+            for (var decayStateIndex = 0; decayStateIndex < this.stateViews.length; decayStateIndex ++) {
+                var decayStateView = this.stateViews[decayStateIndex];
+                decayStateView.vx *= LAYOUT_DECAY;
+                decayStateView.vy *= LAYOUT_DECAY;
+                var l = 4 * (decayStateView.width + decayStateView.height);
                 if (l > defaultSpringLength) {
                     defaultSpringLength = l;
                 }
             }
-            
-            for (var i1 = 0; i1 < this.transitionViews.length; i1 ++) {
-                var v1 = this.transitionViews[i1];
-                v1.vx *= LAYOUT_DECAY;
-                v1.vy *= LAYOUT_DECAY;
+
+            for (var decayTransitionIndex = 0; decayTransitionIndex < this.transitionViews.length; decayTransitionIndex ++) {
+                var decayTransitionView = this.transitionViews[decayTransitionIndex];
+                decayTransitionView.vx *= LAYOUT_DECAY;
+                decayTransitionView.vy *= LAYOUT_DECAY;
             }
-            
+
             function updateSpeeds(v1, x1, y1, v2, x2, y2, l, factor) {
                 var dx = x2 - x1;
                 var dy = y2 - y1;
@@ -218,103 +218,119 @@ namespace("automata.view", function (exports) {
                     v2.vy -= f * dy;
                 }
             }
-            
-            for (var i1 = 0; i1 < this.stateViews.length; i1 ++) {
-                var v1 = this.stateViews[i1];
-                var x1 = v1.x + v1.width / 2;
-                var y1 = v1.y + v1.height / 2;
-                
+
+            for (var springStateIndex = 0; springStateIndex < this.stateViews.length; springStateIndex ++) {
+                var springStateView = this.stateViews[springStateIndex];
+                var x1 = springStateView.x + springStateView.width / 2;
+                var y1 = springStateView.y + springStateView.height / 2;
+
                 // Compute forces between pairs of states
-                for (var i2 = i1 + 1; i2 < this.stateViews.length; i2 ++) {
-                    var v2 = this.stateViews[i2];
-                    updateSpeeds(v1, x1, y1,
-                                 v2, v2.x + v2.width / 2, v2.y + v2.height / 2,
+                for (var springOtherStateIndex = springStateIndex + 1; springOtherStateIndex < this.stateViews.length; springOtherStateIndex ++) {
+                    var springOtherStateView = this.stateViews[springOtherStateIndex];
+                    updateSpeeds(springStateView, x1, y1,
+                                 springOtherStateView,
+                                 springOtherStateView.x + springOtherStateView.width / 2,
+                                 springOtherStateView.y + springOtherStateView.height / 2,
                                  defaultSpringLength, DEFAULT_SPRING_FACTOR);
                 }
-                
+
                 // Compute forces between states and transitions
-                for (var i2 = 0; i2 < this.transitionViews.length; i2 ++) {
-                    var v2 = this.transitionViews[i2];
-                    if (v2.transitions[0].sourceState === v1.state && v2.transitions[0].targetState === v1.state) {
-                        updateSpeeds(v1, x1, y1, v2, v2.x, v2.y, v1.width, DEFAULT_SPRING_FACTOR);
+                for (var springStateTransitionIndex = 0; springStateTransitionIndex < this.transitionViews.length; springStateTransitionIndex ++) {
+                    var springStateTransitionView = this.transitionViews[springStateTransitionIndex];
+                    if (springStateTransitionView.transitions[0].sourceState === springStateView.state &&
+                        springStateTransitionView.transitions[0].targetState === springStateView.state) {
+                        updateSpeeds(springStateView, x1, y1,
+                                     springStateTransitionView, springStateTransitionView.x, springStateTransitionView.y,
+                                     springStateView.width, DEFAULT_SPRING_FACTOR);
                     }
-                    else if (v2.transitions[0].sourceState === v1.state || v2.transitions[0].targetState === v1.state) {
-                        updateSpeeds(v1, x1, y1, v2, v2.x, v2.y, v1.width + v1.height, DEFAULT_SPRING_FACTOR);
-                    }
-                    else {
-                        updateSpeeds(v1, x1, y1, v2, v2.x, v2.y, defaultSpringLength, DEFAULT_SPRING_FACTOR / 100);
-                    }
-                }
-                
-                if (v1.vx >= 0.5 || v1.vy >=0.5) {
-                    done = false;
-                }
-                
-                this.putStateView(v1.state, v1.x + v1.vx, v1.y + v1.vy);
-            }
-
-            for (var i1 = 0; i1 < this.transitionViews.length; i1 ++) {
-                var v1 = this.transitionViews[i1];
-                for (var i2 = i1 + 1; i2 < this.transitionViews.length; i2 ++) {
-                    var v2 = this.transitionViews[i2];
-                    if (v1.transitions[0].sourceState === v2.transitions[0].sourceState && v1.transitions[0].targetState === v2.transitions[0].targetState ||
-                        v1.transitions[0].sourceState === v2.transitions[0].targetState && v1.transitions[0].targetState === v2.transitions[0].sourceState) {
-                        updateSpeeds(v1, v1.x, v1.y, v2, v2.x, v2.y, Math.max((v1.width + v2.width + v1.height + v2.height) / 2, 4 * TRANSITION_RADIUS), 2 * DEFAULT_SPRING_FACTOR);
+                    else if (springStateTransitionView.transitions[0].sourceState === springStateView.state ||
+                             springStateTransitionView.transitions[0].targetState === springStateView.state) {
+                        updateSpeeds(springStateView, x1, y1,
+                                     springStateTransitionView, springStateTransitionView.x, springStateTransitionView.y,
+                                     springStateView.width + springStateView.height, DEFAULT_SPRING_FACTOR);
                     }
                     else {
-                        updateSpeeds(v1, v1.x, v1.y, v2, v2.x, v2.y, defaultSpringLength, DEFAULT_SPRING_FACTOR / 100);
+                        updateSpeeds(springStateView, x1, y1,
+                                     springStateTransitionView, springStateTransitionView.x, springStateTransitionView.y,
+                                     defaultSpringLength, DEFAULT_SPRING_FACTOR / 100);
                     }
                 }
 
-                if (v1.vx >= 0.5 || v1.vy >=0.5) {
+                if (springStateView.vx >= 0.5 || springStateView.vy >=0.5) {
                     done = false;
                 }
-                
-                this.putTransitionHandle(v1.transitions[0], v1.x + v1.vx, v1.y + v1.vy);
+
+                this.putStateView(springStateView.state, springStateView.x + springStateView.vx, springStateView.y + springStateView.vy);
             }
-            
+
+            for (var springTransitionIndex = 0; springTransitionIndex < this.transitionViews.length; springTransitionIndex ++) {
+                var springTransitionView = this.transitionViews[springTransitionIndex];
+                for (var springOtherTransitionIndex = springTransitionIndex + 1; springOtherTransitionIndex < this.transitionViews.length; springOtherTransitionIndex ++) {
+                    var springOtherTransitionView = this.transitionViews[springOtherTransitionIndex];
+                    if (springTransitionView.transitions[0].sourceState === springOtherTransitionView.transitions[0].sourceState &&
+                        springTransitionView.transitions[0].targetState === springOtherTransitionView.transitions[0].targetState ||
+                        springTransitionView.transitions[0].sourceState === springOtherTransitionView.transitions[0].targetState &&
+                        springTransitionView.transitions[0].targetState === springOtherTransitionView.transitions[0].sourceState) {
+                        updateSpeeds(springTransitionView, springTransitionView.x, springTransitionView.y,
+                                     springOtherTransitionView, springOtherTransitionView.x, springOtherTransitionView.y,
+                                     Math.max((springTransitionView.width + springOtherTransitionView.width + springTransitionView.height + springOtherTransitionView.height) / 2, 4 * TRANSITION_RADIUS), 2 * DEFAULT_SPRING_FACTOR);
+                    }
+                    else {
+                        updateSpeeds(springTransitionView, springTransitionView.x, springTransitionView.y,
+                                     springOtherTransitionView, springOtherTransitionView.x, springOtherTransitionView.y,
+                                     defaultSpringLength, DEFAULT_SPRING_FACTOR / 100);
+                    }
+                }
+
+                if (springTransitionView.vx >= 0.5 || springTransitionView.vy >=0.5) {
+                    done = false;
+                }
+
+                this.putTransitionHandle(springTransitionView.transitions[0], springTransitionView.x + springTransitionView.vx, springTransitionView.y + springTransitionView.vy);
+            }
+
             if (done) {
                 this.fire("changed");
             }
-            
+
             return !done;
         },
-        
+
         layout: function () {
             var self = this;
             function step() {
                 if (self.layoutStep()) {
-                    requestAnimationFrame(step);
+                    window.requestAnimationFrame(step);
                 }
             }
 
-            requestAnimationFrame(step);
+            window.requestAnimationFrame(step);
         },
-        
+
         render: function () {
             var fragment = Snap.parse(this.renderTemplate("main", this.model));
             this.container.append(fragment.node);
             this.paper = Snap("svg.automata-Diagram");
             this.resetView = this.paper.select("#reset");
             this.shadow = this.paper.select("#state-shadow");
-            
+
             var self = this;
             var startX, startY, startEvt;
-            
+
             function onMouseDown(evt) {
                 if (evt.button === 0) {
                     startX = self.x;
                     startY = self.y;
                     startEvt = evt;
-                    
+
                     $(document.documentElement).mousemove(onMouseMove);
                     $(document.documentElement).mouseup(onMouseUp);
 
                     evt.preventDefault();
                     evt.stopPropagation();
-                }                
+                }
             }
-            
+
             function onMouseMove(evt) {
                 // The actual coordinates are computed each time the mouse moves
                 // in case the document has been tranformed in between.
@@ -325,19 +341,19 @@ namespace("automata.view", function (exports) {
                 evt.preventDefault();
                 evt.stopPropagation();
             }
-            
+
             function onMouseUp(evt) {
                 if (evt.button === 0) {
                     self.fire("changed");
-                
+
                     $(document.documentElement).off("mouseup", onMouseUp);
                     $(document.documentElement).off("mousemove", onMouseMove);
-                
+
                     evt.preventDefault();
                     evt.stopPropagation();
                 }
             }
-            
+
             function onWheel(evt) {
                 if (!evt) {
                     evt = window.event;
@@ -350,7 +366,7 @@ namespace("automata.view", function (exports) {
                 else if (evt.detail) { // Mozilla
                     delta = -evt.detail;
                 }
-                
+
                 var f = 1;
                 if (delta > 0) {
                     f = 1/ZOOM_FACTOR;
@@ -366,7 +382,7 @@ namespace("automata.view", function (exports) {
                 evt.stopPropagation();
                 evt.preventDefault();
             }
-        
+
             function onDoubleClick(evt) {
                 var w = self.getWidth();
                 var h = self.getHeight();
@@ -379,20 +395,20 @@ namespace("automata.view", function (exports) {
                 evt.preventDefault();
                 evt.stopPropagation();
             }
-            
+
             this.paper.mousedown(onMouseDown).dblclick(onDoubleClick);
             this.paper.node.addEventListener("DOMMouseScroll", onWheel, false); // Mozilla
             this.paper.node.onmousewheel = onWheel;
         },
-        
+
         getWidth: function () {
             return this.container.width();
         },
-        
+
         getHeight: function () {
             return this.container.height();
         },
-        
+
         updateViewbox: function () {
             var w = this.getWidth();
             var h = this.getHeight();
@@ -400,11 +416,11 @@ namespace("automata.view", function (exports) {
                 viewBox: [this.x, this.y, w / this.zoom, h / this.zoom]
             });
         },
-        
+
         getViewIdByStates: function (transition) {
             return transition.sourceState.id + "-" + transition.targetState.id;
         },
-        
+
         createStateView: function (state) {
             var view = this.stateViewsById[state.id] = {
                 state:     state,
@@ -421,7 +437,7 @@ namespace("automata.view", function (exports) {
                 group:     this.paper.g().attr({"class": "state"})
             };
             this.stateViews.push(view);
-            
+
             view.group.add(view.rect, view.name, view.actions, view.separator);
 
             // Set vertical position of state name
@@ -437,7 +453,7 @@ namespace("automata.view", function (exports) {
                 y1: nameBBox.height + 2 * STATE_TB_PADDING,
                 y2: nameBBox.height + 2 * STATE_TB_PADDING
             });
-            
+
             view.height = nameBBox.height + actionsBBox.height + 4 * STATE_TB_PADDING;
             view.rect.attr({height: view.height});
 
@@ -459,7 +475,7 @@ namespace("automata.view", function (exports) {
                 }
             });
         },
-        
+
         setDraggable: function (view, elt, fn) {
             var startX, startY;
             view[elt].drag(
@@ -481,18 +497,18 @@ namespace("automata.view", function (exports) {
                 },
                 this, this, this);
         },
-        
+
         putStateView: function (state, x, y) {
             var view = this.stateViewsById[state.id];
             view.x = x;
             view.y = y;
             view.group.transform("translate(" + x + "," + y + ")");
 
-            for (var i = 0; i < state.incomingTransitions.length; i ++) {
-                this.updateTransitionPath(state.incomingTransitions[i]);
+            for (var incomingTransitionIndex = 0; incomingTransitionIndex < state.incomingTransitions.length; incomingTransitionIndex ++) {
+                this.updateTransitionPath(state.incomingTransitions[incomingTransitionIndex]);
             }
-            for (var i = 0; i < state.outgoingTransitions.length; i ++) {
-                this.updateTransitionPath(state.outgoingTransitions[i]);
+            for (var outgoingTransitionIndex = 0; outgoingTransitionIndex < state.outgoingTransitions.length; outgoingTransitionIndex ++) {
+                this.updateTransitionPath(state.outgoingTransitions[outgoingTransitionIndex]);
             }
 
             if (state === this.model.states[0]) {
@@ -500,10 +516,10 @@ namespace("automata.view", function (exports) {
             }
             return this;
         },
-        
+
         updateStateView: function (state) {
             var view = this.stateViewsById[state.id];
-            
+
             // Replace empty strings with non-breaking spaces to ensure correct bounding box in Webkit
             view.name.attr({text: state.name || "\u2000"});
             view.actions.attr({text: state.getMooreActions().join(", ") || "\u2000"});
@@ -518,7 +534,7 @@ namespace("automata.view", function (exports) {
                 this.updateResetView();
             }
         },
-        
+
         updateResetView: function () {
             var state = this.model.states[0];
             if (state) {
@@ -527,7 +543,7 @@ namespace("automata.view", function (exports) {
                                                         (view.y                  - 4 * TRANSITION_RADIUS) + ")");
             }
         },
-        
+
         createTransitionView: function (transition) {
             var viewIdByStates = this.getViewIdByStates(transition);
 
@@ -552,29 +568,29 @@ namespace("automata.view", function (exports) {
 
             this.updateTransitionHandle(transition);
             this.updateTransitionPath(transition);
-            
+
             // Setup event handlers for transition
             this.setDraggable(view, "handle", function (x, y) {
                 this.putTransitionHandle(transition, x, y);
             });
         },
-        
+
         putTransitionHandle: function (transition, x, y) {
             var view = this.transitionViewsById[transition.id];
             view.x = x;
             view.y = y;
             view.handle.attr({cx: x, cy: y});
-            
+
             this.updateTransitionPath(transition);
             this.moveTransitionText(transition);
         },
-        
+
         updateTransitionHandle: function (transition) {
             var view = this.transitionViewsById[transition.id];
 
             var sourceView = this.stateViewsById[transition.sourceState.id];
             var targetView = this.stateViewsById[transition.targetState.id];
-            
+
             if (transition.sourceState === transition.targetState) {
                 view.x = sourceView.x + sourceView.width + sourceView.height;
                 view.y = sourceView.y + sourceView.height / 2;
@@ -587,28 +603,28 @@ namespace("automata.view", function (exports) {
             view.handle.attr({cx: view.x, cy: view.y});
             this.moveTransitionText(transition);
         },
-        
+
         updateTransitionText: function (transition) {
             var view = this.transitionViewsById[transition.id];
 
             view.text.selectAll("tspan.term").forEach(function (ts) {
                 ts.remove();
             });
-            
+
             var sensors = transition.sourceState.stateMachine.world.sensors;
             var actuators = transition.sourceState.stateMachine.world.actuators;
             var transitions = transition.sourceState.getTransitionsToState(transition.targetState);
             var mooreActions = transition.sourceState.getMooreActions();
-            
+
             view.height = 0;
             view.width = 0;
-            
+
             var hasTerms = false;
             for (var i = 0; i < transitions.length; i ++) {
                 var tr = transitions[i];
-                
+
                 var termSpan = this.paper.el("tspan").attr({"class": "term"});
-                
+
                 // This is a workaround for the fact that tspan.getBBox().height==0
                 var dy = parseFloat(getComputedStyle(termSpan.node, null).getPropertyValue("font-size"));
                 if (hasTerms) {
@@ -617,13 +633,13 @@ namespace("automata.view", function (exports) {
                 }
 
                 termSpan.attr({dy: dy + "px"});
-                    
+
                 var hasInputs = false;
-                for (var j = 0; j < tr.inputs.length; j ++) {
-                    var value = tr.inputs[j];
+                for (var inputIndex = 0; inputIndex < tr.inputs.length; inputIndex ++) {
+                    var value = tr.inputs[inputIndex];
                     if (value !== "-") {
                         var inputSpan = this.paper.el("tspan").attr({"class": "automata-bool-" + value});
-                        inputSpan.attr({"#text": sensors[j].name});
+                        inputSpan.attr({"#text": sensors[inputIndex].name});
                         if (hasInputs) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": "."}));
                         }
@@ -631,10 +647,10 @@ namespace("automata.view", function (exports) {
                         termSpan.add(inputSpan);
                     }
                 }
-                
+
                 var hasActions = false;
-                for (var j = 0; j < tr.outputs.length; j ++) {
-                    if (tr.outputs[j] === "1" && mooreActions.indexOf(actuators[j].name) === -1) {
+                for (var outputIndex = 0; outputIndex < tr.outputs.length; outputIndex ++) {
+                    if (tr.outputs[outputIndex] === "1" && mooreActions.indexOf(actuators[outputIndex].name) === -1) {
                         if (hasActions) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": ", "}));
                         }
@@ -642,10 +658,10 @@ namespace("automata.view", function (exports) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": " / "}));
                             hasActions = true;
                         }
-                        termSpan.add(this.paper.el("tspan").attr({"#text": actuators[j].name}));
+                        termSpan.add(this.paper.el("tspan").attr({"#text": actuators[outputIndex].name}));
                     }
                 }
-                
+
                 if (hasInputs || hasActions) {
                     view.text.add(termSpan);
 
@@ -660,10 +676,10 @@ namespace("automata.view", function (exports) {
                     hasTerms = true;
                 }
             }
-            
+
             this.moveTransitionText(transition);
         },
-        
+
         moveTransitionText: function (transition) {
             var view = this.transitionViewsById[transition.id];
             var x = view.x + 2 * TRANSITION_RADIUS;
@@ -672,10 +688,10 @@ namespace("automata.view", function (exports) {
             view.text.attr({x: x, y: y});
             view.text.selectAll("tspan.term").attr({x: x});
         },
-        
+
         updateTransitionPath: function (transition) {
             var view = this.transitionViewsById[transition.id];
-            
+
             var sourceView = this.stateViewsById[transition.sourceState.id];
             var targetView = this.stateViewsById[transition.targetState.id];
 
@@ -703,17 +719,17 @@ namespace("automata.view", function (exports) {
                     y:   view.x - sourceCenter.x
                 };
             }
-            
+
             var sourceControl = {
                 x: view.x - tangentVector.x,
                 y: view.y - tangentVector.y
             };
-            
+
             var targetControl = {
                 x: view.x + tangentVector.x,
                 y: view.y + tangentVector.y
             };
-            
+
             // Compute source and target ends
             function intersection(cp, v, vc) {
                 var xv = (cp.x < vc.x) ? v.x : v.x + v.width;
@@ -726,7 +742,7 @@ namespace("automata.view", function (exports) {
 
                 return {x : xv, y : yv};
             }
-            
+
             var sourceIntersect = intersection(sourceControl, sourceView, sourceCenter);
             var targetIntersect = intersection(targetControl, targetView, targetCenter);
 
@@ -736,11 +752,11 @@ namespace("automata.view", function (exports) {
                    "Q" + targetControl.x       + "," + targetControl.y + "," + targetIntersect.x + "," + targetIntersect.y
             });
         },
-        
+
         removeTransitionViewIfUnused: function (transition) {
             var viewByTransition = this.transitionViewsById[transition.id];
             viewByTransition.transitions.splice(viewByTransition.transitions.indexOf(transition), 1);
-            
+
             // If no other transition uses the current transition view,
             // remove it from the DOM and from the dictionary of transition by states
             if (viewByTransition.transitions.length === 0) {
@@ -753,10 +769,10 @@ namespace("automata.view", function (exports) {
                     }
                 }
             }
-            
+
             delete this.transitionViewsById[transition.id];
         },
-        
+
         currentStateChanged: function (model, state) {
             this.paper.selectAll(".state").attr({"class": "state"});
             if (state) {

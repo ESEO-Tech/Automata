@@ -1,5 +1,7 @@
 
 namespace("automata.games.openTheGate", function (exports) {
+    "use strict";
+
     exports.ThenCloseTheGateWorld = Object.create(exports.World).augment({
         getStatus: function () {
             var status = exports.World.getStatus.call(this);

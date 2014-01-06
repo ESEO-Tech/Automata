@@ -37,7 +37,7 @@
  * @param {Function} [body] - A function to execute in the context of the namespace
  * @return {Object} The namespace object
  */
-this.namespace = function(env, path, body) {
+window.namespace = function(env, path, body) {
     "use strict";
 
     if (typeof env === "string") {
@@ -45,7 +45,7 @@ this.namespace = function(env, path, body) {
         path = env;
         env = window;
     }
-    
+
     // Start name lookup in the global object
 	var current = env;
 
@@ -67,5 +67,5 @@ this.namespace = function(env, path, body) {
 	}
 
 	return current;
-}
+};
 

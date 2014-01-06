@@ -1,5 +1,6 @@
 
 namespace("automata.games.openTheGate", function (exports) {
+    "use strict";
 
     exports.World = Object.create(automata.model.World).augment({
         timeStepMax: 100,
