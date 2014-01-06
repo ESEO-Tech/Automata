@@ -63,8 +63,6 @@ module.exports = function(grunt) {
             },
             core: {
                 src: [
-                    "macros/arrays.js",
-
                     'js/namespace.js',
                     'js/main.js',
                     'js/shims/*.js',
@@ -143,6 +141,7 @@ module.exports = function(grunt) {
                     src: ["build/dist/", "build/pkg/"],
                     dest: "/home/GuillaumeSavaton/public_html/Automata/",
                     host: "GuillaumeSavaton@trame.eseo.fr",
+                    port: "2200",
                     syncDest: true,
                     recursive: true
                 }
