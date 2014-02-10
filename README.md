@@ -4,7 +4,10 @@ Automata
 A web-based game to learn finite-state machines.
 
 This application is under development.
+
 [Try the demo in your browser now](http://trame.eseo.fr/~GuillaumeSavaton/Automata/).
+
+[See a quick screencast](http://youtu.be/wxhwhlaHb0Q).
 
 Firefox users should upgrade to Firefox 25 to get correct text rendering in the diagram view.
 
