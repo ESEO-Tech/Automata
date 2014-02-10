@@ -15,7 +15,7 @@ namespace("automata.model", function (exports) {
      * @todo Add documentation
      */
     exports.Transition = exports.Object.create({
-        
+
         init: function (sourceState, targetState) {
             exports.Object.init.call(this);
 
@@ -25,13 +25,13 @@ namespace("automata.model", function (exports) {
             var world = sourceState.stateMachine.world;
             this.inputs  = world.sensors  .map(function () { return "-"; });
             this.outputs = world.actuators.map(function () { return "0"; });
-            
+
             sourceState.addOutgoingTransition(this);
             targetState.addIncomingTransition(this);
-            
+
             return this;
         },
-        
+
         toStorable: function () {
             return {
                 sourceStateId: this.sourceState.id,
@@ -40,62 +40,62 @@ namespace("automata.model", function (exports) {
                 outputs: this.outputs
             };
         },
-        
+
         fromStorable: function (obj) {
             this.inputs = obj.inputs;
             this.outputs = obj.outputs;
             this.fire("changed");
             return this;
         },
-        
+
         destroy: function () {
             this.sourceState.removeOutgoingTransition(this);
             this.targetState.removeIncomingTransition(this);
         },
-        
+
         setInput: function (index, value) {
             this.inputs[index] = value;
-            
+
             this.fire("changed");
-            
+
             return this;
         },
-        
+
         setOutput: function (index, value) {
             this.outputs[index] = value;
-            
+
             this.fire("changed");
-            
+
             return this;
         },
-        
+
         setTargetState: function (state) {
             this.targetState.removeIncomingTransition(this);
             state.addIncomingTransition(this);
             this.targetState = state;
-            
+
             this.fire("changed");
-            
+
             return this;
         },
-        
+
         getIndex: function () {
             return this.sourceState.outgoingTransitions.indexOf(this);
         },
-        
+
         matchesPattern: function (pattern) {
-            for (var i = 0; i < this.inputs.length && i < pattern.length; i ++) {
+            for (var i = 0, l = Math.min(this.inputs.length, pattern.length); i < l; i ++) {
                 if (this.inputs[i] !== "-" && pattern[i] !== "-" && this.inputs[i] !== pattern[i]) {
                     return false;
                 }
             }
             return true;
         },
-        
+
         canFire: function () {
             return this.matchesPattern(this.sourceState.stateMachine.world.sensorValues);
         },
-        
+
         isNonDeterministic: function () {
             return this.sourceState.outgoingTransitions.some(function (transition) {
                 // TODO check if outputs and target state are different

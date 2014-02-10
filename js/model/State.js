@@ -18,7 +18,7 @@ namespace("automata.model", function (exports) {
         /**
          * @event automata.model.State#changed
          */
-        
+
         /**
          * Initialize a state.
          *
@@ -35,7 +35,7 @@ namespace("automata.model", function (exports) {
          */
         init: function (stateMachine) {
             exports.Object.init.call(this);
-            
+
             var suffix = this.id;
             do {
                 this.name = "State" + suffix;
@@ -43,16 +43,16 @@ namespace("automata.model", function (exports) {
             } while(stateMachine.states.some(function (state) {
                 return state.name === this.name;
             }, this));
-            
+
             this.stateMachine = stateMachine;
             this.encoding = stateMachine.getStateVars().map(function () { return "0"; });
 
             this.outgoingTransitions = [];
             this.incomingTransitions = [];
-            
+
             return this;
         },
-        
+
         /**
          * @memberof automata.model.State
          * @see automata.model.Object.toStorable
@@ -63,7 +63,7 @@ namespace("automata.model", function (exports) {
                 encoding: this.encoding
             };
         },
-        
+
         /**
          * @memberof automata.model.State
          * @see automata.model.Object.fromStorable
@@ -75,7 +75,7 @@ namespace("automata.model", function (exports) {
             this.fire("changed");
             return this;
         },
-        
+
         /**
          * Prepare the removal of the current state from the state machine.
          *
@@ -94,7 +94,7 @@ namespace("automata.model", function (exports) {
             }
             return this;
         },
-        
+
         /**
          * Set the name of the current state.
          *
@@ -106,12 +106,12 @@ namespace("automata.model", function (exports) {
          */
         setName: function (name) {
             this.name = name;
-            
+
             this.fire("changed");
-            
+
             return this;
         },
-        
+
         /**
          * Set one bit of the encoding of the current state.
          *
@@ -124,9 +124,9 @@ namespace("automata.model", function (exports) {
          */
         setEncoding: function (index, value) {
             this.encoding[index] = value;
-            
+
             this.fire("changed");
-            
+
             return this;
         },
 
@@ -142,7 +142,7 @@ namespace("automata.model", function (exports) {
             this.outgoingTransitions.push(transition);
             return this;
         },
-        
+
         /**
          * Remove an outgoing transition from the current state.
          *
@@ -156,7 +156,7 @@ namespace("automata.model", function (exports) {
             this.outgoingTransitions.splice(index, 1);
             return this;
         },
-        
+
         /**
          * Add an incoming transition to the current state.
          *
@@ -168,7 +168,7 @@ namespace("automata.model", function (exports) {
         addIncomingTransition: function (transition) {
             this.incomingTransitions.push(transition);
         },
-        
+
         /**
          * Remove an incoming transition from the current state.
          *
@@ -182,7 +182,7 @@ namespace("automata.model", function (exports) {
             this.incomingTransitions.splice(index, 1);
             return this;
         },
-        
+
         /**
          * Find the transitions from the current state to a given state.
          *
@@ -196,7 +196,7 @@ namespace("automata.model", function (exports) {
                 return transition.targetState === state;
             });
         },
-        
+
         /**
          * Find the actions in that state that do not depend on sensor values.
          *
@@ -229,7 +229,7 @@ namespace("automata.model", function (exports) {
                 return [];
             }
         },
-        
+
         /**
          * Find the transition that can be fired at the current simulation step.
          *
@@ -241,7 +241,7 @@ namespace("automata.model", function (exports) {
          * @return {?automata.model.Transition} The transition found.
          */
         getTransitionToFire: function () {
-            for (var i = 0; i < this.outgoingTransitions.length; i ++) {
+            for (var i = 0, l = this.outgoingTransitions.length; i < l; i ++) {
                 var transition = this.outgoingTransitions[i];
                 if (transition.canFire()) {
                     return transition;

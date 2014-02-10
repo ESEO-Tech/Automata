@@ -177,7 +177,7 @@ namespace("automata.view", function (exports) {
 
             // Update incoming and outgoing transition paths if Moore actions have changed.
             // Update outgoing transition conditions if conditions have changed.
-            for (var i = 0; i < transition.sourceState.outgoingTransitions.length; i ++) {
+            for (var i = 0, l = transition.sourceState.outgoingTransitions.length; i < l; i ++) {
                 this.updateTransitionText(transition.sourceState.outgoingTransitions[i]);
             }
 
@@ -189,8 +189,11 @@ namespace("automata.view", function (exports) {
 
             var defaultSpringLength = 0;
 
+            var stateViewsLength = this.stateViews.length;
+            var transitionViewsLength = this.transitionViews.length;
+
             // Speed decay, to reduce oscillations
-            for (var decayStateIndex = 0; decayStateIndex < this.stateViews.length; decayStateIndex ++) {
+            for (var decayStateIndex = 0; decayStateIndex < stateViewsLength; decayStateIndex ++) {
                 var decayStateView = this.stateViews[decayStateIndex];
                 decayStateView.vx *= LAYOUT_DECAY;
                 decayStateView.vy *= LAYOUT_DECAY;
@@ -200,7 +203,7 @@ namespace("automata.view", function (exports) {
                 }
             }
 
-            for (var decayTransitionIndex = 0; decayTransitionIndex < this.transitionViews.length; decayTransitionIndex ++) {
+            for (var decayTransitionIndex = 0; decayTransitionIndex < transitionViewsLength; decayTransitionIndex ++) {
                 var decayTransitionView = this.transitionViews[decayTransitionIndex];
                 decayTransitionView.vx *= LAYOUT_DECAY;
                 decayTransitionView.vy *= LAYOUT_DECAY;
@@ -219,13 +222,13 @@ namespace("automata.view", function (exports) {
                 }
             }
 
-            for (var springStateIndex = 0; springStateIndex < this.stateViews.length; springStateIndex ++) {
+            for (var springStateIndex = 0; springStateIndex < stateViewsLength; springStateIndex ++) {
                 var springStateView = this.stateViews[springStateIndex];
                 var x1 = springStateView.x + springStateView.width / 2;
                 var y1 = springStateView.y + springStateView.height / 2;
 
                 // Compute forces between pairs of states
-                for (var springOtherStateIndex = springStateIndex + 1; springOtherStateIndex < this.stateViews.length; springOtherStateIndex ++) {
+                for (var springOtherStateIndex = springStateIndex + 1; springOtherStateIndex < stateViewsLength; springOtherStateIndex ++) {
                     var springOtherStateView = this.stateViews[springOtherStateIndex];
                     updateSpeeds(springStateView, x1, y1,
                                  springOtherStateView,
@@ -235,7 +238,7 @@ namespace("automata.view", function (exports) {
                 }
 
                 // Compute forces between states and transitions
-                for (var springStateTransitionIndex = 0; springStateTransitionIndex < this.transitionViews.length; springStateTransitionIndex ++) {
+                for (var springStateTransitionIndex = 0; springStateTransitionIndex < transitionViewsLength; springStateTransitionIndex ++) {
                     var springStateTransitionView = this.transitionViews[springStateTransitionIndex];
                     if (springStateTransitionView.transitions[0].sourceState === springStateView.state &&
                         springStateTransitionView.transitions[0].targetState === springStateView.state) {
@@ -263,9 +266,9 @@ namespace("automata.view", function (exports) {
                 this.putStateView(springStateView.state, springStateView.x + springStateView.vx, springStateView.y + springStateView.vy);
             }
 
-            for (var springTransitionIndex = 0; springTransitionIndex < this.transitionViews.length; springTransitionIndex ++) {
+            for (var springTransitionIndex = 0; springTransitionIndex < transitionViewsLength; springTransitionIndex ++) {
                 var springTransitionView = this.transitionViews[springTransitionIndex];
-                for (var springOtherTransitionIndex = springTransitionIndex + 1; springOtherTransitionIndex < this.transitionViews.length; springOtherTransitionIndex ++) {
+                for (var springOtherTransitionIndex = springTransitionIndex + 1; springOtherTransitionIndex < transitionViewsLength; springOtherTransitionIndex ++) {
                     var springOtherTransitionView = this.transitionViews[springOtherTransitionIndex];
                     if (springTransitionView.transitions[0].sourceState === springOtherTransitionView.transitions[0].sourceState &&
                         springTransitionView.transitions[0].targetState === springOtherTransitionView.transitions[0].targetState ||
@@ -466,7 +469,7 @@ namespace("automata.view", function (exports) {
 
             this.setDraggable(view, "group", function (x, y) {
                 this.putStateView(state, x, y);
-                for (var i = 0; i < state.outgoingTransitions.length; i ++) {
+                for (var i = 0, l = state.outgoingTransitions.length; i < l; i ++) {
                     var transition = state.outgoingTransitions[i];
                     if (transition.targetState === state) {
                         this.updateTransitionHandle(transition);
@@ -504,10 +507,10 @@ namespace("automata.view", function (exports) {
             view.y = y;
             view.group.transform("translate(" + x + "," + y + ")");
 
-            for (var incomingTransitionIndex = 0; incomingTransitionIndex < state.incomingTransitions.length; incomingTransitionIndex ++) {
+            for (var incomingTransitionIndex = 0, incomingTransitionsLength = state.incomingTransitions.length; incomingTransitionIndex < incomingTransitionsLength; incomingTransitionIndex ++) {
                 this.updateTransitionPath(state.incomingTransitions[incomingTransitionIndex]);
             }
-            for (var outgoingTransitionIndex = 0; outgoingTransitionIndex < state.outgoingTransitions.length; outgoingTransitionIndex ++) {
+            for (var outgoingTransitionIndex = 0, outgoingTransitionsLength = state.outgoingTransitions.length; outgoingTransitionIndex < outgoingTransitionsLength; outgoingTransitionIndex ++) {
                 this.updateTransitionPath(state.outgoingTransitions[outgoingTransitionIndex]);
             }
 
@@ -620,7 +623,7 @@ namespace("automata.view", function (exports) {
             view.width = 0;
 
             var hasTerms = false;
-            for (var i = 0; i < transitions.length; i ++) {
+            for (var i = 0, l = transitions.length; i < l; i ++) {
                 var tr = transitions[i];
 
                 var termSpan = this.paper.el("tspan").attr({"class": "term"});
@@ -635,7 +638,7 @@ namespace("automata.view", function (exports) {
                 termSpan.attr({dy: dy + "px"});
 
                 var hasInputs = false;
-                for (var inputIndex = 0; inputIndex < tr.inputs.length; inputIndex ++) {
+                for (var inputIndex = 0, inputsLength = tr.inputs.length; inputIndex < inputsLength; inputIndex ++) {
                     var value = tr.inputs[inputIndex];
                     if (value !== "-") {
                         var inputSpan = this.paper.el("tspan").attr({"class": "automata-bool-" + value});
@@ -649,7 +652,7 @@ namespace("automata.view", function (exports) {
                 }
 
                 var hasActions = false;
-                for (var outputIndex = 0; outputIndex < tr.outputs.length; outputIndex ++) {
+                for (var outputIndex = 0, outputsLength = tr.outputs.length; outputIndex < outputsLength; outputIndex ++) {
                     if (tr.outputs[outputIndex] === "1" && mooreActions.indexOf(actuators[outputIndex].name) === -1) {
                         if (hasActions) {
                             termSpan.add(this.paper.el("tspan").attr({"#text": ", "}));
@@ -666,9 +669,9 @@ namespace("automata.view", function (exports) {
                     view.text.add(termSpan);
 
                     // This is a workaround for the fact that tspan.getBBox().width==0
-                    var l = termSpan.node.getComputedTextLength();
-                    if (l > view.width) {
-                        view.width = l;
+                    var termSpanLength = termSpan.node.getComputedTextLength();
+                    if (termSpanLength > view.width) {
+                        view.width = termSpanLength;
                     }
 
                     view.height += dy;

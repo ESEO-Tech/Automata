@@ -48,10 +48,13 @@ namespace("automata.storage", function (exports, env) {
             var success = false;
             if (supportsLocalStorage()) {
                 var sourceIndex;
-                for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                var sourcesLength = this.sources.length;
+
+                for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
                     this.sources[sourceIndex].source.removeListener("changed", this.save, this);
                 }
-                for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+
+                for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
                     var item = this.sources[sourceIndex];
                     if (item.key in env.localStorage) {
                         console.log("Loading: " + item.key);
@@ -59,7 +62,8 @@ namespace("automata.storage", function (exports, env) {
                         success = true;
                     }
                 }
-                for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+
+                for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
                     this.sources[sourceIndex].source.addListener("changed", this.save, this);
                 }
             }
@@ -72,7 +76,7 @@ namespace("automata.storage", function (exports, env) {
          */
         save: function (source) {
             if (supportsLocalStorage()) {
-                for (var sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+                for (var sourceIndex = 0, sourcesLength = this.sources.length; sourceIndex < sourcesLength; sourceIndex ++) {
                     var item = this.sources[sourceIndex];
                     if (typeof source === "undefined" || item.source === source) {
                         console.log("Saving: " + item.key);
@@ -84,7 +88,7 @@ namespace("automata.storage", function (exports, env) {
 
         toJSON: function () {
             var data = {};
-            for (var sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+            for (var sourceIndex = 0, sourcesLength = this.sources.length; sourceIndex < sourcesLength; sourceIndex ++) {
                 var item = this.sources[sourceIndex];
                 data[item.key] = item.source.toStorable();
             }
@@ -93,18 +97,21 @@ namespace("automata.storage", function (exports, env) {
 
         fromJSON: function (json) {
             var data = JSON.parse(json);
+
             var sourceIndex;
-            for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+            var sourcesLength = this.sources.length;
+
+            for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
                 this.sources[sourceIndex].source.removeListener("changed", this.save, this);
             }
-            for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+            for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
                 var item = this.sources[sourceIndex];
                 if (item.key in data) {
                     console.log("Importing: " + item.key);
                     item.source.fromStorable(data[item.key], this.mapping);
                 }
             }
-            for (sourceIndex = 0; sourceIndex < this.sources.length; sourceIndex ++) {
+            for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
                 this.sources[sourceIndex].source.addListener("changed", this.save, this);
             }
             return this;

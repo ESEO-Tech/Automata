@@ -17,7 +17,7 @@ namespace("automata.model", function (exports, env) {
      * @type {!number}
      */
     var creationCount = 0;
-    
+
     /**
      * Base object.
      *
@@ -46,7 +46,7 @@ namespace("automata.model", function (exports, env) {
             creationCount ++;
             return this;
         },
-        
+
         /**
          * Create a new object with the current object as prototype.
          *
@@ -61,7 +61,7 @@ namespace("automata.model", function (exports, env) {
         create: function (properties) {
             return Object.create(this).augment(properties || {});
         },
-        
+
         /**
          * The prototype of the current object.
          *
@@ -72,7 +72,7 @@ namespace("automata.model", function (exports, env) {
         get proto() {
             return Object.getPrototypeOf(this);
         },
-        
+
         /**
          * Augment the current object with the properties of the given object.
          *
@@ -87,7 +87,7 @@ namespace("automata.model", function (exports, env) {
             }
             return this;
         },
-        
+
         /**
          * Convert the current object into an object suitable for storage.
          *
@@ -99,7 +99,7 @@ namespace("automata.model", function (exports, env) {
         toStorable: function () {
             return {};
         },
-        
+
         /**
          * Initialize the current object from the given storable object.
          *
@@ -112,7 +112,7 @@ namespace("automata.model", function (exports, env) {
         fromStorable: function (obj) {
             return this;
         },
-        
+
         /**
          * Add a listener for a given event.
          *
@@ -143,7 +143,7 @@ namespace("automata.model", function (exports, env) {
             this.listeners[event].push(this.makeListenerRecord(event, a, b));
             return this;
         },
-        
+
         /**
          * Remove a listener for a given event.
          *
@@ -160,9 +160,10 @@ namespace("automata.model", function (exports, env) {
             if (event in this.listeners) {
                 var listeners = this.listeners[event];
                 var record = this.makeListenerRecord(event, a, b);
-                for (var i = 0; i < listeners.length;) {
+                for (var i = 0, l = listeners.length; i < l;) {
                     if (listeners[i].callback === record.callback && listeners[i].receiver === record.receiver) {
                         listeners.splice(i, 1);
+                        l --;
                     }
                     else {
                         i ++;
@@ -171,7 +172,7 @@ namespace("automata.model", function (exports, env) {
             }
             return this;
         },
-        
+
         /**
          * Fire an event.
          *
@@ -185,14 +186,14 @@ namespace("automata.model", function (exports, env) {
                 var listeners = this.listeners[event];
                 var args = Array.prototype.slice.call(arguments, 1);
                 args.unshift(this);
-                for (var i = 0; i < listeners.length; i ++) {
+                for (var i = 0, l = listeners.length; i < l; i ++) {
                     var listener = listeners[i];
                     listener.callback.apply(listener.receiver, args);
                 }
             }
             return this;
         },
-        
+
         /**
          * Returns an event listener definition object.
          *
