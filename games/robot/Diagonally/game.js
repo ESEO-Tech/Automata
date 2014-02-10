@@ -6,7 +6,7 @@ namespace("automata.games.robot", function (exports) {
         key: "automata.games.robot.Diagonally",
         view: exports.WorldView,
 
-        world: Object.create(exports.World).augment({
+        world: exports.World.create({
             width: 600,
             height: 600,
 

@@ -2,7 +2,7 @@
 namespace("automata.games.openTheGate", function (exports) {
     "use strict";
 
-    exports.DontCrushTheFollowerWorld = Object.create(exports.World).augment({
+    exports.DontCrushTheFollowerWorld = exports.World.create({
 
         carXMin: [-80, -220, -500, -630],
 

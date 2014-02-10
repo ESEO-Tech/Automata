@@ -2,7 +2,7 @@
 namespace("automata.games.robot", function (exports) {
     "use strict";
 
-    exports.World = Object.create(automata.model.World).augment({
+    exports.World = automata.model.World.create({
         timeStepMax: 100,
 
         sensors:   [

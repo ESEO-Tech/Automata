@@ -2,7 +2,7 @@
 namespace("automata.games.openTheGate", function (exports) {
     "use strict";
 
-    exports.ThenCloseTheGateWorld = Object.create(exports.World).augment({
+    exports.ThenCloseTheGateWorld = exports.World.create({
         getStatus: function () {
             var status = exports.World.getStatus.call(this);
             if (status.done && (status.status === "success" || status.status === "warning") && this.gateY < this.gateYMax) {

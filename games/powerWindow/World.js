@@ -2,7 +2,7 @@
 namespace("automata.games.powerWindow", function (exports) {
     "use strict";
 
-    exports.World = Object.create(automata.model.World).augment({
+    exports.World = automata.model.World.create({
         key: "automata.games.powerWindow",
         sensors:   [
             {name: "OB",  desc: "Open Button"},

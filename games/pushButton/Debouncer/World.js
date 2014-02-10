@@ -2,7 +2,7 @@
 namespace("automata.games.pushButton", function (exports) {
     "use strict";
 
-    exports.DebouncerWorld = Object.create(exports.CounterWorld).augment({
+    exports.DebouncerWorld = exports.CounterWorld.create({
         BOUNCE_COUNTER_MAX: 4,
         
         setButton: function (value) {

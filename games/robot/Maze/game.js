@@ -6,7 +6,7 @@ namespace("automata.games.robot", function (exports) {
         key: "automata.games.robot.Maze",
         view: exports.WorldView,
     
-        world: Object.create(exports.World).augment({
+        world: exports.World.create({
             width: 690,
             height: 405,
             
