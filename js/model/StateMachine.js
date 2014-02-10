@@ -15,23 +15,23 @@ namespace("automata.model", function (exports) {
      * @todo Add documentation
      */
     exports.StateMachine = exports.Object.create({
-        
+
         init: function (world) {
             exports.Object.init.call(this);
-            
+
             this.world = world;
-            
+
             this.states = [];
             this.statesById = {};
-            
+
             this.transitions = [];
             this.transitionsById = {};
-            
+
             this.reset();
-            
+
             return this;
         },
-        
+
         toStorable: function () {
             var result = {
                 states: {},
@@ -45,7 +45,7 @@ namespace("automata.model", function (exports) {
             }
             return result;
         },
-        
+
         fromStorable: function (obj, mapping) {
             for (var sid in obj.states) {
                 mapping[sid] = this.createState().fromStorable(obj.states[sid]);
@@ -56,7 +56,7 @@ namespace("automata.model", function (exports) {
             }
             return this;
         },
-        
+
         getStateVars: function () {
             if (this.world.solution && this.world.solution.stateVars) {
                 return this.world.solution.stateVars;
@@ -65,25 +65,25 @@ namespace("automata.model", function (exports) {
                 return [];
             }
         },
-        
+
         createState: function () {
             var state = exports.State.create().init(this);
             this.states.push(state);
             this.statesById[state.id] = state;
-            
+
             state.addListener("changed", function () {
                 this.fire("changed");
             }, this);
-            
+
             this.fire("createState", state);
             this.fire("changed");
-            
+
             return state;
         },
-        
+
         removeState: function (state) {
             this.fire("beforeRemoveState", state);
-            
+
             var index = this.states.indexOf(state);
             if (index === 0) {
                 this.world.stop();
@@ -92,13 +92,13 @@ namespace("automata.model", function (exports) {
             state.destroy();
             this.states.splice(index, 1);
             delete this.statesById[state.id];
-            
+
             this.fire("afterRemoveState", state);
             this.fire("changed");
-            
+
             return this;
         },
-    
+
         createTransition: function (sourceState, targetState) {
             var transition = exports.Transition.create().init(sourceState, targetState);
             this.transitions.push(transition);
@@ -107,27 +107,27 @@ namespace("automata.model", function (exports) {
             transition.addListener("changed", function () {
                 this.fire("changed");
             }, this);
-            
-            
+
+
             this.fire("createTransition", transition);
             this.fire("changed");
-            
+
             return transition;
         },
-        
+
         removeTransition: function (transition) {
             this.fire("beforeRemoveTransition", transition);
-            
+
             transition.destroy();
             this.transitions.splice(this.transitions.indexOf(transition), 1);
             delete this.transitionsById[transition.id];
-            
+
             this.fire("afterRemoveTransition", transition);
             this.fire("changed");
-            
+
             return this;
         },
-        
+
         reset: function () {
             if (this.states.length) {
                 this.currentState = this.states[0];
@@ -137,20 +137,17 @@ namespace("automata.model", function (exports) {
             }
             this.fire("currentStateChanged", this.currentState);
         },
-        
+
         step: function () {
             var transition = this.currentState.getTransitionToFire();
-            if (!transition) {
-                this.world.pause();
-                return this.world.actuators.map(function () { return "0"; });
-            }
-            else {
+            if (transition) {
                 this.currentState = transition.targetState;
                 if (transition.sourceState !== transition.targetState) {
                     this.fire("currentStateChanged", this.currentState);
                 }
                 return transition.outputs;
             }
+            return this.world.actuators.map(function () { return "0"; });
         }
     });
 });
