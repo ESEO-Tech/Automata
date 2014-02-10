@@ -3,10 +3,8 @@ namespace("automata.games.openTheGate", function (exports) {
     "use strict";
 
     exports.ThenCloseTheGate = {
+        key: "automata.games.openTheGate.ThenCloseTheGate",
         view: exports.WorldView,
-        
-        world: Object.create(exports.ThenCloseTheGateWorld).augment({
-            key: "automata.games.openTheGate.ThenCloseTheGate"
-        })
+        world: exports.ThenCloseTheGateWorld
     };
 });

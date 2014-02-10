@@ -3,11 +3,10 @@ namespace("automata.games.robot", function (exports) {
     "use strict";
 
     exports.BehindTheWall = {
+        key: "automata.games.robot.BehindTheWall",
         view: exports.WorldView,
 
         world: Object.create(exports.World).augment({
-            key: "automata.games.robot.BehindTheWall",
-
             width: 600,
             height: 400,
 

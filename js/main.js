@@ -25,9 +25,9 @@ namespace("automata", function (exports) {
             // Configure the data storage for the current game
             // and attempt to load the saved data.
             var storage = automata.storage.LocalStorage.create().init()
-                .addSource(world.key + ".model", world.stateMachine)
-                .addSource(world.key + ".view.table", tableView)
-                .addSource(world.key + ".view.diagram", diagramView);
+                .addSource(game.key + ".model", world.stateMachine)
+                .addSource(game.key + ".view.table", tableView)
+                .addSource(game.key + ".view.diagram", diagramView);
             var loaded = storage.load();
 
             function handleHash() {

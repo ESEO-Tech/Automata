@@ -3,11 +3,10 @@ namespace("automata.games.robot", function (exports) {
     "use strict";
 
     exports.Maze = {
+        key: "automata.games.robot.Maze",
         view: exports.WorldView,
     
         world: Object.create(exports.World).augment({
-            key: "automata.games.robot.Maze",
-            
             width: 690,
             height: 405,
             

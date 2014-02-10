@@ -3,10 +3,8 @@ namespace("automata.games.openTheGate", function (exports) {
     "use strict";
 
     exports.DontCrushTheFollower = {
+        key: "automata.games.openTheGate.DontCrushTheFollower",
         view: exports.WorldView,
-        
-        world: Object.create(exports.DontCrushTheFollowerWorld).augment({
-            key: "automata.games.openTheGate.DontCrushTheFollower"
-        })
+        world: exports.DontCrushTheFollowerWorld
     };
 });
