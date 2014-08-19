@@ -2,12 +2,12 @@
 $(function () {
     "use strict";
 
-    var MANIFEST = "http://trame.eseo.fr/~GuillaumeSavaton/Automata/package.manifest";
+    var MANIFEST = "http://tice.sea.eseo.fr/logique/automata/package.manifest";
 
     var mozApps = window.navigator.mozApps;
 
     function addInstallButton() {
-        $('<span class="group"><input type="button" class="control" value="l" title="Install"></span>')
+        $('<span class="group"><button title="Install"><i class="fa fa-download"></i></span>')
             .appendTo($("#control-view"))
             .click(install);
     }
