@@ -15,6 +15,7 @@
 
 #control-view input {
     height: 100%;
+    color: black;
 }
 
 #control-play.running {

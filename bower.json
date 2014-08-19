@@ -1,0 +1,10 @@
+{
+  "name": "Automata",
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "fontawesome": "~4.1.0",
+    "normalize.css": "~3.0.1",
+    "nunjucks": "~1.0.7",
+    "snap.svg": "~0.3.0"
+  }
+}

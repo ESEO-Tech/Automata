@@ -14,16 +14,20 @@ Firefox users should upgrade to Firefox 25 to get correct text rendering in the 
 Dependencies
 ------------
 
-* [normalize.css](http://necolas.github.io/normalize.css/) (installed as vendor/normalize.css)
-* [jQuery](http://jquery.com/) (installed as vendor/jquery-2.0.3-min.js)
-* [Nunjucks](http://jlongster.github.io/nunjucks/) (installed as vendor/nunjucks-slim.min.js)
-* [Snap.svg](http://snapsvg.io/) (installed as vendor/snap.svg-min.js)
+These libraries are installed as Bower components:
+
+* [normalize.css](http://necolas.github.io/normalize.css/)
+* [jQuery](http://jquery.com/)
+* [Nunjucks](http://jlongster.github.io/nunjucks/)
+* [Snap.svg](http://snapsvg.io/)
 
 Building
 --------
 
+    sudo npm install -g bower
     sudo npm install -g grunt-cli
     npm install
+    bower install
     grunt
 
 Testing

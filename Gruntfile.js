@@ -109,7 +109,7 @@ module.exports = function(grunt) {
                 files: [
                     {src: "fonts/Arsenal/*.otf", dest: "build/dist/"},
                     {src: "fonts/Heydings/*.ttf", dest: "build/dist/"},
-                    {src: "vendor/*", dest: "build/dist/"},
+                    {src: "bower_components/**/*", dest: "build/dist/"},
                     {src: "icons/*.png", dest: "build/dist/"},
                     {src: "install.html", dest: "build/pkg/"},
                     {src: "js/webapp.js", dest: "build/dist/"}

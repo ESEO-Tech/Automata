@@ -4,6 +4,6 @@
         "parser": "gfm"
     },
     "opts": {
-        "private": true,
+        "private": true
     }
 }
