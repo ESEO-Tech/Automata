@@ -38,7 +38,7 @@ namespace("automata.view", function (exports) {
             this.root = $(this.renderTemplate("main", this.model)).appendTo(this.container);
 
             var model = this.model;
-            $("input", this.root).click(function () {
+            $("button", this.root).click(function () {
                 model.createState();
             });
         },
@@ -86,7 +86,7 @@ namespace("automata.view", function (exports) {
             // Create new row in the transition table
             var row = $(this.renderTemplate("state", {state: state, model: model})).insertBefore($("tr", this.root).last());
 
-            $("td.remove-state input", row).click(function () {
+            $("td.remove-state button", row).click(function () {
                 model.removeState(state);
             });
 
@@ -94,7 +94,7 @@ namespace("automata.view", function (exports) {
                 state.setName($(this).val());
             });
 
-            $("td.create-transition input", row).click(function () {
+            $("td.create-transition button", row).click(function () {
                 model.createTransition(state, state);
             });
 
@@ -147,7 +147,7 @@ namespace("automata.view", function (exports) {
             tdnt.after(this.renderTemplate("transition", {transition: transition, model: model}));
 
             // Add handler for the "Remove transition" button
-            $("td.remove-transition input", transitionRow).click(function () {
+            $("td.remove-transition button", transitionRow).click(function () {
                 model.removeTransition(transition);
             });
 

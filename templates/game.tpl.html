@@ -9,6 +9,7 @@
         <link rel="icon" type="image/png" href="icons/32.png" />
 
         <link rel="stylesheet" href="bower_components/normalize.css/normalize.css">
+        <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css">
         <link rel="stylesheet" href="css/automata.core.min.css">
         <link rel="stylesheet" href="css/{{key}}.min.css">
         
@@ -25,21 +26,20 @@
     <body>
         <div id="main">
             <div id="control-view">
-                <!-- P: Play, S: Stop, u: Pause -->
                 <span class="group">
-                    <a class="icon" href="index.html">H</a>
+                    <a href="index.html"><i class="fa fa-home"></i></a>
                 </span>
                 <span class="group">
-                    <input class="control" type="button" id="control-play" value="P" title="Play/Pause">
-                    <input class="control" type="button" id="control-stop" value="S" title="Stop">
+                    <button id="control-play" title="Play/Pause"><i class="fa fa-play"></i></button>
+                    <button id="control-stop" title="Stop"><i class="fa fa-stop"></i></button>
                     Speed: <input type="range" id="control-speed" value="20" min="0" max="10" step="1" title="Speed">
                 </span>
                 <span class="group">
-                    <input class="control" type="button" id="control-left" value="<">
-                    <input class="control" type="button" id="control-right" value=">">
+                    <button id="control-left" title="Show previous pane"><i class="fa fa-chevron-left"></i></button>
+                    <button id="control-right" title="Show next pane"><i class="fa fa-chevron-right"></i></button>
                 </span>
                 <span class="group">
-                    <input class="icon" type="button" id="control-help" value="l" title="Help">
+                    <button id="control-help" title="Help"><i class="fa fa-info-circle"></i></button>
                 </span>
                 <a class="export" download="{{key}}.json"></a>
                 <input class="import" type="file">
@@ -52,7 +52,7 @@
                     <h1>{{title}}</h1>
                     <div>{{content}}</div>
                 </div>
-                <input class="control" type="button" value="X" title="Close">
+                <button title="Close"><i class="fa fa-times"></i></button>
             </div>
             <div id="score-view"></div>
         </div>

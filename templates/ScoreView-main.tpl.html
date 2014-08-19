@@ -1,12 +1,12 @@
 <div>
-    <div class="score-status icon">
-        {%   if status == "success" %} 8
-        {% elif status == "warning" %} !
-        {% elif status == "error"   %} 2
+    <div class="score-status">
+        {%   if status == "success" %} <i class="fa fa-thumbs-up"></i>
+        {% elif status == "warning" %} <i class="fa fa-warning"></i>
+        {% elif status == "error"   %} <i class="fa fa-thumbs-down"></i>
         {% endif %}
     </div>
     <div class="score-message">{{message}}</div>
     <div>
-        <input class="control" type="button" value="X" title="Close">
+        <button title="Close"><i class="fa fa-times"></i></button>
     </div>
 </div>

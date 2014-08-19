@@ -1,5 +1,5 @@
 <tr class="state-{{state.id}}">
-    <td class="remove-state"><input type="button" value="-" title="Remove this state"></td>
+    <td class="remove-state"><button title="Remove this state"><i class="fa fa-minus-circle"></i></button></td>
     <td class="source-state-name">
         <input type="text" size="10" value="{{state.name}}">
         {% if model.getStateVars().length %}
@@ -18,6 +18,6 @@
         {% endif %}
     </td>
     <td class="create-transition" colspan="{{model.world.sensors.length + model.world.actuators.length + 3}}">
-        <input type="button" value="+" title="Create a transition">
+        <button title="Create a transition"><i class="fa fa-plus-circle"></i></button>
     </td>
 </tr>

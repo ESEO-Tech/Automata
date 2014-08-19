@@ -24,7 +24,7 @@ namespace("automata.view", function (exports) {
         
         render: function () {
             var self = this;
-            $("input[value='X']", this.container).click(function () {
+            $("button", this.container).click(function () {
                 self.hide();
             });
         },

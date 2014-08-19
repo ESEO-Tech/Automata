@@ -1,5 +1,5 @@
 
-#help-view input[value='X'] {
+#help-view button {
     position: absolute;
     bottom: 0.5em;
     left: 1em;

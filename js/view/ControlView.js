@@ -64,11 +64,11 @@ namespace("automata.view", function (exports) {
         },
 
         start: function () {
-            this.playButton.addClass("running").val("u");
+            this.playButton.addClass("running").html('<i class="fa fa-pause"></i>');
         },
 
         pauseOrStop: function () {
-            this.playButton.removeClass("running").val("P");
+            this.playButton.removeClass("running").html('<i class="fa fa-play"></i>');
         },
 
         updateTimeStep: function () {

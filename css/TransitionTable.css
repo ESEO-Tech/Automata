@@ -51,11 +51,10 @@
  * Buttons
  * ---------------------------------------------------------------------- */
 
-.automata-TransitionTable .create-state input,
-.automata-TransitionTable .create-transition input,
-.automata-TransitionTable .remove-state input,
-.automata-TransitionTable .remove-transition input {
-    font-family: "Heydings Icons";
+.automata-TransitionTable .create-state button,
+.automata-TransitionTable .create-transition button,
+.automata-TransitionTable .remove-state button,
+.automata-TransitionTable .remove-transition button {
     background: none;
     border: none;
 }

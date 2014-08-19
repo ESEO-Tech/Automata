@@ -32,7 +32,7 @@ namespace("automata.view", function (exports) {
             this.container.attr("class", "visible");
             
             var self = this;
-            $("input[value='X']", this.container).click(function () {
+            $("button", this.container).click(function () {
                 self.hide();
             });
         },

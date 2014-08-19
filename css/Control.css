@@ -13,6 +13,7 @@
     text-decoration: underline;
 }
 
+#control-view button,
 #control-view input {
     height: 100%;
     color: black;

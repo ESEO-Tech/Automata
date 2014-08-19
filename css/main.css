@@ -1,6 +1,5 @@
 
 @import "../fonts/Arsenal/stylesheet.css";
-@import "../fonts/Heydings/stylesheet.css";
 
 body {
     margin: 0;
@@ -71,14 +70,6 @@ body {
 
 #help-view.visible, #score-view.visible {
     top: 0em;
-}
-
-.control {
-    font-family: "Heydings Controls";
-}
-
-.icon {
-    font-family: "Heydings Icons";
 }
 
 .entering-left-pane, .leaving-left-pane {
