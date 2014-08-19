@@ -138,9 +138,9 @@ module.exports = function(grunt) {
             dist: {
                 options: {
                     src: ["build/dist/", "build/pkg/"],
-                    dest: "/home/GuillaumeSavaton/public_html/Automata/",
-                    host: "GuillaumeSavaton@trame.eseo.fr",
-                    port: "2200",
+                    dest: "/var/www/logique/automata/",
+                    host: "www-data@tice.sea.eseo.fr",
+                    port: "2204",
                     syncDest: true,
                     recursive: true
                 }
