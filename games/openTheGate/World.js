@@ -5,7 +5,7 @@ namespace("automata.games.openTheGate", function (exports) {
     exports.World = automata.model.World.create({
         timeStepMax: 100,
         
-        sensors:   [
+        sensors: [
             {name: "B",  desc: "Button"},
             {name: "O", desc: "Gate is fully Open"},
             {name: "C", desc: "Gate is fully Closed"},
@@ -26,14 +26,11 @@ namespace("automata.games.openTheGate", function (exports) {
         carWidth: 80,
         carXMin: [-80, -480, -880, -1280],
         carXMax: 421,
-        carXStop: 160,
+        carXStop: 120,
         carXStep: 2,
         carY: 190,
         carCount: 4,
 
-        vehicleSensorXMin: 270,
-        vehicleSensorXMax: 290,
-        
         width: 400,
         height: 300,
         
@@ -110,7 +107,7 @@ namespace("automata.games.openTheGate", function (exports) {
                 }
                 
                 // Push the button when the car is in front of the gate until the gate starts to open
-                if(x >= this.carXStop && x <= this.carXStop + this.carXStep && this.gateY >= this.gateYOpen && !this.buttonHasBeenPressed) {
+                if(x >= this.carXStop && x <= this.carXStop + this.carXStep && this.gateY >= this.gateYOpen) {
                     this.setSensorValue(0, "1");
                     this.buttonHasBeenPressed = true;
                 }
@@ -121,7 +118,7 @@ namespace("automata.games.openTheGate", function (exports) {
                 }                    
                 
                 // Update vehicle sensor
-                if (x + this.carWidth >= this.vehicleSensorXMin && x <= this.vehicleSensorXMax) {
+                if (x + this.carWidth >= this.gateX && x <= this.gateX + this.gateWidth) {
                     this.setSensorValue(3, "1");
                 }
             }

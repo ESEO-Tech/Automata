@@ -4,7 +4,7 @@ namespace("automata.games.openTheGate", function (exports) {
 
     exports.DontCrushTheFollowerWorld = exports.World.create({
 
-        carXMin: [-80, -220, -500, -630],
+        carXMin: [-80, -190, -500, -690],
 
         getStatus: function () {
             var status = exports.World.getStatus.call(this);

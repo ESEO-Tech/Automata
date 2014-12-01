@@ -25,13 +25,13 @@ namespace("automata.games.openTheGate", function (exports) {
 
             // Draw sensors
             this.sensorViews = [
-                this.paper.circle(220, 170, 5),   // Button
+                this.paper.circle(180, 170, 5),   // Button
                 this.paper.rect(245, 144, 20, 5), // Open
                 this.paper.rect(245, 251, 20, 5), // Close
                 this.paper.rect(270, 251, 20, 5)  // Vehicle
             ];
 
-            this.paper.text(220, 160, "B");
+            this.paper.text(180, 160, "B");
             this.paper.text(255, 140, "O");
             this.paper.text(255, 270, "C");
             this.paper.text(280, 270, "V");
