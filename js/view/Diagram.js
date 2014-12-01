@@ -197,7 +197,7 @@ namespace("automata.view", function (exports) {
                 var decayStateView = this.stateViews[decayStateIndex];
                 decayStateView.vx *= LAYOUT_DECAY;
                 decayStateView.vy *= LAYOUT_DECAY;
-                var l = 4 * (decayStateView.width + decayStateView.height);
+                var l = 2.5 * (decayStateView.width + decayStateView.height);
                 if (l > defaultSpringLength) {
                     defaultSpringLength = l;
                 }
