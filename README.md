@@ -5,7 +5,7 @@ A web-based game to learn finite-state machines.
 
 This application is under development.
 
-[Try the demo in your browser now](http://trame.eseo.fr/~GuillaumeSavaton/Automata/).
+[Try the demo in your browser now](http://tice.sea.eseo.fr/logique/automata/).
 
 [See a quick screencast](http://youtu.be/wxhwhlaHb0Q).
 
