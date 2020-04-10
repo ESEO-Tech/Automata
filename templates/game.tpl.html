@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css">
         <link rel="stylesheet" href="css/automata.core.min.css">
         <link rel="stylesheet" href="css/{{key}}.min.css">
-        
+
         <script src="bower_components/jquery/dist/jquery.min.js"></script>
         <script src="bower_components/nunjucks/browser/nunjucks-slim.min.js"></script>
         <script src="bower_components/snap.svg/dist/snap.svg-min.js"></script>
@@ -32,7 +32,8 @@
                 <span class="group">
                     <button id="control-play" title="Play/Pause"><i class="fa fa-play"></i></button>
                     <button id="control-stop" title="Stop"><i class="fa fa-stop"></i></button>
-                    Speed: <input type="range" id="control-speed" value="20" min="0" max="10" step="1" title="Speed">
+                    <label for="control-speed">Speed:</label>
+                    <input type="range" id="control-speed" value="20" min="0" max="10" step="1" title="Speed">
                 </span>
                 <span class="group">
                     <button id="control-left" title="Show previous pane"><i class="fa fa-chevron-left"></i></button>

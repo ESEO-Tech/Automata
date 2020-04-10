@@ -2,6 +2,7 @@
 #control-view {
     padding: 0.5em 0;
     color: white;
+    display: table-row;
 }
 
 #control-view a {
@@ -13,10 +14,15 @@
     text-decoration: underline;
 }
 
-#control-view button,
+#control-view label,
 #control-view input {
+    vertical-align: middle;
+}
+
+#control-view button {
     height: 100%;
-    color: black;
+    border: none;
+    background: transparent;
 }
 
 #control-play.running {
@@ -24,7 +30,9 @@
 }
 
 #control-view .group {
-    margin: 0 1em;
+    padding: 0 1em;
+    display: table-cell;
+    vertical-align: middle;
 }
 
 #control-view .export,
