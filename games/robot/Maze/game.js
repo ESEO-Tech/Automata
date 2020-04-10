@@ -5,11 +5,11 @@ namespace("automata.games.robot", function (exports) {
     exports.Maze = {
         key: "automata.games.robot.Maze",
         view: exports.WorldView,
-    
+
         world: exports.World.create({
             width: 690,
             height: 405,
-            
+
             walls: [
                 // Vertical walls
                 [65,  5,    75, 399],
@@ -20,12 +20,12 @@ namespace("automata.games.robot", function (exports) {
                 [305, 101, 315, 207],
                 [353, 149, 363, 207],
                 [401, 53,  411, 207],
-                [449, 101, 459, 255], [449, 341, 449, 399],
+                [449, 101, 459, 255], [449, 341, 459, 399],
                 [497, 53,  507, 7],
                 [545, 5,   555, 63],  [545, 197, 555, 255],
                 [593, 53,  603, 207], [593, 245, 603, 351],
                 [641, 5,   651, 63],  [641, 101, 651, 399],
-                
+
                 // Horizontal walls
                 [65,  5,   651, 15],
                 [113, 53,  459, 63],  [545, 53,  603, 63],
@@ -37,11 +37,11 @@ namespace("automata.games.robot", function (exports) {
                 [113, 341, 171, 351], [209, 341, 459, 351],
                 [65,  389, 651, 399]
             ],
-            
+
             startX: 95,
             startY: 370,
             startAngle: -90,
-            
+
             goalX: 646,
             goalY: 82,
             goalRadius: 15
