@@ -3,7 +3,7 @@ Automata
 
 A web-based game to learn finite-state machines.
 
-This application is under development.
+This application is not actively developed. It depends on outdated libraries that would deserve an upgrade.
 
 [Try the demo in your browser now](https://guillaume-savaton-eseo.github.io/Automata/).
 
