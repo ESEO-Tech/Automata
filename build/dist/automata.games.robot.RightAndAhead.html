@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Automata</title>
+
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+
+        <link rel="icon" type="image/png" href="icons/32.png" />
+
+        <link rel="stylesheet" href="bower_components/normalize.css/normalize.css">
+        <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css">
+        <link rel="stylesheet" href="css/automata.core.min.css">
+        <link rel="stylesheet" href="css/automata.games.robot.RightAndAhead.min.css">
+
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/nunjucks/browser/nunjucks-slim.min.js"></script>
+        <script src="bower_components/snap.svg/dist/snap.svg-min.js"></script>
+        <script src="js/automata.core.min.js"></script>
+        <script src="js/automata.games.robot.RightAndAhead.min.js"></script>
+
+        <script>
+            automata.main(automata.games.robot.RightAndAhead);
+        </script>
+    </head>
+    <body>
+        <div id="main">
+            <div id="control-view">
+                <span class="group">
+                    <a href="index.html"><i class="fa fa-home"></i></a>
+                </span>
+                <span class="group">
+                    <button id="control-play" title="Play/Pause"><i class="fa fa-play"></i></button>
+                    <button id="control-stop" title="Stop"><i class="fa fa-stop"></i></button>
+                    <label for="control-speed">Speed:</label>
+                    <input type="range" id="control-speed" value="20" min="0" max="10" step="1" title="Speed">
+                </span>
+                <span class="group">
+                    <button id="control-left" title="Show previous pane"><i class="fa fa-chevron-left"></i></button>
+                    <button id="control-right" title="Show next pane"><i class="fa fa-chevron-right"></i></button>
+                </span>
+                <span class="group">
+                    <button id="control-help" title="Help"><i class="fa fa-info-circle"></i></button>
+                </span>
+                <a class="export" download="automata.games.robot.RightAndAhead.json"></a>
+                <input class="import" type="file">
+            </div>
+            <div id="world-view" class="left-pane"></div>
+            <div id="table-view" class="right-pane"></div>
+            <div id="diagram-view" class="hidden"></div>
+            <div id="help-view">
+                <div>
+                    <h1>Right and Ahead</h1>
+                    <div>
+<p>Program the robot to find the orange circle.</p>
+
+<p><strong>Tip:</strong> Execute the following sequence:</p>
+
+<ol>
+    <li>Turn right until heading south (use the <em>End of Rotation</em> (EOR) sensor).</li>
+    <li>Go ahead.</li>
+</ol>
+
+<h2>Sensors</h2>
+
+<table>
+    <tr>
+        <th rowspan="2">
+            WL<br>
+            (Wall on the <strong>Left</strong>)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>There is a wall on the <strong>left</strong> side of the robot</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>There is no obstacle on the <strong>left</strong> side of the robot</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            WR<br>
+            (Wall on the <strong>Right</strong>)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>There is a wall on the <strong>right</strong> side of the robot</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>There is no obstacle on the <strong>right</strong> side of the robot</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            WA<br>
+            (Wall <strong>Ahead</strong>)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>There is a wall <strong>in front of</strong> the robot</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>There is no obstacle <strong>in front of</strong> the robot</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            EOR<br>
+            (End Of Rotation)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The robot is oriented along the North-South or East-West axis</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>The robot has an intermediate orientation</td>
+    </tr>
+</table>
+
+<h2>Actuators</h2>
+
+<table>
+    <tr>
+        <th rowspan="2">
+            LF<br>
+            (Left wheel Forward)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The left wheel turns in the forward direction</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No effect</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            LB<br>
+            (Left wheel Backward)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The left wheel turns in the backward direction</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No effect</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            RF<br>
+            (Right wheel Forward)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The right wheel turns in the forward direction</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No effect</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            RB<br>
+            (Right wheel Backward)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The right wheel turns in the backward direction</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No effect</td>
+    </tr>
+</table>
+
+<p>Setting both <em>Forward</em> and <em>Backward</em> at the same time for the same wheel has no effect.</p>
+</div>
+                </div>
+                <button title="Close"><i class="fa fa-times"></i></button>
+            </div>
+            <div id="score-view"></div>
+        </div>
+    </body>
+</html>

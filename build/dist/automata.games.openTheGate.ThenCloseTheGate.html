@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Automata</title>
+
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+
+        <link rel="icon" type="image/png" href="icons/32.png" />
+
+        <link rel="stylesheet" href="bower_components/normalize.css/normalize.css">
+        <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css">
+        <link rel="stylesheet" href="css/automata.core.min.css">
+        <link rel="stylesheet" href="css/automata.games.openTheGate.ThenCloseTheGate.min.css">
+
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/nunjucks/browser/nunjucks-slim.min.js"></script>
+        <script src="bower_components/snap.svg/dist/snap.svg-min.js"></script>
+        <script src="js/automata.core.min.js"></script>
+        <script src="js/automata.games.openTheGate.ThenCloseTheGate.min.js"></script>
+
+        <script>
+            automata.main(automata.games.openTheGate.ThenCloseTheGate);
+        </script>
+    </head>
+    <body>
+        <div id="main">
+            <div id="control-view">
+                <span class="group">
+                    <a href="index.html"><i class="fa fa-home"></i></a>
+                </span>
+                <span class="group">
+                    <button id="control-play" title="Play/Pause"><i class="fa fa-play"></i></button>
+                    <button id="control-stop" title="Stop"><i class="fa fa-stop"></i></button>
+                    <label for="control-speed">Speed:</label>
+                    <input type="range" id="control-speed" value="20" min="0" max="10" step="1" title="Speed">
+                </span>
+                <span class="group">
+                    <button id="control-left" title="Show previous pane"><i class="fa fa-chevron-left"></i></button>
+                    <button id="control-right" title="Show next pane"><i class="fa fa-chevron-right"></i></button>
+                </span>
+                <span class="group">
+                    <button id="control-help" title="Help"><i class="fa fa-info-circle"></i></button>
+                </span>
+                <a class="export" download="automata.games.openTheGate.ThenCloseTheGate.json"></a>
+                <input class="import" type="file">
+            </div>
+            <div id="world-view" class="left-pane"></div>
+            <div id="table-view" class="right-pane"></div>
+            <div id="diagram-view" class="hidden"></div>
+            <div id="help-view">
+                <div>
+                    <h1>Then close the gate</h1>
+                    <div>
+<p>This is an automatic gate opener with a call button.
+    Program the system to achieve the following behavior:</p>
+
+<ol>
+    <li>When the car driver pushes the button, open the gate.</li>
+    <li>When the vehicle has moved past the gate, close it.</li>
+</ol>
+
+<p><strong>Tip:</strong> Use the vehicle sensor to detect whether a car is passing through the gate.</p>
+
+<h2>Sensors</h2>
+
+<table>
+    <tr>
+        <th rowspan="2">
+            B<br>
+            (Button)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The button is pressed</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>The button is released</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            O<br>
+            (gate is Open)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The gate is completely open</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>The gate is not completely open</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            C<br>
+            (gate is Closed)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The gate is completely closed</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>The gate is not completely closed</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            V<br>
+            (Vehicle)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>A vehicle is passing through the gate</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No vehicle is passing through the gate</td>
+    </tr>
+</table>
+
+<h2>Actuators</h2>
+
+<table>
+    <tr>
+        <th rowspan="2">
+            U<br>
+            (Up)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>Move the gate up</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No effect</td>
+    </tr>
+
+    <tr>
+        <th rowspan="2">
+            D<br>
+            (Down)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>Move the gate down</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>No effect</td>
+    </tr>
+</table>
+
+<p>Setting both <em>Up</em> and <em>Down</em> at the same time can damage the gate.
+    It is considered as an error.</p>
+</div>
+                </div>
+                <button title="Close"><i class="fa fa-times"></i></button>
+            </div>
+            <div id="score-view"></div>
+        </div>
+    </body>
+</html>
