@@ -10,7 +10,7 @@ This application is not actively developed. It depends on outdated libraries tha
 Dependencies
 ------------
 
-These libraries are installed as Bower components:
+These libraries are installed as Node modules:
 
 * [normalize.css](http://necolas.github.io/normalize.css/)
 * [jQuery](http://jquery.com/)
@@ -23,10 +23,8 @@ Building
 These commands install the dependencies and build Automata into the `docs/` folder:
 
 ```
-sudo npm install -g bower
 sudo npm install -g grunt-cli
 npm install
-bower install
 grunt
 ```
 

@@ -105,9 +105,13 @@ module.exports = function(grunt) {
         copy: {
             core: {
                 files: [
-                    {src: "fonts/Arsenal/*.otf",   dest: "docs/"},
-                    {src: "bower_components/**/*", dest: "docs/"},
-                    {src: "icons/*.png",           dest: "docs/"}
+                    {src: "fonts/Arsenal/*.otf",             dest: "docs/"},
+                    {src: "node_modules/normalize.css/**/*", dest: "docs/"},
+                    {src: "node_modules/@fortawesome/**/*",  dest: "docs/"},
+                    {src: "node_modules/nunjucks/**/*",      dest: "docs/"},
+                    {src: "node_modules/snapsvg/**/*",       dest: "docs/"},
+                    {src: "node_modules/jquery/**/*",        dest: "docs/"},
+                    {src: "icons/*.png",                     dest: "docs/"}
                 ]
             }
         },

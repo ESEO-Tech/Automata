@@ -8,14 +8,14 @@
 
         <link rel="icon" type="image/png" href="icons/32.png" />
 
-        <link rel="stylesheet" href="bower_components/normalize.css/normalize.css">
-        <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css">
+        <link rel="stylesheet" href="node_modules/normalize.css/normalize.css">
+        <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
         <link rel="stylesheet" href="css/automata.core.min.css">
         <link rel="stylesheet" href="css/{{key}}.min.css">
 
-        <script src="bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="bower_components/nunjucks/browser/nunjucks-slim.min.js"></script>
-        <script src="bower_components/snap.svg/dist/snap.svg-min.js"></script>
+        <script src="node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="node_modules/nunjucks/browser/nunjucks-slim.min.js"></script>
+        <script src="node_modules/snapsvg/dist/snap.svg-min.js"></script>
         <script src="js/automata.core.min.js"></script>
         <script src="js/{{key}}.min.js"></script>
 
@@ -51,7 +51,7 @@
             <div id="help-view">
                 <div>
                     <h1>{{title}}</h1>
-                    <div>{{content}}</div>
+                    <div>{{content | safe}}</div>
                 </div>
                 <button title="Close"><i class="fa fa-times"></i></button>
             </div>
