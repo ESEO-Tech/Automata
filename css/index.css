@@ -1,5 +1,13 @@
+
+@import "main.css";
+@import "Control.css";
+
 #games-menu {
     overflow-y: auto;
+    left: 0.5em;
+    width: calc(100% - 5em);
+    height: calc(100% - 5em);
+    padding: 1em 2em;
 }
 
 #games-menu h1 {
