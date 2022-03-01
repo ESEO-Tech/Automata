@@ -1,9 +1,9 @@
 
-import {CoreObject} from "./Object.js";
+import {CoreObject} from "../model/Object.js";
 
 function supportsLocalStorage() {
     try {
-        return "localStorage" in env && env.localStorage !== null;
+        return "localStorage" in window && window.localStorage !== null;
     }
     catch(e){
         return false;
@@ -50,9 +50,9 @@ export const LocalStorage = CoreObject.create({
 
             for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
                 var item = this.sources[sourceIndex];
-                if (item.key in env.localStorage) {
+                if (item.key in window.localStorage) {
                     console.log("Loading: " + item.key);
-                    item.source.fromStorable(JSON.parse(env.localStorage[item.key]), this.mapping);
+                    item.source.fromStorable(JSON.parse(window.localStorage[item.key]), this.mapping);
                     success = true;
                 }
             }
@@ -74,7 +74,7 @@ export const LocalStorage = CoreObject.create({
                 var item = this.sources[sourceIndex];
                 if (typeof source === "undefined" || item.source === source) {
                     console.log("Saving: " + item.key);
-                    env.localStorage[item.key] = JSON.stringify(source.toStorable());
+                    window.localStorage[item.key] = JSON.stringify(source.toStorable());
                 }
             }
         }
@@ -128,10 +128,10 @@ export const LocalStorage = CoreObject.create({
     },
 
     toBase64: function () {
-        return env.btoa(env.unescape(encodeURIComponent(this.toJSON())));
+        return btoa(unescape(encodeURIComponent(this.toJSON())));
     },
 
     fromBase64: function (base64) {
-        return this.fromJSON(decodeURIComponent(env.escape(env.atob(base64))));
+        return this.fromJSON(decodeURIComponent(escape(atob(base64))));
     }
 });

@@ -8,11 +8,6 @@ import {View} from "./View.js";
  * @todo Add documentation
  */
 export const TransitionTable = View.create().augment({
-    templates: {
-        main:       "templates/TransitionTable-main.tpl.html",
-        state:      "templates/TransitionTable-state.tpl.html",
-        transition: "templates/TransitionTable-transition.tpl.html"
-    },
 
     init: function (model, container) {
         View.init.call(this, model, container);
@@ -29,7 +24,7 @@ export const TransitionTable = View.create().augment({
     },
 
     render: function () {
-        this.root = $(this.renderTemplate("main", this.model)).appendTo(this.container);
+        this.root = $(this.renderTemplate("TransitionTable-main.tpl.html", this.model)).appendTo(this.container);
 
         var model = this.model;
         $("button", this.root).click(function () {
@@ -78,7 +73,7 @@ export const TransitionTable = View.create().augment({
         });
 
         // Create new row in the transition table
-        var row = $(this.renderTemplate("state", {state: state, model: model})).insertBefore($("tr", this.root).last());
+        var row = $(this.renderTemplate("TransitionTable-state.tpl.html", {state: state, model: model})).insertBefore($("tr", this.root).last());
 
         $("td.remove-state button", row).click(function () {
             model.removeState(state);
@@ -138,7 +133,7 @@ export const TransitionTable = View.create().augment({
         var rows = this.getRowsForState(state);
         var transitionRow = rows.last();
         var tdnt = $("td.create-transition", transitionRow);
-        tdnt.after(this.renderTemplate("transition", {transition: transition, model: model}));
+        tdnt.after(this.renderTemplate("TransitionTable-transition.tpl.html", {transition: transition, model: model}));
 
         // Add handler for the "Remove transition" button
         $("td.remove-transition button", transitionRow).click(function () {

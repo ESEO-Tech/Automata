@@ -9,8 +9,7 @@ import {CoreObject} from "../model/Object.js";
  *
  * @todo Add documentation
  */
-const View = CoreObject.create({
-    templates: {},
+export const View = CoreObject.create({
 
     init: function (model, container) {
         CoreObject.init.call(this);
@@ -31,6 +30,6 @@ const View = CoreObject.create({
     },
 
     renderTemplate: function (name, context) {
-        return nunjucks.render(this.templates[name], context);
+        return nunjucks.render(`templates/${name}`, context);
     }
 });

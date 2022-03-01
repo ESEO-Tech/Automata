@@ -1,23 +1,17 @@
 
-namespace("automata.games.robot", function (exports) {
-    "use strict";
+export {WorldView}           from "../WorldView.js";
+import {World as RobotWorld} from "../World.js";
 
-    exports.RightAndAhead = {
-        key: "automata.games.robot.RightAndAhead",
-        view: exports.WorldView,
+export const World = RobotWorld.create({
+    width: 600,
+    height: 400,
 
-        world: exports.World.create({
-            width: 600,
-            height: 400,
+    walls: [],
 
-            walls: [],
+    startX: 300,
+    startY: 50,
 
-            startX: 300,
-            startY: 50,
-
-            goalX: 300,
-            goalY: 350,
-            goalRadius: 15
-        })
-    };
+    goalX: 300,
+    goalY: 350,
+    goalRadius: 15
 });

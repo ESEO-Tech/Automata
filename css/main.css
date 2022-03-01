@@ -50,9 +50,9 @@ body {
     width: calc(100% - 4em);
     height: calc(100% - 5em);
 
-    background:         linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 250, 240, 1) 5em);
-    background:    -moz-linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 250, 240, 1) 5em);
-    background: -webkit-linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 250, 240, 1) 5em);
+    background:         linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 250, 240, 1) 5em);
+    background:    -moz-linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 250, 240, 1) 5em);
+    background: -webkit-linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 250, 240, 1) 5em);
 
     box-shadow: 0 1px 4px 0 rgb(128, 128, 128);
 

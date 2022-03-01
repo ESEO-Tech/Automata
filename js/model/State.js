@@ -1,5 +1,5 @@
 
-import {CoreObject} from "Object.js";
+import {CoreObject} from "./Object.js";
 
 /**
  * A state in a state machine.

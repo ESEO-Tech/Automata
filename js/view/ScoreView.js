@@ -8,9 +8,6 @@ import {View} from "./View.js";
  * @todo Add documentation
  */
 export const ScoreView = View.create().augment({
-    templates: {
-        main: "templates/ScoreView-main.tpl.html"
-    },
 
     init: function (model, container) {
         View.init.call(this, model, container);
@@ -22,7 +19,7 @@ export const ScoreView = View.create().augment({
 
     show: function (world, status) {
         this.container.empty();
-        $(this.renderTemplate("main", status)).appendTo(this.container);
+        $(this.renderTemplate("ScoreView-main.tpl.html", status)).appendTo(this.container);
         this.container.attr("class", "visible");
 
         var self = this;

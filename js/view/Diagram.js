@@ -19,10 +19,6 @@ const LAYOUT_DECAY             = 0.9;
  */
 export const Diagram = View.create().augment({
 
-    templates: {
-        main: "templates/Diagram-main.tpl.svg"
-    },
-
     init: function (model, container) {
         View.init.call(this, model, container);
 
@@ -305,7 +301,7 @@ export const Diagram = View.create().augment({
     },
 
     render: function () {
-        var fragment = Snap.parse(this.renderTemplate("main", this.model));
+        var fragment = Snap.parse(this.renderTemplate("Diagram-main.tpl.svg", this.model));
         this.container.append(fragment.node);
         this.paper = Snap("svg.automata-Diagram");
         this.resetView = this.paper.select("#reset");

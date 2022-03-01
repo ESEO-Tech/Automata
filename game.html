@@ -10,18 +10,14 @@
 
         <link rel="stylesheet" href="node_modules/normalize.css/normalize.css">
         <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
-        <link rel="stylesheet" href="css/automata.core.min.css">
+        <link rel="stylesheet" href="css/game.css">
         <link rel="stylesheet" href="css/{{key}}.min.css">
 
         <script src="node_modules/jquery/dist/jquery.min.js"></script>
         <script src="node_modules/nunjucks/browser/nunjucks-slim.min.js"></script>
         <script src="node_modules/snapsvg/dist/snap.svg-min.js"></script>
-        <script src="js/automata.core.min.js"></script>
-        <script src="js/{{key}}.min.js"></script>
-
-        <script>
-            main({{key}});
-        </script>
+        <script src="templates/index.js"></script>
+        <script src="js/game.js" type="module"></script>
     </head>
     <body>
         <div id="main">
@@ -49,10 +45,7 @@
             <div id="table-view" class="right-pane"></div>
             <div id="diagram-view" class="hidden"></div>
             <div id="help-view">
-                <div>
-                    <h1>{{title}}</h1>
-                    <div>{{content | safe}}</div>
-                </div>
+                <div></div>
                 <button title="Close"><i class="fa fa-times"></i></button>
             </div>
             <div id="score-view"></div>

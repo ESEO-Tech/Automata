@@ -81,7 +81,7 @@ export const World = CoreObject.create({
         if (this.isRunning) {
             var refTime = Date.now();
             var self = this;
-            this.clock = env.setTimeout(function () {
+            this.clock = setTimeout(function () {
                 self.step(Date.now() - refTime + timeElapsed);
             }, this.timeStep);
         }
@@ -89,13 +89,13 @@ export const World = CoreObject.create({
 
     pause: function () {
         this.isRunning = false;
-        env.clearTimeout(this.clock);
+        clearTimeout(this.clock);
         this.fire("pause");
     },
 
     stop: function () {
         this.isRunning = false;
-        env.clearTimeout(this.clock);
+        clearTimeout(this.clock);
         this.reset();
         this.fire("stop");
     },

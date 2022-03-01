@@ -51,7 +51,7 @@ export const CoreObject = {
      * @return {CoreObject} The new object.
      */
     create: function (properties) {
-        return CoreObject.create(this).augment(properties || {});
+        return Object.create(this).augment(properties || {});
     },
 
     /**
@@ -202,7 +202,7 @@ export const CoreObject = {
             if (typeof a === "function") {
                 return {
                     callback: a,
-                    receiver: env
+                    receiver: window
                 };
             }
             else {

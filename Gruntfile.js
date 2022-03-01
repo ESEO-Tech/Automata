@@ -49,8 +49,8 @@ module.exports = function(grunt) {
 
         nunjucks: {
             core: {
-                src: "templates/*",
-                dest: "docs/automata.templates.js"
+                src: "templates/*.tpl.*",
+                dest: "templates/index.js"
             }
         },
 
@@ -140,10 +140,10 @@ module.exports = function(grunt) {
     }
 
     var indexData = { categories: [] };
-    var categoryList = grunt.file.readJSON("games/list.json");
+    var categoryList = grunt.file.readJSON("games/index.json");
     for (var catIndex = 0; catIndex < categoryList.contents.length; catIndex ++) {
         var catDir = "games/" + categoryList.contents[catIndex];
-        var gamesList = grunt.file.readJSON(catDir + "/list.json");
+        var gamesList = grunt.file.readJSON(catDir + "/index.json");
         var indexCatData = {
             title: gamesList.title,
             games: []
@@ -152,7 +152,7 @@ module.exports = function(grunt) {
 
         for (var gameIndex = 0; gameIndex < gamesList.contents.length; gameIndex ++) {
             var gameDir = catDir + "/" + gamesList.contents[gameIndex];
-            var gameData = grunt.file.readJSON(gameDir + "/game.json");
+            var gameData = grunt.file.readJSON(gameDir + "/index.json");
             var gameHelp = gameData.help ? grunt.file.read(gameDir + "/" + gameData.help) : "";
             var gameKey = categoryList.id + "." + gamesList.id + "." + gameData.id;
 
