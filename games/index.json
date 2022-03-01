@@ -1,4 +1,5 @@
 [
-    "robot",
-    "openTheGate"
+    "pushButton",
+    "openTheGate",
+    "robot"
 ]

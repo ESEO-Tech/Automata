@@ -1,6 +1,3 @@
 {
-    "title": "Counter",
-    "css": [
-        "../WorldView.css"
-    ]
+    "title": "Counter"
 }
