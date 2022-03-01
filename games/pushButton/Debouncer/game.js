@@ -24,7 +24,7 @@ export class World extends CounterWorld {
 
     onStep() {
         super.onStep();
-        var value = this.buttonState;
+        let value = this.buttonState;
         if (this.bounceCounter < this.bounceCounterMax) {
             if (this.bounceCounter % 2 === 1) {
                 value = this.buttonState === "1" ? "0" : "1";

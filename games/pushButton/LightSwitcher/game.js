@@ -24,17 +24,10 @@ export class WorldView {
         container.html('<button>B=<span class="automata-bool-0">0</span></button>\
                         <div class="light off"><div>L=<span class="automata-bool-0">0</span></div>');
 
-        var self = this;
         $("button", container)
-            .mousedown(function () {
-                self.setButton("1");
-            })
-            .mouseup(function () {
-                self.setButton("0");
-            })
-            .mouseout(function () {
-                self.setButton("0");
-            });
+            .mousedown(() => this.setButton("1"))
+            .mouseup(()   => this.setButton("0"))
+            .mouseout(()  => this.setButton("0"));
 
         world.addListener("changed", this.update, this);
     }
@@ -48,7 +41,7 @@ export class WorldView {
     }
 
     update() {
-        var value = this.world.getActuatorValue(0);
+        const value = this.world.getActuatorValue(0);
 
         $(".light", this.container)
             .removeClass("on off")

@@ -40,17 +40,10 @@ export class WorldView {
                         <div class="actuator">C=<span class="automata-bool-0">0</span></div>\
                         <div class="counter"><div>0</div></div>');
 
-        var self = this;
         $("button", container)
-            .mousedown(function () {
-                self.setButton("1");
-            })
-            .mouseup(function () {
-                self.setButton("0");
-            })
-            .mouseout(function () {
-                self.setButton("0");
-            });
+            .mousedown(() => this.setButton("1"))
+            .mouseup(()   => this.setButton("0"))
+            .mouseout(()  => this.setButton("0"));
 
         world.addListener("changed", this.update, this);
     }
@@ -64,7 +57,7 @@ export class WorldView {
     }
 
     update() {
-        var value = this.world.getActuatorValue(0);
+        const value = this.world.getActuatorValue(0);
 
         $(".actuator span", this.container)
             .removeClass()

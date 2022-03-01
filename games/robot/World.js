@@ -53,14 +53,14 @@ export class World extends CoreWorld {
         this.sensorValues = ["0", "0", "0", "0"];
 
         // Compute next coordinates
-        var leftDir = 0;
+        let leftDir = 0;
         if (this.actuatorValues[0] === "1") {
             leftDir += 1;
         }
         if (this.actuatorValues[1] === "1") {
             leftDir -= 1;
         }
-        var rightDir = 0;
+        let rightDir = 0;
         if (this.actuatorValues[2] === "1") {
             rightDir += 1;
         }
@@ -68,7 +68,7 @@ export class World extends CoreWorld {
             rightDir -= 1;
         }
 
-        var nextMatrix = this.robotMatrix.clone();
+        const nextMatrix = this.robotMatrix.clone();
         if (leftDir === rightDir) {
             nextMatrix.translate(leftDir * this.stepDistance, 0);
         }
@@ -84,28 +84,27 @@ export class World extends CoreWorld {
 
         // Detect collisions
         function intersect(cx, cy, r, wx, wy1, wy2) {
-            var r2 = r * r;
-            var d = wx - cx;
-            var d2 = d * d;
+            const r2 = r * r;
+            const d = wx - cx;
+            const d2 = d * d;
             if (r2 < d2) {
                 return false;
             }
             else {
-                var s = Math.sqrt(r2 - d2);
-                var y1 = cy + s;
-                var y2 = cy - s;
+                const s = Math.sqrt(r2 - d2);
+                const y1 = cy + s;
+                const y2 = cy - s;
                 return y1 >= wy1 && y1 <= wy2 || y2 >= wy1 && y2 <= wy2;
             }
         }
 
-        var collision =
+        let collision =
             intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, 0,           0, this.height) ||
             intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, this.width,  0, this.height) ||
             intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, 0,           0, this.width)  ||
             intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, this.height, 0, this.width);
 
-        for (var collisionWallIndex = 0; collisionWallIndex < this.walls.length; collisionWallIndex ++) {
-            var cw = this.walls[collisionWallIndex];
+        for (const cw of this.walls) {
             if (intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, cw[0], cw[1], cw[3]) ||
                 intersect(nextMatrix.e, nextMatrix.f, this.robotRadius, cw[2], cw[1], cw[3]) ||
                 intersect(nextMatrix.f, nextMatrix.e, this.robotRadius, cw[1], cw[0], cw[2]) ||
@@ -141,12 +140,11 @@ export class World extends CoreWorld {
         }
 
         // Update sensors
-        for (var sensorIndex = 0; sensorIndex < this.sensorPoints.length; sensorIndex ++) {
-            var sensor = this.sensorPoints[sensorIndex];
-            var sx = this.robotMatrix.x(sensor.x, sensor.y);
-            var sy = this.robotMatrix.y(sensor.x, sensor.y);
-            for (var sensorWallIndex = 0; sensorWallIndex < this.walls.length; sensorWallIndex ++) {
-                var sw = this.walls[sensorWallIndex];
+        for (let sensorIndex = 0; sensorIndex < this.sensorPoints.length; sensorIndex ++) {
+            const sensor = this.sensorPoints[sensorIndex];
+            const sx = this.robotMatrix.x(sensor.x, sensor.y);
+            const sy = this.robotMatrix.y(sensor.x, sensor.y);
+            for (const sw of this.walls) {
                 if (intersect(sx, sy, this.sensorRadius, sw[0], sw[1], sw[3]) ||
                     intersect(sx, sy, this.sensorRadius, sw[2], sw[1], sw[3]) ||
                     intersect(sy, sx, this.sensorRadius, sw[1], sw[0], sw[2]) ||
@@ -159,8 +157,8 @@ export class World extends CoreWorld {
     }
 
     getStatus() {
-        var goalDx = this.goalX - this.robotMatrix.e;
-        var goalDy = this.goalY - this.robotMatrix.f;
+        const goalDx = this.goalX - this.robotMatrix.e;
+        const goalDy = this.goalY - this.robotMatrix.f;
         if (goalDx * goalDx + goalDy * goalDy <= this.goalRadius * this.goalRadius) {
             return {done: true, status: "success"};
         }

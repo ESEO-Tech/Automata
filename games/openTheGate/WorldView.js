@@ -81,14 +81,15 @@ export class WorldView {
     }
 
     update() {
-        for (var sensorIndex = 0; sensorIndex < this.sensorViews.length; sensorIndex ++) {
+        for (let sensorIndex = 0; sensorIndex < this.sensorViews.length; sensorIndex ++) {
             this.sensorViews[sensorIndex].attr({"class": this.world.sensorValues[sensorIndex] === "1" ? "active" : "inactive"});
         }
-        for (var actuatorIndex = 0; actuatorIndex < this.actuatorViews.length; actuatorIndex ++) {
+        
+        for (let actuatorIndex = 0; actuatorIndex < this.actuatorViews.length; actuatorIndex ++) {
             this.actuatorViews[actuatorIndex].attr({"class": this.world.actuatorValues[actuatorIndex] === "1" ? "active" : "inactive"});
         }
 
-        for (var carIndex = 0; carIndex < this.carViews.length; carIndex ++) {
+        for (let carIndex = 0; carIndex < this.carViews.length; carIndex ++) {
             this.carViews[carIndex].attr({transform: "translate(" + this.world.carX[carIndex] + "," + this.world.carY + ")"});
         }
 

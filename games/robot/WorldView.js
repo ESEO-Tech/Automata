@@ -17,8 +17,7 @@ export class WorldView {
         this.paper.circle(world.goalX, world.goalY, world.goalRadius).attr({fill: "orange"});
 
         // Draw walls
-        for (var i = 0; i < world.walls.length; i ++) {
-            var wall = world.walls[i];
+        for (const wall of world.walls) {
             this.paper.rect(wall[0], wall[1], wall[2] - wall[0], wall[3] - wall[1]).attr({fill: "black", stroke: "none"});
         }
 
@@ -27,7 +26,7 @@ export class WorldView {
             return this.paper.circle(p.x, p.y, world.sensorRadius);
         }, this);
 
-        var r = world.robotRadius;
+        const r = world.robotRadius;
         this.robotView = this.paper.g(
             this.paper.circle(0, 0, world.robotRadius).attr({fill: "rgb(38, 67, 112)"}),
             this.paper.circle(world.robotRadius * 0.25, 0, world.robotRadius * 0.75).attr({fill: "rgb(51, 91, 149)"}),
@@ -46,7 +45,7 @@ export class WorldView {
     }
 
     update() {
-        for (var i = 0; i < this.sensorViews.length; i ++) {
+        for (let i = 0; i < this.sensorViews.length; i ++) {
             this.sensorViews[i].attr({
                 "class": this.world.sensorValues[i] === "1" ? "active" : "inactive"
             });
