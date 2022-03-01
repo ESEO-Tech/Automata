@@ -1,15 +1,6 @@
 {
-    "id": "Debouncer",
     "title": "Debouncer",
-    "js": [
-        "../../../macros/arrays.js",
-        "../Counter/World.js",
-        "../Counter/WorldView.js",
-        "World.js",
-        "game.js"
-    ],
     "css": [
         "../WorldView.css"
-    ],
-    "icon": "icon.svg"
+    ]
 }

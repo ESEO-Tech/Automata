@@ -1,16 +1,6 @@
 {
-    "id": "DontCrushTheFollower",
     "title": "Don't crush the follower",
-    "js": [
-        "../../../macros/arrays.js",
-        "../World.js",
-        "../WorldView.js",
-        "World.js",
-        "game.js"
-    ],
     "css": [
         "../WorldView.css"
-    ],
-    "help": "help.html",
-    "icon": "icon.svg"
+    ]
 }

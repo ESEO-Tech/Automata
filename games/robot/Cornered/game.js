@@ -1,28 +1,21 @@
+export {WorldView}           from "../WorldView.js";
+import {World as RobotWorld} from "../World.js";
 
-namespace("automata.games.robot", function (exports) {
-    "use strict";
+export const World = RobotWorld.create({
+    width: 600,
+    height: 400,
 
-    exports.Cornered = {
-        key: "automata.games.robot.Cornered",
-        view: exports.WorldView,
+    walls: [
+        [0,   0,   600, 10],
+        [0,   390, 600, 400],
+        [0,   0,   10,  400],
+        [590, 0,   600, 400]
+    ],
 
-        world: exports.World.create({
-            width: 600,
-            height: 400,
+    startX: 30,
+    startY: 30,
 
-            walls: [
-                [0,   0,   600, 10],
-                [0,   390, 600, 400],
-                [0,   0,   10,  400],
-                [590, 0,   600, 400]
-            ],
-
-            startX: 30,
-            startY: 30,
-
-            goalX: 570,
-            goalY: 370,
-            goalRadius: 15
-        })
-    };
+    goalX: 570,
+    goalY: 370,
+    goalRadius: 15
 });

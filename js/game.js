@@ -23,6 +23,12 @@ async function main(game) {
     const infoResp = await fetch(`games/${sid}/${gid}/index.json`);
     const info     = await infoResp.json();
 
+    // Add custom CSS.
+    const style = document.createElement("link");
+    style.rel = "stylesheet";
+    style.href = `games/${sid}/${gid}/index.css`;
+    document.querySelector("head").appendChild(style);
+
     // Load game help text.
     const helpResp = await fetch(`games/${sid}/${gid}/help.html`);
     const help     = await helpResp.text();

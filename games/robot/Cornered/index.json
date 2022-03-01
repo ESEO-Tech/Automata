@@ -1,15 +1,3 @@
 {
-    "id": "Cornered",
-    "title": "Cornered",
-    "js": [
-        "../../../macros/arrays.js",
-        "../World.js",
-        "../WorldView.js",
-        "game.js"
-    ],
-    "css": [
-        "../WorldView.css"
-    ],
-    "help": "help.html",
-    "icon": "icon.svg"
+    "title": "Cornered"
 }
