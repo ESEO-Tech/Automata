@@ -4,7 +4,7 @@ import {ControlView}     from "./view/ControlView.js";
 import {Diagram}         from "./view/Diagram.js";
 import {HelpView}        from "./view/HelpView.js";
 import {ScoreView}       from "./view/ScoreView.js";
-import {LocalStorage}    from "./storage/LocalStorage.js";
+import * as storage      from "./storage/LocalStorage.js";
 
 async function main(game) {
     // Extract game ID from URL hash.
@@ -56,11 +56,10 @@ async function main(game) {
 
     // Configure the data storage for the current game
     // and attempt to load the saved data.
-    var storage = LocalStorage.create().init()
-        .addSource(`${sid}.${gid}.model`, world.stateMachine)
-        .addSource(`${sid}.${gid}.view.table`, tableView)
-        .addSource(`${sid}.${gid}.view.diagram`, diagramView);
-    var loaded = storage.load();
+    storage.addSource(`${sid}.${gid}.model`, world.stateMachine);
+    storage.addSource(`${sid}.${gid}.view.table`, tableView);
+    storage.addSource(`${sid}.${gid}.view.diagram`, diagramView);
+    const loaded = storage.load();
 
 /*
     function handleHash() {

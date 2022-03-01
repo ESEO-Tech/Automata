@@ -1,6 +1,4 @@
 
-import {CoreObject} from "../model/Object.js";
-
 function supportsLocalStorage() {
     try {
         return "localStorage" in window && window.localStorage !== null;
@@ -10,128 +8,103 @@ function supportsLocalStorage() {
     }
 }
 
-/**
- * @class LocalStorage
- * @memberof automata.storage
- *
- * @todo Add documentation
+// sources is an array to enforce ordering during load operations.
+const sources = [];
+
+const mapping = {};
+
+export function addSource(key, model) {
+    sources.push({key, model});
+    model.addListener("changed", save);
+}
+
+/*
+ * Load all sources from the data store.
+ * Returns true on success.
  */
-export const LocalStorage = CoreObject.create({
+export function load() {
+    let success = false;
 
-    /*
-     * Configure a data storage.
-     */
-    init: function() {
-        // this.sources is an array to enforce ordering during load operations
-        this.sources = [];
-        this.mapping = {};
-        return this;
-    },
+    if (supportsLocalStorage()) {
+        for (const src of sources) {
+            src.model.removeListener("changed", save);
+        }
 
-    addSource: function (key, source) {
-        this.sources.push({key: key, source: source});
-        source.addListener("changed", this.save, this);
-        return this;
-    },
-
-    /*
-     * Load all sources from the data store.
-     * Returns true on success.
-     */
-    load: function () {
-        var success = false;
-        if (supportsLocalStorage()) {
-            var sourceIndex;
-            var sourcesLength = this.sources.length;
-
-            for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
-                this.sources[sourceIndex].source.removeListener("changed", this.save, this);
-            }
-
-            for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
-                var item = this.sources[sourceIndex];
-                if (item.key in window.localStorage) {
-                    console.log("Loading: " + item.key);
-                    item.source.fromStorable(JSON.parse(window.localStorage[item.key]), this.mapping);
-                    success = true;
-                }
-            }
-
-            for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
-                this.sources[sourceIndex].source.addListener("changed", this.save, this);
+        for (const src of sources) {
+            if (src.key in window.localStorage) {
+                console.log("Loading: " + src.key);
+                src.model.fromStorable(JSON.parse(window.localStorage[src.key]), mapping);
+                success = true;
             }
         }
-        return success;
-    },
 
-    /*
-     * Save the given source to the data store.
-     * If no source is specified, all sources are saved.
-     */
-    save: function (source) {
-        if (supportsLocalStorage()) {
-            for (var sourceIndex = 0, sourcesLength = this.sources.length; sourceIndex < sourcesLength; sourceIndex ++) {
-                var item = this.sources[sourceIndex];
-                if (typeof source === "undefined" || item.source === source) {
-                    console.log("Saving: " + item.key);
-                    window.localStorage[item.key] = JSON.stringify(source.toStorable());
-                }
-            }
+        for (const src of sources) {
+            src.model.addListener("changed", save);
         }
-    },
-
-    toJSON: function () {
-        var data = {};
-        for (var sourceIndex = 0, sourcesLength = this.sources.length; sourceIndex < sourcesLength; sourceIndex ++) {
-            var item = this.sources[sourceIndex];
-            data[item.key] = item.source.toStorable();
-        }
-        return JSON.stringify(data);
-    },
-
-    fromJSON: function (json) {
-        var data = JSON.parse(json);
-
-        var sourceIndex;
-        var sourcesLength = this.sources.length;
-
-        for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
-            this.sources[sourceIndex].source.removeListener("changed", this.save, this);
-        }
-        for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
-            var item = this.sources[sourceIndex];
-            if (item.key in data) {
-                console.log("Importing: " + item.key);
-                item.source.fromStorable(data[item.key], this.mapping);
-            }
-        }
-        for (sourceIndex = 0; sourceIndex < sourcesLength; sourceIndex ++) {
-            this.sources[sourceIndex].source.addListener("changed", this.save, this);
-        }
-        return this;
-    },
-
-    toBlobURL: function () {
-        var blob = new Blob([this.toJSON()], {type: "application/json"});
-        return URL.createObjectURL(blob);
-    },
-
-    fromFile: function (file) {
-        var reader = new FileReader();
-        var self = this;
-        reader.onload = function () {
-            self.fromJSON(this.result);
-        };
-
-        reader.readAsText(file);
-        return this;
-    },
-
-    toBase64: function () {
-        return btoa(unescape(encodeURIComponent(this.toJSON())));
-    },
-
-    fromBase64: function (base64) {
-        return this.fromJSON(decodeURIComponent(escape(atob(base64))));
     }
-});
+
+    return success;
+}
+
+/*
+ * Save the given model to the data store.
+ * If no model is specified, all sources are saved.
+ */
+export function save(model) {
+    if (supportsLocalStorage()) {
+        for (const src of sources) {
+            if (!model || src.model === model) {
+                console.log("Saving: " + src.key);
+                window.localStorage[src.key] = JSON.stringify(model.toStorable());
+            }
+        }
+    }
+}
+
+export function toJSON() {
+    const data = {};
+    for (const src of sources) {
+        data[src.key] = src.model.toStorable();
+    }
+    return JSON.stringify(data);
+}
+
+export function fromJSON(json) {
+    const data = JSON.parse(json);
+
+    for (const src of sources) {
+        src.model.removeListener("changed", save);
+    }
+
+    for (const src of sources) {
+        if (src.key in data) {
+            console.log("Importing: " + src.key);
+            src.model.fromStorable(data[src.key], mapping);
+        }
+    }
+
+    for (const src of sources) {
+        src.model.addListener("changed", save);
+    }
+}
+
+export function toBlobURL() {
+    const blob = new Blob([toJSON()], {type: "application/json"});
+    return URL.createObjectURL(blob);
+}
+
+export function fromFile(file) {
+    const reader = new FileReader();
+    reader.onload = function () {
+        self.fromJSON(this.result);
+    };
+    reader.readAsText(file);
+}
+
+export function toBase64() {
+    return btoa(unescape(encodeURIComponent(toJSON())));
+}
+
+export function fromBase64(base64) {
+    return fromJSON(decodeURIComponent(escape(atob(base64))));
+}
