@@ -103,9 +103,7 @@ export function toBlobURL() {
 
 export function fromFile(file) {
     const reader = new FileReader();
-    reader.onload = function () {
-        self.fromJSON(this.result);
-    };
+    reader.onload = evt => this.fromJSON(evt.target.result);
     reader.readAsText(file);
 }
 

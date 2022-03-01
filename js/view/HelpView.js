@@ -15,10 +15,7 @@ export class HelpView extends View {
     }
 
     render() {
-        var self = this;
-        $("button", this.container).click(function () {
-            self.hide();
-        });
+        $("button", this.container).click(() => this.hide());
     }
 
     show() {

@@ -15,7 +15,7 @@ export class Transition extends CoreObject {
         this.sourceState = sourceState;
         this.targetState = targetState;
 
-        var world = sourceState.stateMachine.world;
+        const world = sourceState.stateMachine.world;
         this.inputs  = world.sensors  .map(function () { return "-"; });
         this.outputs = world.actuators.map(function () { return "0"; });
 
@@ -75,7 +75,8 @@ export class Transition extends CoreObject {
     }
 
     matchesPattern(pattern) {
-        for (var i = 0, l = Math.min(this.inputs.length, pattern.length); i < l; i ++) {
+        const l = Math.min(this.inputs.length, pattern.length);
+        for (let i = 0; i < l; i ++) {
             if (this.inputs[i] !== "-" && pattern[i] !== "-" && this.inputs[i] !== pattern[i]) {
                 return false;
             }

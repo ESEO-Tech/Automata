@@ -64,7 +64,7 @@ export class World extends CoreObject {
         while(timeElapsed >= this.timeStep && this.isRunning) {
             this.actuatorValues = this.stateMachine.step();
             this.onStep();
-            var status = this.getStatus();
+            const status = this.getStatus();
             if (status.done) {
                 this.pause();
                 this.fire("done", status);
@@ -75,10 +75,9 @@ export class World extends CoreObject {
         this.fire("changed");
 
         if (this.isRunning) {
-            var refTime = Date.now();
-            var self = this;
-            this.clock = setTimeout(function () {
-                self.step(Date.now() - refTime + timeElapsed);
+            const refTime = Date.now();
+            this.clock = setTimeout(() => {
+                this.step(Date.now() - refTime + timeElapsed);
             }, this.timeStep);
         }
     }

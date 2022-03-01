@@ -21,37 +21,36 @@ export class ControlView extends View {
     render() {
         this.playButton = $("#control-play", this.container);
 
-        var self = this;
-        this.playButton.click(function () {
-            if (self.model.isRunning) {
-                self.model.pause();
+        this.playButton.click(() => {
+            if (this.model.isRunning) {
+                this.model.pause();
             }
             else {
-                self.updateTimeStep();
-                self.model.start();
+                this.updateTimeStep();
+                this.model.start();
             }
         });
 
-        $("#control-stop", this.container).click(function () {
-            self.model.stop();
+        $("#control-stop", this.container).click(() => {
+            this.model.stop();
         });
 
-        $("#control-left", this.container).click(function () {
-            self.moveLeft();
+        $("#control-left", this.container).click(() => {
+            this.moveLeft();
         });
 
-        $("#control-right", this.container).click(function () {
-            self.moveRight();
+        $("#control-right", this.container).click(() => {
+            this.moveRight();
         });
 
         $("#control-speed", this.container)
             .val(10 - 10 * (this.model.timeStep - this.model.timeStepMin) / (this.model.timeStepMax - this.model.timeStepMin))
-            .change(function () {
-                self.updateTimeStep();
+            .change(() => {
+                this.updateTimeStep();
             });
 
-        $("#control-help", this.container).click(function () {
-            self.model.fire("help");
+        $("#control-help", this.container).click(() => {
+            this.model.fire("help");
         });
     }
 
@@ -64,20 +63,19 @@ export class ControlView extends View {
     }
 
     updateTimeStep() {
-        var value = parseInt($("#control-speed", this.container).val());
+        const value = parseInt($("#control-speed", this.container).val());
         this.model.timeStep = this.model.timeStepMin + (this.model.timeStepMax - this.model.timeStepMin) * (10 - value) / 10 ;
     }
 
     moveLeft() {
-        var entering = this.panes.pop();
+        const entering = this.panes.pop();
         $(entering).attr("class", "entering-left-pane");
         this.panes.unshift(entering);
 
-        var self = this;
-        setTimeout(function () {
-            $(self.panes[0]).attr("class", "left-pane");
-            $(self.panes[1]).attr("class", "right-pane");
-            $(self.panes[2]).attr("class", "leaving-right-pane");
+        setTimeout(() => {
+            $(this.panes[0]).attr("class", "left-pane");
+            $(this.panes[1]).attr("class", "right-pane");
+            $(this.panes[2]).attr("class", "leaving-right-pane");
         }, 20);
     }
 
@@ -85,11 +83,10 @@ export class ControlView extends View {
         $(this.panes[2]).attr("class", "entering-right-pane");
         this.panes.push(this.panes.shift());
 
-        var self = this;
-        setTimeout(function () {
-            $(self.panes[0]).attr("class", "left-pane");
-            $(self.panes[1]).attr("class", "right-pane");
-            $(self.panes[2]).attr("class", "leaving-left-pane");
+        setTimeout(() => {
+            $(this.panes[0]).attr("class", "left-pane");
+            $(this.panes[1]).attr("class", "right-pane");
+            $(this.panes[2]).attr("class", "leaving-left-pane");
         }, 20);
     }
 }

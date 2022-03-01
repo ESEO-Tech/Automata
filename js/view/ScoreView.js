@@ -19,10 +19,7 @@ export class ScoreView extends View {
         $(this.renderTemplate("ScoreView-main.tpl.html", status)).appendTo(this.container);
         this.container.attr("class", "visible");
 
-        var self = this;
-        $("button", this.container).click(function () {
-            self.hide();
-        });
+        $("button", this.container).click(() => this.hide());
     }
 
     hide() {

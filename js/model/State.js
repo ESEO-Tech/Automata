@@ -30,7 +30,7 @@ export class State extends CoreObject {
     constructor(stateMachine) {
         super();
 
-        var suffix = this.id;
+        let suffix = this.id;
         do {
             this.name = "State" + suffix;
             suffix ++;
@@ -144,7 +144,7 @@ export class State extends CoreObject {
      * @return {automata.model.State} The current state.
      */
     removeOutgoingTransition(transition) {
-        var index = this.outgoingTransitions.indexOf(transition);
+        const index = this.outgoingTransitions.indexOf(transition);
         this.outgoingTransitions.splice(index, 1);
         return this;
     }
@@ -170,7 +170,7 @@ export class State extends CoreObject {
      * @return {automata.model.State} The current state.
      */
     removeIncomingTransition(transition) {
-        var index = this.incomingTransitions.indexOf(transition);
+        const index = this.incomingTransitions.indexOf(transition);
         this.incomingTransitions.splice(index, 1);
         return this;
     }
@@ -233,10 +233,9 @@ export class State extends CoreObject {
      * @return {?automata.model.Transition} The transition found.
      */
     getTransitionToFire() {
-        for (var i = 0, l = this.outgoingTransitions.length; i < l; i ++) {
-            var transition = this.outgoingTransitions[i];
-            if (transition.canFire()) {
-                return transition;
+        for (const t of this.outgoingTransitions) {
+            if (t.canFire()) {
+                return t;
             }
         }
         return null;

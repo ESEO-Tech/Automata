@@ -25,25 +25,25 @@ export class StateMachine extends CoreObject {
     }
 
     toStorable() {
-        var result = {
+        const result = {
             states: {},
             transitions: {}
         };
-        for (var sid in this.statesById) {
+        for (const sid in this.statesById) {
             result.states[sid] = this.statesById[sid].toStorable();
         }
-        for (var tid in this.transitionsById) {
+        for (const tid in this.transitionsById) {
             result.transitions[tid] = this.transitionsById[tid].toStorable();
         }
         return result;
     }
 
     fromStorable(obj, mapping) {
-        for (var sid in obj.states) {
+        for (const sid in obj.states) {
             mapping[sid] = this.createState().fromStorable(obj.states[sid]);
         }
-        for (var tid in obj.transitions) {
-            var tobj = obj.transitions[tid];
+        for (const tid in obj.transitions) {
+            const tobj = obj.transitions[tid];
             mapping[tid] = this.createTransition(mapping[tobj.sourceStateId], mapping[tobj.targetStateId]).fromStorable(tobj);
         }
         return this;
@@ -59,7 +59,7 @@ export class StateMachine extends CoreObject {
     }
 
     createState() {
-        var state = new State(this);
+        const state = new State(this);
         this.states.push(state);
         this.statesById[state.id] = state;
 
@@ -76,7 +76,7 @@ export class StateMachine extends CoreObject {
     removeState(state) {
         this.fire("beforeRemoveState", state);
 
-        var index = this.states.indexOf(state);
+        const index = this.states.indexOf(state);
         if (index === 0) {
             this.world.stop();
         }
@@ -92,7 +92,7 @@ export class StateMachine extends CoreObject {
     }
 
     createTransition(sourceState, targetState) {
-        var transition = new Transition(sourceState, targetState);
+        const transition = new Transition(sourceState, targetState);
         this.transitions.push(transition);
         this.transitionsById[transition.id] = transition;
 
@@ -130,7 +130,7 @@ export class StateMachine extends CoreObject {
     }
 
     step() {
-        var transition = this.currentState.getTransitionToFire();
+        const transition = this.currentState.getTransitionToFire();
         if (transition) {
             this.currentState = transition.targetState;
             if (transition.sourceState !== transition.targetState) {
@@ -138,6 +138,6 @@ export class StateMachine extends CoreObject {
             }
             return transition.outputs;
         }
-        return this.world.actuators.map(function () { return "0"; });
+        return this.world.actuators.map(() => "0");
     }
 }

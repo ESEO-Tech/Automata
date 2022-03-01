@@ -101,16 +101,16 @@ export class CoreObject {
      *
      * @memberof CoreObject
      *
-     * @param {string}   event      - The name of the event to listen.
-     * @param {function} [callback] - The function to call when the event is fired (defaults to the function that matches the event name in the callback receiver).
-     * @param {CoreObject}   [receiver] - The context object of the callback (defaults to the global object).
+     * @param {string}      event      - The name of the event to listen.
+     * @param {function}    [callback] - The function to call when the event is fired (defaults to the function that matches the event name in the callback receiver).
+     * @param {CoreObject}  [receiver] - The context object of the callback (defaults to the global object).
      * @return {CoreObject} The current object.
      */
     removeListener(event, a, b) {
         if (event in this.listeners) {
-            var listeners = this.listeners[event];
-            var record = this.makeListenerRecord(event, a, b);
-            for (var i = 0, l = listeners.length; i < l;) {
+            const listeners = this.listeners[event];
+            const record = this.makeListenerRecord(event, a, b);
+            for (let i = 0, l = listeners.length; i < l;) {
                 if (listeners[i].callback === record.callback && listeners[i].receiver === record.receiver) {
                     listeners.splice(i, 1);
                     l --;
@@ -133,12 +133,10 @@ export class CoreObject {
      */
     fire(event) {
         if (event in this.listeners) {
-            var listeners = this.listeners[event];
-            var args = Array.prototype.slice.call(arguments, 1);
+            const args = Array.prototype.slice.call(arguments, 1);
             args.unshift(this);
-            for (var i = 0, l = listeners.length; i < l; i ++) {
-                var listener = listeners[i];
-                listener.callback.apply(listener.receiver, args);
+            for (const l of this.listeners[event]) {
+                l.callback.apply(l.receiver, args);
             }
         }
         return this;
