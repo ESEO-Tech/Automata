@@ -24,7 +24,7 @@ let creationCount = 0;
  *
  * @abstract
  */
-export const CoreObject = {
+export class CoreObject {
     /**
      * Initialize the current object.
      *
@@ -32,53 +32,11 @@ export const CoreObject = {
      *
      * @return {CoreObject} The current object.
      */
-    init: function () {
+    constructor() {
         this.listeners = {};
         this.id = String(creationCount);
         creationCount ++;
-        return this;
-    },
-
-    /**
-     * Create a new object with the current object as prototype.
-     *
-     * Optionally augment the new CoreObject with the given properties
-     * (see {@link CoreObject#augment}).
-     *
-     * @memberof CoreObject
-     *
-     * @param {CoreObject} [properties] - An object with the properties to add to the new object.
-     * @return {CoreObject} The new object.
-     */
-    create: function (properties) {
-        return Object.create(this).augment(properties || {});
-    },
-
-    /**
-     * The prototype of the current object.
-     *
-     * @memberof CoreObject
-     *
-     * @type {CoreObject|CoreObject}
-     */
-    get proto() {
-        return CoreObject.getPrototypeOf(this);
-    },
-
-    /**
-     * Augment the current object with the properties of the given object.
-     *
-     * @memberof CoreObject
-     *
-     * @param {CoreObject} [properties] - An object with the properties to add to the new object.
-     * @return {CoreObject} The current object.
-     */
-    augment: function (properties) {
-        for (var p in properties) {
-            this[p] = properties[p];
-        }
-        return this;
-    },
+    }
 
     /**
      * Convert the current object into an object suitable for storage.
@@ -88,9 +46,9 @@ export const CoreObject = {
      *
      * @return {CoreObject} A storable representation of the current object.
      */
-    toStorable: function () {
+    toStorable() {
         return {};
-    },
+    }
 
     /**
      * Initialize the current object from the given storable object.
@@ -101,9 +59,9 @@ export const CoreObject = {
      * @param {!CoreObject} obj - A storable representation of the current object.
      * @return {CoreObject} The current object.
      */
-    fromStorable: function (obj) {
+    fromStorable(obj) {
         return this;
-    },
+    }
 
     /**
      * Add a listener for a given event.
@@ -128,13 +86,13 @@ export const CoreObject = {
      * @param {CoreObject}   [receiver] - The context object of the callback (defaults to the global object).
      * @return {CoreObject} The current object.
      */
-    addListener: function (event, a, b) {
+    addListener(event, a, b) {
         if (!(event in this.listeners)) {
             this.listeners[event] = [];
         }
         this.listeners[event].push(this.makeListenerRecord(event, a, b));
         return this;
-    },
+    }
 
     /**
      * Remove a listener for a given event.
@@ -148,7 +106,7 @@ export const CoreObject = {
      * @param {CoreObject}   [receiver] - The context object of the callback (defaults to the global object).
      * @return {CoreObject} The current object.
      */
-    removeListener: function (event, a, b) {
+    removeListener(event, a, b) {
         if (event in this.listeners) {
             var listeners = this.listeners[event];
             var record = this.makeListenerRecord(event, a, b);
@@ -163,7 +121,7 @@ export const CoreObject = {
             }
         }
         return this;
-    },
+    }
 
     /**
      * Fire an event.
@@ -173,7 +131,7 @@ export const CoreObject = {
      * @param {string} event - The name of the event to fire.
      * @return {CoreObject} The current object.
      */
-    fire: function (event) {
+    fire(event) {
         if (event in this.listeners) {
             var listeners = this.listeners[event];
             var args = Array.prototype.slice.call(arguments, 1);
@@ -184,7 +142,7 @@ export const CoreObject = {
             }
         }
         return this;
-    },
+    }
 
     /**
      * Returns an event listener definition object.
@@ -197,7 +155,7 @@ export const CoreObject = {
      * @param {CoreObject}   [receiver] - The context object of the callback (defaults to the global object).
      * @return {CoreObject} A listener definition.
      */
-    makeListenerRecord: function (event, a, b) {
+    makeListenerRecord(event, a, b) {
         if (typeof b === "undefined") {
             if (typeof a === "function") {
                 return {
@@ -219,4 +177,4 @@ export const CoreObject = {
             };
         }
     }
-};
+}

@@ -36,13 +36,14 @@ async function main(game) {
 
     // Load model and initialize views.
     const {WorldView, World} = await import(`../games/${sid}/${gid}/game.js`)
-    var world       = World.create().init();
-    var worldView   = WorldView.create().init(world, $("#world-view"));
-    var tableView   = TransitionTable.create().init(world.stateMachine, $("#table-view"));
-    var controlView = ControlView.create().init(world, $("#control-view"));
-    var diagramView = Diagram.create().init(world.stateMachine, $("#diagram-view"));
-    var helpView    = HelpView.create().init(world, $("#help-view"));
-    var scoreView   = ScoreView.create().init(world, $("#score-view"));
+    var world       = new World();
+    world.reset();
+    var worldView   = new WorldView(world, $("#world-view"));
+    var tableView   = new TransitionTable(world.stateMachine, $("#table-view"));
+    var controlView = new ControlView(world, $("#control-view"));
+    var diagramView = new Diagram(world.stateMachine, $("#diagram-view"));
+    var helpView    = new HelpView(world, $("#help-view"));
+    var scoreView   = new ScoreView(world, $("#score-view"));
 
     // When the window is resized, scale the content of
     // the table view and update the diagram viewbox.

@@ -18,30 +18,40 @@ export function addSource(key, model) {
     model.addListener("changed", save);
 }
 
+function addListeners() {
+    for (const src of sources) {
+        src.model.addListener("changed", save);
+    }
+}
+
+function removeListeners() {
+    for (const src of sources) {
+        src.model.removeListener("changed", save);
+    }
+}
+
 /*
  * Load all sources from the data store.
  * Returns true on success.
  */
 export function load() {
+    if (!supportsLocalStorage()) {
+        return false;
+    }
+
     let success = false;
 
-    if (supportsLocalStorage()) {
-        for (const src of sources) {
-            src.model.removeListener("changed", save);
-        }
+    removeListeners();
 
-        for (const src of sources) {
-            if (src.key in window.localStorage) {
-                console.log("Loading: " + src.key);
-                src.model.fromStorable(JSON.parse(window.localStorage[src.key]), mapping);
-                success = true;
-            }
-        }
-
-        for (const src of sources) {
-            src.model.addListener("changed", save);
+    for (const src of sources) {
+        if (src.key in window.localStorage) {
+            console.log("Loading: " + src.key);
+            src.model.fromStorable(JSON.parse(window.localStorage[src.key]), mapping);
+            success = true;
         }
     }
+
+    addListeners();
 
     return success;
 }
@@ -51,12 +61,14 @@ export function load() {
  * If no model is specified, all sources are saved.
  */
 export function save(model) {
-    if (supportsLocalStorage()) {
-        for (const src of sources) {
-            if (!model || src.model === model) {
-                console.log("Saving: " + src.key);
-                window.localStorage[src.key] = JSON.stringify(model.toStorable());
-            }
+    if (!supportsLocalStorage()) {
+        return;
+    }
+
+    for (const src of sources) {
+        if (!model || src.model === model) {
+            console.log("Saving: " + src.key);
+            window.localStorage[src.key] = JSON.stringify(model.toStorable());
         }
     }
 }
@@ -72,9 +84,7 @@ export function toJSON() {
 export function fromJSON(json) {
     const data = JSON.parse(json);
 
-    for (const src of sources) {
-        src.model.removeListener("changed", save);
-    }
+    removeListeners();
 
     for (const src of sources) {
         if (src.key in data) {
@@ -83,9 +93,7 @@ export function fromJSON(json) {
         }
     }
 
-    for (const src of sources) {
-        src.model.addListener("changed", save);
-    }
+    addListeners();
 }
 
 export function toBlobURL() {

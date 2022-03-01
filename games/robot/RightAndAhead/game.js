@@ -2,16 +2,20 @@
 export {WorldView}           from "../WorldView.js";
 import {World as RobotWorld} from "../World.js";
 
-export const World = RobotWorld.create({
-    width: 600,
-    height: 400,
+export class World extends RobotWorld {
+    constructor() {
+        super();
 
-    walls: [],
+        this.width = 600;
+        this.height = 400;
 
-    startX: 300,
-    startY: 50,
+        this.walls = [];
 
-    goalX: 300,
-    goalY: 350,
-    goalRadius: 15
-});
+        this.startX = 300;
+        this.startY = 50;
+
+        this.goalX = 300;
+        this.goalY = 350;
+        this.goalRadius = 15;
+    }
+}

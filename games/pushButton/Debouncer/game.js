@@ -3,26 +3,29 @@ import {WorldView, World as CounterWorld} from "../Counter/game.js";
 
 export {WorldView};
 
-export const World = CounterWorld.create({
-    BOUNCE_COUNTER_MAX: 4,
+export class World extends CounterWorld {
+    constructor() {
+        super();
+        this.bounceCounterMax = 4;
+    }
 
-    setButton: function (value) {
+    setButton(value) {
         if (value !== this.buttonState) {
             this.bounceCounter = 0;
         }
         this.buttonState = value;
-    },
+    }
 
-    onReset: function () {
-        CounterWorld.onReset.call(this);
+    onReset() {
+        super.onReset();
         this.buttonState = "0";
-        this.bounceCounter = this.BOUNCE_COUNTER_MAX;
-    },
+        this.bounceCounter = this.bounceCounterMax;
+    }
 
-    onStep: function () {
-        CounterWorld.onStep.call(this);
+    onStep() {
+        super.onStep();
         var value = this.buttonState;
-        if (this.bounceCounter < this.BOUNCE_COUNTER_MAX) {
+        if (this.bounceCounter < this.bounceCounterMax) {
             if (this.bounceCounter % 2 === 1) {
                 value = this.buttonState === "1" ? "0" : "1";
             }
@@ -30,4 +33,4 @@ export const World = CounterWorld.create({
         }
         this.setSensorValue(0, value);
     }
-});
+}

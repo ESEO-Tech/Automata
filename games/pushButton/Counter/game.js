@@ -1,39 +1,39 @@
 
-import {CoreObject}         from "../../../js/model/Object.js";
 import {World as CoreWorld} from "../../../js/model/World.js";
 
-export const World = CoreWorld.create({
-    timeStepMin: 10,
-    timeStepMax: 200,
-    timeStep: 20,
+export class World extends CoreWorld {
+    constructor() {
+        super();
 
-    sensors:   [
-        {name: "B",  desc: "Button"}
-    ],
-    actuators: [
-        {name: "C", desc: "Count"}
-    ],
+        this.timeStepMin = 10;
+        this.timeStepMax = 200;
+        this.timeStep = 20;
 
-    setButton: function (value) {
+        this.sensors = [
+            {name: "B",  desc: "Button"}
+        ];
+        this.actuators = [
+            {name: "C", desc: "Count"}
+        ];
+    }
+
+    setButton(value) {
         this.setSensorValue(0, value);
-    },
+    }
 
-    onReset: function () {
+    onReset() {
         this.counterValue = 0;
-    },
+    }
 
-    onStep: function () {
+    onStep() {
         if (this.getActuatorValue(0) === "1") {
             this.counterValue ++;
         }
     }
-});
+}
 
-export const WorldView = CoreObject.create({
-
-    init: function (world, container) {
-        CoreObject.init.call(this);
-
+export class WorldView {
+    constructor(world, container) {
         this.world = world;
 
         container.html('<button>B=<span class="automata-bool-0">0</span></button>\
@@ -53,19 +53,17 @@ export const WorldView = CoreObject.create({
             });
 
         world.addListener("changed", this.update, this);
+    }
 
-        return this;
-    },
-
-    setButton: function (value) {
+    setButton(value) {
         this.world.setButton(value);
         $("button span", this.container)
             .removeClass()
             .addClass("automata-bool-" + value)
             .html(value);
-    },
+    }
 
-    update: function () {
+    update() {
         var value = this.world.getActuatorValue(0);
 
         $(".actuator span", this.container)
@@ -75,4 +73,4 @@ export const WorldView = CoreObject.create({
 
         $(".counter div", this.container).html(this.world.counterValue);
     }
-});
+}

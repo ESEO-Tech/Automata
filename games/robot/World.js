@@ -1,54 +1,55 @@
 
 import {World as CoreWorld} from "../../js/model/World.js";
 
-export const World = CoreWorld.create({
-    timeStepMax: 100,
+export class World extends CoreWorld {
+    constructor() {
+        super();
 
-    sensors:   [
-        {name: "WL",  desc: "Wall on the Left"},
-        {name: "WR",  desc: "Wall on the right"},
-        {name: "WA",  desc: "Wall Ahead"},
-        {name: "EOR", desc: "End Of Rotation"}
-    ],
-    actuators: [
-        {name: "LF", desc: "Left wheel Forward"},
-        {name: "LB", desc: "Left wheel Backward"},
-        {name: "RF", desc: "Right wheel Forward"},
-        {name: "RB", desc: "Right wheel Backward"}
-    ],
+        this.timeStepMax = 100;
 
-    width: 100,
-    height: 100,
+        this.sensors = [
+            {name: "WL",  desc: "Wall on the Left"},
+            {name: "WR",  desc: "Wall on the right"},
+            {name: "WA",  desc: "Wall Ahead"},
+            {name: "EOR", desc: "End Of Rotation"}
+        ];
+        this.actuators = [
+            {name: "LF", desc: "Left wheel Forward"},
+            {name: "LB", desc: "Left wheel Backward"},
+            {name: "RF", desc: "Right wheel Forward"},
+            {name: "RB", desc: "Right wheel Backward"}
+        ];
 
-    walls: [],
+        this.width = 100;
+        this.height = 100;
 
-    robotRadius: 10,
-    sensorFactor: 1.4,
-    stepDistance: 1,
+        this.walls = [];
 
-    startX: 0,
-    startY: 0,
-    startAngle: 0,
+        this.robotRadius = 10;
+        this.sensorFactor = 1.4;
+        this.stepDistance = 1;
 
-    goalX: 0,
-    goalY: 0,
-    goalRadius: 10,
+        this.startX = 0;
+        this.startY = 0;
+        this.startAngle = 0;
 
-    init: function () {
+        this.goalX = 0;
+        this.goalY = 0;
+        this.goalRadius = 10;
+
         this.sensorRadius = this.robotRadius / 4;
         this.sensorPoints = [
             {x: -this.robotRadius,                     y: -this.robotRadius * this.sensorFactor},
             {x: -this.robotRadius,                     y:  this.robotRadius * this.sensorFactor},
             {x:  this.robotRadius * this.sensorFactor, y: 0}
         ];
-        return CoreWorld.init.call(this);
-    },
+    }
 
-    onReset: function () {
+    onReset() {
         this.robotMatrix = (new Snap.Matrix()).translate(this.startX, this.startY).rotate(this.startAngle);
-    },
+    }
 
-    onStep: function () {
+    onStep() {
         this.sensorValues = ["0", "0", "0", "0"];
 
         // Compute next coordinates
@@ -155,9 +156,9 @@ export const World = CoreWorld.create({
                 }
             }
         }
-    },
+    }
 
-    getStatus: function () {
+    getStatus() {
         var goalDx = this.goalX - this.robotMatrix.e;
         var goalDy = this.goalY - this.robotMatrix.f;
         if (goalDx * goalDx + goalDy * goalDy <= this.goalRadius * this.goalRadius) {
@@ -167,4 +168,4 @@ export const World = CoreWorld.create({
             return {done: false};
         }
     }
-});
+}

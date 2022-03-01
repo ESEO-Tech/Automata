@@ -7,10 +7,9 @@ import {View} from "./View.js";
  *
  * @todo Add documentation
  */
-export const TransitionTable = View.create().augment({
-
-    init: function (model, container) {
-        View.init.call(this, model, container);
+export class TransitionTable extends View {
+    constructor(model, container) {
+        super(model, container);
 
         model.addListener("createState",            this)
              .addListener("afterRemoveState",       this)
@@ -20,19 +19,18 @@ export const TransitionTable = View.create().augment({
              .addListener("currentStateChanged",    this);
 
         this.zoom = 1;
-        return this;
-    },
+    }
 
-    render: function () {
+    render() {
         this.root = $(this.renderTemplate("TransitionTable-main.tpl.html", this.model)).appendTo(this.container);
 
         var model = this.model;
         $("button", this.root).click(function () {
             model.createState();
         });
-    },
+    }
 
-    scale: function () {
+    scale() {
         // Adjust state name input width
         var stateNameInputs = $(".source-state-name input[type=text]", this.root);
         var size = -1;
@@ -49,9 +47,9 @@ export const TransitionTable = View.create().augment({
         this.zoom = this.container.innerWidth() / this.root.width();
         this.root.css("transform", "scale(" + this.zoom + ")");
         this.container.scrollTop(scrollTop * this.zoom);
-    },
+    }
 
-    scrollTo: function (rows) {
+    scrollTo(rows) {
         var rowsTop = rows.position().top;
         var rowsBottom = rows.last().position().top + rows.last().height();
         var containerTop = this.container.scrollTop();
@@ -62,9 +60,9 @@ export const TransitionTable = View.create().augment({
         else if (rowsBottom > containerHeight) {
             this.container.scrollTop(containerTop + rowsBottom - containerHeight);
         }
-    },
+    }
 
-    createState: function (model, state) {
+    createState(model, state) {
         state.addListener("changed", this.updateState, this);
 
         // Update target state selectors
@@ -99,20 +97,20 @@ export const TransitionTable = View.create().augment({
         // Scroll to the new state row and focus the state name field
         this.scrollTo(row);
         $("input[type=text]", row).focus();
-    },
+    }
 
-    getRowsForState: function (state) {
+    getRowsForState(state) {
         return $("tr.state-" + state.id, this.root);
-    },
+    }
 
-    afterRemoveState: function (model, state) {
+    afterRemoveState(model, state) {
         this.getRowsForState(state).remove();
         $("option[value='" + state.id + "']", this.root).remove();
 
         this.scale();
-    },
+    }
 
-    updateState: function (state) {
+    updateState(state) {
         var rows = this.getRowsForState(state);
         $("td.source-state-name input[type=text]", rows).val(state.name);
         $("table.state-encoding input", rows).each(function (index) {
@@ -122,9 +120,9 @@ export const TransitionTable = View.create().augment({
 
         this.scale();
         this.scrollTo(rows);
-    },
+    }
 
-    createTransition: function (model, transition) {
+    createTransition(model, transition) {
         var state = transition.sourceState;
 
         transition.addListener("changed", this.updateTransition, this);
@@ -177,9 +175,9 @@ export const TransitionTable = View.create().augment({
         this.showNonDeterministicTransitions(transition.sourceState);
         this.scale();
         this.scrollTo(transitionRow);
-    },
+    }
 
-    updateTransition: function (transition) {
+    updateTransition(transition) {
         var index = transition.getIndex();
         var row = this.getRowsForState(transition.sourceState).slice(index, index + 1);
         $("td.transition-input input", row).each(function (i) {
@@ -193,9 +191,9 @@ export const TransitionTable = View.create().augment({
         this.showNonDeterministicTransitions(transition.sourceState);
         this.scale();
         this.scrollTo(row);
-    },
+    }
 
-    beforeRemoveTransition: function (model, transition) {
+    beforeRemoveTransition(model, transition) {
         var index = transition.getIndex();
         var rows = this.getRowsForState(transition.sourceState);
         if (index > 0) {
@@ -208,14 +206,14 @@ export const TransitionTable = View.create().augment({
             rows.slice(1, 2).remove();
         }
         $("td.remove-state, td.source-state-name", rows.first()).attr("rowspan", rows.length - 1);
-    },
+    }
 
-    afterRemoveTransition: function (model, transition) {
+    afterRemoveTransition(model, transition) {
         this.showNonDeterministicTransitions(transition.sourceState);
         this.scale();
-    },
+    }
 
-    showNonDeterministicTransitions: function (state) {
+    showNonDeterministicTransitions(state) {
         for (var i = 0, l = state.outgoingTransitions.length; i < l; i ++) {
             var transition = state.outgoingTransitions[i];
             var index = transition.getIndex();
@@ -227,9 +225,9 @@ export const TransitionTable = View.create().augment({
                 row.removeClass("error");
             }
         }
-    },
+    }
 
-    currentStateChanged: function (model, state) {
+    currentStateChanged(model, state) {
         $("tr", this.root).removeClass("current");
         if (state) {
             var rows = this.getRowsForState(state);
@@ -237,4 +235,4 @@ export const TransitionTable = View.create().augment({
             this.scrollTo(rows);
         }
     }
-});
+}

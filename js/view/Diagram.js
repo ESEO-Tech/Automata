@@ -17,10 +17,9 @@ const LAYOUT_DECAY             = 0.9;
  *
  * @todo Add documentation
  */
-export const Diagram = View.create().augment({
-
-    init: function (model, container) {
-        View.init.call(this, model, container);
+export class Diagram extends View {
+    constructor(model, container) {
+        super(model, container);
 
         this.model = model;
 
@@ -40,11 +39,9 @@ export const Diagram = View.create().augment({
              .addListener("createTransition", this)
              .addListener("afterRemoveTransition", this)
              .addListener("currentStateChanged", this);
+    }
 
-        return this;
-    },
-
-    toStorable: function () {
+    toStorable() {
         var result = {
             x: this.x,
             y: this.y,
@@ -70,9 +67,9 @@ export const Diagram = View.create().augment({
         }
 
         return result;
-    },
+    }
 
-    fromStorable: function (obj, mapping) {
+    fromStorable(obj, mapping) {
         this.x = obj.x;
         this.y = obj.y;
         this.zoom = obj.zoom;
@@ -91,28 +88,28 @@ export const Diagram = View.create().augment({
         }
 
         return this;
-    },
+    }
 
-    createState: function (model, state) {
+    createState(model, state) {
         state.addListener("changed", this.updateState, this);
         this.createStateView(state);
         this.layout();
-    },
+    }
 
-    afterRemoveState: function (model, state) {
+    afterRemoveState(model, state) {
         var view = this.stateViewsById[state.id];
         view.group.remove();
         this.stateViews.splice(this.stateViews.indexOf(view), 1);
         delete this.stateViewsById[state.id];
         this.layout();
-    },
+    }
 
-    updateState: function (state) {
+    updateState(state) {
         this.updateStateView(state);
         this.layout();
-    },
+    }
 
-    createTransition: function (model, transition) {
+    createTransition(model, transition) {
         transition.addListener("changed", this.updateTransition, this);
         var viewIdByStates = this.getViewIdByStates(transition);
         if (viewIdByStates in this.transitionViewsByStates) {
@@ -127,18 +124,18 @@ export const Diagram = View.create().augment({
         this.updateStateView(transition.sourceState);
 
         this.layout();
-    },
+    }
 
-    afterRemoveTransition: function (model, transition) {
+    afterRemoveTransition(model, transition) {
         this.removeTransitionViewIfUnused(transition);
 
         // Update source state view if Moore actions have changed
         this.updateStateView(transition.sourceState);
 
         this.layout();
-    },
+    }
 
-    updateTransition: function (transition) {
+    updateTransition(transition) {
         var viewIdByStates = this.getViewIdByStates(transition);
         var viewByStates = this.transitionViewsByStates[viewIdByStates];
         var viewByTransition = this.transitionViewsById[transition.id];
@@ -172,9 +169,9 @@ export const Diagram = View.create().augment({
         }
 
         this.layout();
-    },
+    }
 
-    layoutStep: function () {
+    layoutStep() {
         var done = true;
 
         var defaultSpringLength = 0;
@@ -287,9 +284,9 @@ export const Diagram = View.create().augment({
         }
 
         return !done;
-    },
+    }
 
-    layout: function () {
+    layout() {
         var self = this;
         function step() {
             if (self.layoutStep()) {
@@ -298,9 +295,9 @@ export const Diagram = View.create().augment({
         }
 
         window.requestAnimationFrame(step);
-    },
+    }
 
-    render: function () {
+    render() {
         var fragment = Snap.parse(this.renderTemplate("Diagram-main.tpl.svg", this.model));
         this.container.append(fragment.node);
         this.paper = Snap("svg.automata-Diagram");
@@ -392,29 +389,29 @@ export const Diagram = View.create().augment({
         this.paper.mousedown(onMouseDown).dblclick(onDoubleClick);
         this.paper.node.addEventListener("DOMMouseScroll", onWheel, false); // Mozilla
         this.paper.node.onmousewheel = onWheel;
-    },
+    }
 
-    getWidth: function () {
+    getWidth() {
         return this.container.width();
-    },
+    }
 
-    getHeight: function () {
+    getHeight() {
         return this.container.height();
-    },
+    }
 
-    updateViewbox: function () {
+    updateViewbox() {
         var w = this.getWidth();
         var h = this.getHeight();
         this.paper.attr({
             viewBox: [this.x, this.y, w / this.zoom, h / this.zoom]
         });
-    },
+    }
 
-    getViewIdByStates: function (transition) {
+    getViewIdByStates(transition) {
         return transition.sourceState.id + "-" + transition.targetState.id;
-    },
+    }
 
-    createStateView: function (state) {
+    createStateView(state) {
         var view = this.stateViewsById[state.id] = {
             state:     state,
             x:         0,
@@ -467,9 +464,9 @@ export const Diagram = View.create().augment({
                 }
             }
         });
-    },
+    }
 
-    setDraggable: function (view, elt, fn) {
+    setDraggable(view, elt, fn) {
         var startX, startY;
         view[elt].drag(
             function onMove(dx, dy, x, y, evt) {
@@ -489,9 +486,9 @@ export const Diagram = View.create().augment({
                 evt.preventDefault();
             },
             this, this, this);
-    },
+    }
 
-    putStateView: function (state, x, y) {
+    putStateView(state, x, y) {
         var view = this.stateViewsById[state.id];
         view.x = x;
         view.y = y;
@@ -508,9 +505,9 @@ export const Diagram = View.create().augment({
             this.updateResetView();
         }
         return this;
-    },
+    }
 
-    updateStateView: function (state) {
+    updateStateView(state) {
         var view = this.stateViewsById[state.id];
 
         // Replace empty strings with non-breaking spaces to ensure correct bounding box in Webkit
@@ -526,18 +523,18 @@ export const Diagram = View.create().augment({
         if (state === this.model.states[0]) {
             this.updateResetView();
         }
-    },
+    }
 
-    updateResetView: function () {
+    updateResetView() {
         var state = this.model.states[0];
         if (state) {
             var view = this.stateViewsById[state.id];
             this.resetView.transform("translate(" + (view.x + view.width / 2 - 4 * TRANSITION_RADIUS) + "," +
                                                     (view.y                  - 4 * TRANSITION_RADIUS) + ")");
         }
-    },
+    }
 
-    createTransitionView: function (transition) {
+    createTransitionView(transition) {
         var viewIdByStates = this.getViewIdByStates(transition);
 
         var view = this.transitionViewsById[transition.id] = this.transitionViewsByStates[viewIdByStates] = {
@@ -566,9 +563,9 @@ export const Diagram = View.create().augment({
         this.setDraggable(view, "handle", function (x, y) {
             this.putTransitionHandle(transition, x, y);
         });
-    },
+    }
 
-    putTransitionHandle: function (transition, x, y) {
+    putTransitionHandle(transition, x, y) {
         var view = this.transitionViewsById[transition.id];
         view.x = x;
         view.y = y;
@@ -576,9 +573,9 @@ export const Diagram = View.create().augment({
 
         this.updateTransitionPath(transition);
         this.moveTransitionText(transition);
-    },
+    }
 
-    updateTransitionHandle: function (transition) {
+    updateTransitionHandle(transition) {
         var view = this.transitionViewsById[transition.id];
 
         var sourceView = this.stateViewsById[transition.sourceState.id];
@@ -595,9 +592,9 @@ export const Diagram = View.create().augment({
 
         view.handle.attr({cx: view.x, cy: view.y});
         this.moveTransitionText(transition);
-    },
+    }
 
-    updateTransitionText: function (transition) {
+    updateTransitionText(transition) {
         var view = this.transitionViewsById[transition.id];
 
         view.text.selectAll("tspan.term").forEach(function (ts) {
@@ -671,18 +668,18 @@ export const Diagram = View.create().augment({
         }
 
         this.moveTransitionText(transition);
-    },
+    }
 
-    moveTransitionText: function (transition) {
+    moveTransitionText(transition) {
         var view = this.transitionViewsById[transition.id];
         var x = view.x + 2 * TRANSITION_RADIUS;
         var y = view.y - view.height / 2;
 
         view.text.attr({x: x, y: y});
         view.text.selectAll("tspan.term").attr({x: x});
-    },
+    }
 
-    updateTransitionPath: function (transition) {
+    updateTransitionPath(transition) {
         var view = this.transitionViewsById[transition.id];
 
         var sourceView = this.stateViewsById[transition.sourceState.id];
@@ -744,9 +741,9 @@ export const Diagram = View.create().augment({
                "Q" + sourceControl.x       + "," + sourceControl.y + "," + view.x            + "," + view.y +
                "Q" + targetControl.x       + "," + targetControl.y + "," + targetIntersect.x + "," + targetIntersect.y
         });
-    },
+    }
 
-    removeTransitionViewIfUnused: function (transition) {
+    removeTransitionViewIfUnused(transition) {
         var viewByTransition = this.transitionViewsById[transition.id];
         viewByTransition.transitions.splice(viewByTransition.transitions.indexOf(transition), 1);
 
@@ -764,12 +761,12 @@ export const Diagram = View.create().augment({
         }
 
         delete this.transitionViewsById[transition.id];
-    },
+    }
 
-    currentStateChanged: function (model, state) {
+    currentStateChanged(model, state) {
         this.paper.selectAll(".state").attr({"class": "state"});
         if (state) {
             this.stateViewsById[state.id].group.attr({"class": "state current"});
         }
     }
-});
+}

@@ -7,27 +7,25 @@ import {View} from "./View.js";
  *
  * @todo Add documentation
  */
-export const HelpView = View.create().augment({
-    init: function (model, container) {
-        View.init.call(this, model, container);
+export class HelpView extends View {
+    constructor(model, container) {
+        super(model, container);
 
         model.addListener("help", this.show, this);
+    }
 
-        return this;
-    },
-
-    render: function () {
+    render() {
         var self = this;
         $("button", this.container).click(function () {
             self.hide();
         });
-    },
+    }
 
-    show: function () {
+    show() {
         this.container.attr("class", "visible");
-    },
+    }
 
-    hide: function () {
+    hide() {
         this.container.removeClass("visible");
     }
-});
+}

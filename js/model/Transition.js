@@ -7,10 +7,10 @@ import {CoreObject} from "./Object.js";
  *
  * @todo Add documentation
  */
-export const Transition = CoreObject.create({
+export class Transition extends CoreObject {
 
-    init: function (sourceState, targetState) {
-        CoreObject.init.call(this);
+    constructor(sourceState, targetState) {
+        super();
 
         this.sourceState = sourceState;
         this.targetState = targetState;
@@ -21,48 +21,46 @@ export const Transition = CoreObject.create({
 
         sourceState.addOutgoingTransition(this);
         targetState.addIncomingTransition(this);
+    }
 
-        return this;
-    },
-
-    toStorable: function () {
+    toStorable() {
         return {
             sourceStateId: this.sourceState.id,
             targetStateId: this.targetState.id,
             inputs: this.inputs,
             outputs: this.outputs
         };
-    },
+    }
 
-    fromStorable: function (obj) {
+    fromStorable(obj) {
         this.inputs = obj.inputs;
         this.outputs = obj.outputs;
         this.fire("changed");
         return this;
-    },
+    }
 
-    destroy: function () {
+    destroy() {
         this.sourceState.removeOutgoingTransition(this);
         this.targetState.removeIncomingTransition(this);
-    },
+    }
 
-    setInput: function (index, value) {
+    setInput(index, value) {
         this.inputs[index] = value;
 
         this.fire("changed");
 
         return this;
-    },
+    }
 
-    setOutput: function (index, value) {
+    setOutput(index, value) {
         this.outputs[index] = value;
 
         this.fire("changed");
 
         return this;
-    },
+    }
 
-    setTargetState: function (state) {
+    setTargetState(state) {
         this.targetState.removeIncomingTransition(this);
         state.addIncomingTransition(this);
         this.targetState = state;
@@ -70,26 +68,26 @@ export const Transition = CoreObject.create({
         this.fire("changed");
 
         return this;
-    },
+    }
 
-    getIndex: function () {
+    getIndex() {
         return this.sourceState.outgoingTransitions.indexOf(this);
-    },
+    }
 
-    matchesPattern: function (pattern) {
+    matchesPattern(pattern) {
         for (var i = 0, l = Math.min(this.inputs.length, pattern.length); i < l; i ++) {
             if (this.inputs[i] !== "-" && pattern[i] !== "-" && this.inputs[i] !== pattern[i]) {
                 return false;
             }
         }
         return true;
-    },
+    }
 
-    canFire: function () {
+    canFire() {
         return this.matchesPattern(this.sourceState.stateMachine.world.sensorValues);
-    },
+    }
 
-    isNonDeterministic: function () {
+    isNonDeterministic() {
         return this.sourceState.outgoingTransitions.some(function (transition) {
             // TODO check if outputs and target state are different
             return transition !== this && this.matchesPattern(transition.inputs) && (
@@ -99,4 +97,4 @@ export const Transition = CoreObject.create({
             );
         }, this);
     }
-});
+}

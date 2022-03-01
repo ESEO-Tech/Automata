@@ -9,10 +9,9 @@ import {Transition} from "./Transition.js";
  *
  * @todo Add documentation
  */
-export const StateMachine = CoreObject.create({
-
-    init: function (world) {
-        CoreObject.init.call(this);
+export class StateMachine extends CoreObject {
+    constructor(world) {
+        super();
 
         this.world = world;
 
@@ -23,11 +22,9 @@ export const StateMachine = CoreObject.create({
         this.transitionsById = {};
 
         this.reset();
+    }
 
-        return this;
-    },
-
-    toStorable: function () {
+    toStorable() {
         var result = {
             states: {},
             transitions: {}
@@ -39,9 +36,9 @@ export const StateMachine = CoreObject.create({
             result.transitions[tid] = this.transitionsById[tid].toStorable();
         }
         return result;
-    },
+    }
 
-    fromStorable: function (obj, mapping) {
+    fromStorable(obj, mapping) {
         for (var sid in obj.states) {
             mapping[sid] = this.createState().fromStorable(obj.states[sid]);
         }
@@ -50,19 +47,19 @@ export const StateMachine = CoreObject.create({
             mapping[tid] = this.createTransition(mapping[tobj.sourceStateId], mapping[tobj.targetStateId]).fromStorable(tobj);
         }
         return this;
-    },
+    }
 
-    getStateVars: function () {
+    getStateVars() {
         if (this.world.solution && this.world.solution.stateVars) {
             return this.world.solution.stateVars;
         }
         else {
             return [];
         }
-    },
+    }
 
-    createState: function () {
-        var state = State.create().init(this);
+    createState() {
+        var state = new State(this);
         this.states.push(state);
         this.statesById[state.id] = state;
 
@@ -74,9 +71,9 @@ export const StateMachine = CoreObject.create({
         this.fire("changed");
 
         return state;
-    },
+    }
 
-    removeState: function (state) {
+    removeState(state) {
         this.fire("beforeRemoveState", state);
 
         var index = this.states.indexOf(state);
@@ -92,10 +89,10 @@ export const StateMachine = CoreObject.create({
         this.fire("changed");
 
         return this;
-    },
+    }
 
-    createTransition: function (sourceState, targetState) {
-        var transition = Transition.create().init(sourceState, targetState);
+    createTransition(sourceState, targetState) {
+        var transition = new Transition(sourceState, targetState);
         this.transitions.push(transition);
         this.transitionsById[transition.id] = transition;
 
@@ -103,14 +100,13 @@ export const StateMachine = CoreObject.create({
             this.fire("changed");
         }, this);
 
-
         this.fire("createTransition", transition);
         this.fire("changed");
 
         return transition;
-    },
+    }
 
-    removeTransition: function (transition) {
+    removeTransition(transition) {
         this.fire("beforeRemoveTransition", transition);
 
         transition.destroy();
@@ -121,9 +117,9 @@ export const StateMachine = CoreObject.create({
         this.fire("changed");
 
         return this;
-    },
+    }
 
-    reset: function () {
+    reset() {
         if (this.states.length) {
             this.currentState = this.states[0];
         }
@@ -131,9 +127,9 @@ export const StateMachine = CoreObject.create({
             this.currentState = null;
         }
         this.fire("currentStateChanged", this.currentState);
-    },
+    }
 
-    step: function () {
+    step() {
         var transition = this.currentState.getTransitionToFire();
         if (transition) {
             this.currentState = transition.targetState;
@@ -144,4 +140,4 @@ export const StateMachine = CoreObject.create({
         }
         return this.world.actuators.map(function () { return "0"; });
     }
-});
+}

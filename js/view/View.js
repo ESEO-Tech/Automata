@@ -9,27 +9,19 @@ import {CoreObject} from "../model/Object.js";
  *
  * @todo Add documentation
  */
-export const View = CoreObject.create({
-
-    init: function (model, container) {
-        CoreObject.init.call(this);
-
+export class View extends CoreObject {
+    constructor(model, container) {
+        super();
         this.model = model;
-
-        if (container) {
-            this.container = container;
-        }
-
+        this.container = container;
         this.render();
+    }
 
-        return this;
-    },
-
-    render: function () {
+    render() {
         // Abstract
-    },
+    }
 
-    renderTemplate: function (name, context) {
+    renderTemplate(name, context) {
         return nunjucks.render(`templates/${name}`, context);
     }
-});
+}

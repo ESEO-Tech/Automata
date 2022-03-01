@@ -1,11 +1,6 @@
 
-import {CoreObject} from "../../js/model/Object.js";
-
-export const WorldView = CoreObject.create({
-
-    init: function (world, container) {
-        CoreObject.init.call(this);
-
+export class WorldView {
+    constructor(world, container) {
         this.world = world;
 
         this.paper = Snap();
@@ -83,9 +78,9 @@ export const WorldView = CoreObject.create({
         world.addListener("changed", this.update, this);
 
         return this;
-    },
+    }
 
-    update: function () {
+    update() {
         for (var sensorIndex = 0; sensorIndex < this.sensorViews.length; sensorIndex ++) {
             this.sensorViews[sensorIndex].attr({"class": this.world.sensorValues[sensorIndex] === "1" ? "active" : "inactive"});
         }
@@ -100,4 +95,4 @@ export const WorldView = CoreObject.create({
         this.gateView.attr({transform: "translate(" + this.world.gateX + "," + this.world.gateY + ")"});
         this.problemView.attr({"class": (this.world.problem() ? "visible" : "invisible")});
     }
-});
+}

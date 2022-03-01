@@ -8,7 +8,7 @@ import {CoreObject} from "./Object.js";
  * @memberof automata.model
  * @augments CoreObject
  */
-export const State = CoreObject.create({
+export class State extends CoreObject {
     /**
      * @event automata.model.State#changed
      */
@@ -27,8 +27,8 @@ export const State = CoreObject.create({
      * @param {automata.model.StateMachine} stateMachine - The state machine that will contain the current state.
      * @return {automata.model.State} The current state.
      */
-    init: function (stateMachine) {
-        CoreObject.init.call(this);
+    constructor(stateMachine) {
+        super();
 
         var suffix = this.id;
         do {
@@ -43,32 +43,30 @@ export const State = CoreObject.create({
 
         this.outgoingTransitions = [];
         this.incomingTransitions = [];
-
-        return this;
-    },
+    }
 
     /**
      * @memberof automata.model.State
      * @see CoreObject.toStorable
      */
-    toStorable: function () {
+    toStorable() {
         return {
             name: this.name,
             encoding: this.encoding
         };
-    },
+    }
 
     /**
      * @memberof automata.model.State
      * @see CoreObject.fromStorable
      * @fires automata.model.State#changed
      */
-    fromStorable: function (obj) {
+    fromStorable(obj) {
         this.name = obj.name;
         this.encoding = obj.encoding;
         this.fire("changed");
         return this;
-    },
+    }
 
     /**
      * Prepare the removal of the current state from the state machine.
@@ -79,7 +77,7 @@ export const State = CoreObject.create({
      *
      * @return {automata.model.State} The current state.
      */
-    destroy: function () {
+    destroy() {
         while (this.outgoingTransitions.length) {
             this.stateMachine.removeTransition(this.outgoingTransitions[0]);
         }
@@ -87,7 +85,7 @@ export const State = CoreObject.create({
             this.stateMachine.removeTransition(this.incomingTransitions[0]);
         }
         return this;
-    },
+    }
 
     /**
      * Set the name of the current state.
@@ -98,13 +96,13 @@ export const State = CoreObject.create({
      * @return {automata.model.State} The current state.
      * @fires automata.model.State#changed
      */
-    setName: function (name) {
+    setName(name) {
         this.name = name;
 
         this.fire("changed");
 
         return this;
-    },
+    }
 
     /**
      * Set one bit of the encoding of the current state.
@@ -116,13 +114,13 @@ export const State = CoreObject.create({
      * @return {automata.model.State} The current state.
      * @fires automata.model.State#changed
      */
-    setEncoding: function (index, value) {
+    setEncoding(index, value) {
         this.encoding[index] = value;
 
         this.fire("changed");
 
         return this;
-    },
+    }
 
     /**
      * Add an outgoing transition to the current state.
@@ -132,10 +130,10 @@ export const State = CoreObject.create({
      * @param {automata.model.Transition} transition - The transition to add.
      * @return {automata.model.State} The current state.
      */
-    addOutgoingTransition: function (transition) {
+    addOutgoingTransition(transition) {
         this.outgoingTransitions.push(transition);
         return this;
-    },
+    }
 
     /**
      * Remove an outgoing transition from the current state.
@@ -145,11 +143,11 @@ export const State = CoreObject.create({
      * @param {automata.model.Transition} transition - The transition to remove.
      * @return {automata.model.State} The current state.
      */
-    removeOutgoingTransition: function (transition) {
+    removeOutgoingTransition(transition) {
         var index = this.outgoingTransitions.indexOf(transition);
         this.outgoingTransitions.splice(index, 1);
         return this;
-    },
+    }
 
     /**
      * Add an incoming transition to the current state.
@@ -159,9 +157,9 @@ export const State = CoreObject.create({
      * @param {automata.model.Transition} transition - The transition to add.
      * @return {automata.model.State} The current state.
      */
-    addIncomingTransition: function (transition) {
+    addIncomingTransition(transition) {
         this.incomingTransitions.push(transition);
-    },
+    }
 
     /**
      * Remove an incoming transition from the current state.
@@ -171,11 +169,11 @@ export const State = CoreObject.create({
      * @param {automata.model.Transition} transition - The transition to remove.
      * @return {automata.model.State} The current state.
      */
-    removeIncomingTransition: function (transition) {
+    removeIncomingTransition(transition) {
         var index = this.incomingTransitions.indexOf(transition);
         this.incomingTransitions.splice(index, 1);
         return this;
-    },
+    }
 
     /**
      * Find the transitions from the current state to a given state.
@@ -185,11 +183,11 @@ export const State = CoreObject.create({
      * @param {automata.model.State} state - The target state.
      * @return {Array.<automata.model.Transition>} The transitions found.
      */
-    getTransitionsToState: function (state) {
+    getTransitionsToState(state) {
         return this.outgoingTransitions.filter(function (transition) {
             return transition.targetState === state;
         });
-    },
+    }
 
     /**
      * Find the actions in that state that do not depend on sensor values.
@@ -204,7 +202,7 @@ export const State = CoreObject.create({
      *
      * @return {Array.<string>} An array of actuator names.
      */
-    getMooreActions: function () {
+    getMooreActions() {
         if (this.outgoingTransitions.length) {
             return this.stateMachine.world.actuators.filter(function (q, index) {
                 return this.outgoingTransitions.every(function (transition) {
@@ -222,7 +220,7 @@ export const State = CoreObject.create({
         else {
             return [];
         }
-    },
+    }
 
     /**
      * Find the transition that can be fired at the current simulation step.
@@ -234,7 +232,7 @@ export const State = CoreObject.create({
      *
      * @return {?automata.model.Transition} The transition found.
      */
-    getTransitionToFire: function () {
+    getTransitionToFire() {
         for (var i = 0, l = this.outgoingTransitions.length; i < l; i ++) {
             var transition = this.outgoingTransitions[i];
             if (transition.canFire()) {
@@ -243,4 +241,4 @@ export const State = CoreObject.create({
         }
         return null;
     }
-});
+}

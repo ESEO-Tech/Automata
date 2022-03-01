@@ -1,25 +1,24 @@
 
-import {CoreObject}         from "../../../js/model/Object.js";
 import {World as CoreWorld} from "../../../js/model/World.js";
 
-export const World = CoreWorld.create({
-    timeStepMin: 10,
-    timeStepMax: 10,
-    timeStep: 10,
+export class World extends CoreWorld {
+    constructor() {
+        super();
+        this.timeStepMin = 10;
+        this.timeStepMax = 10;
+        this.timeStep = 10;
 
-    sensors:   [
-        {name: "B",  desc: "Button"}
-    ],
-    actuators: [
-        {name: "L", desc: "Light"}
-    ]
-});
+        this.sensors = [
+            {name: "B",  desc: "Button"}
+        ];
+        this.actuators = [
+            {name: "L", desc: "Light"}
+        ];
+    }
+}
 
-export const WorldView = CoreObject.create({
-
-    init: function (world, container) {
-        CoreObject.init.call(this);
-
+export class WorldView {
+    constructor(world, container) {
         this.world = world;
 
         container.html('<button>B=<span class="automata-bool-0">0</span></button>\
@@ -38,19 +37,17 @@ export const WorldView = CoreObject.create({
             });
 
         world.addListener("changed", this.update, this);
+    }
 
-        return this;
-    },
-
-    setButton: function (value) {
+    setButton(value) {
         this.world.setSensorValue(0, value);
         $("button span", this.container)
             .removeClass()
             .addClass("automata-bool-" + value)
             .html(value);
-    },
+    }
 
-    update: function () {
+    update() {
         var value = this.world.getActuatorValue(0);
 
         $(".light", this.container)
@@ -62,4 +59,4 @@ export const WorldView = CoreObject.create({
             .addClass("automata-bool-" + value)
             .html(value);
     }
-});
+}

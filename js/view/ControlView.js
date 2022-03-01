@@ -7,20 +7,18 @@ import {View} from "./View.js";
  *
  * @todo Add documentation
  */
-export const ControlView = View.create().augment({
-    init: function (model, container) {
-        View.init.call(this, model, container);
+export class ControlView extends View {
+    constructor(model, container) {
+        super(model, container);
 
         model.addListener("start", this.start, this)
              .addListener("pause", this.pauseOrStop, this)
              .addListener("stop",  this.pauseOrStop, this);
 
         this.panes = ["#world-view", "#table-view", "#diagram-view"];
+    }
 
-        return this;
-    },
-
-    render: function () {
+    render() {
         this.playButton = $("#control-play", this.container);
 
         var self = this;
@@ -55,22 +53,22 @@ export const ControlView = View.create().augment({
         $("#control-help", this.container).click(function () {
             self.model.fire("help");
         });
-    },
+    }
 
-    start: function () {
+    start() {
         this.playButton.addClass("running").html('<i class="fa fa-pause"></i>');
-    },
+    }
 
-    pauseOrStop: function () {
+    pauseOrStop() {
         this.playButton.removeClass("running").html('<i class="fa fa-play"></i>');
-    },
+    }
 
-    updateTimeStep: function () {
+    updateTimeStep() {
         var value = parseInt($("#control-speed", this.container).val());
         this.model.timeStep = this.model.timeStepMin + (this.model.timeStepMax - this.model.timeStepMin) * (10 - value) / 10 ;
-    },
+    }
 
-    moveLeft: function () {
+    moveLeft() {
         var entering = this.panes.pop();
         $(entering).attr("class", "entering-left-pane");
         this.panes.unshift(entering);
@@ -81,9 +79,9 @@ export const ControlView = View.create().augment({
             $(self.panes[1]).attr("class", "right-pane");
             $(self.panes[2]).attr("class", "leaving-right-pane");
         }, 20);
-    },
+    }
 
-    moveRight: function () {
+    moveRight() {
         $(this.panes[2]).attr("class", "entering-right-pane");
         this.panes.push(this.panes.shift());
 
@@ -94,4 +92,4 @@ export const ControlView = View.create().augment({
             $(self.panes[2]).attr("class", "leaving-left-pane");
         }, 20);
     }
-});
+}

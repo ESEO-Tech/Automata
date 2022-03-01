@@ -1,6 +1,10 @@
+
 export {WorldView}          from "../WorldView.js";
 import {World as GateWorld} from "../World.js";
 
-export const World = GateWorld.create({
-    carCount: 1
-});
+export class World extends GateWorld {
+    constructor() {
+        super();
+        this.carCount = 1;
+    }
+}

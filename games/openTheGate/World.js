@@ -1,38 +1,43 @@
+
 import {World as CoreWorld} from "../../js/model/World.js";
 
-export const World = CoreWorld.create({
-    timeStepMax: 100,
+export class World extends CoreWorld {
+    constructor() {
+        super();
 
-    sensors: [
-        {name: "B",  desc: "Button"},
-        {name: "O", desc: "Gate is fully Open"},
-        {name: "C", desc: "Gate is fully Closed"},
-        {name: "V", desc: "A Vehicle is passing through the gate"}
-    ],
-    actuators: [
-        {name: "U", desc: "Move gate Up"},
-        {name: "D", desc: "Move gate Down"}
-    ],
+        this.timeStepMax = 100;
 
-    gateWidth: 10,
-    gateYMin: 150,
-    gateYMax: 210,
-    gateYOpen: 170,
-    gateYStep: 1,
-    gateX: 250,
+        this.sensors = [
+            {name: "B",  desc: "Button"},
+            {name: "O", desc: "Gate is fully Open"},
+            {name: "C", desc: "Gate is fully Closed"},
+            {name: "V", desc: "A Vehicle is passing through the gate"}
+        ];
+        this.actuators = [
+            {name: "U", desc: "Move gate Up"},
+            {name: "D", desc: "Move gate Down"}
+        ];
 
-    carWidth: 80,
-    carXMin: [-80, -480, -880, -1280],
-    carXMax: 421,
-    carXStop: 120,
-    carXStep: 2,
-    carY: 190,
-    carCount: 4,
+        this.gateWidth = 10;
+        this.gateYMin = 150;
+        this.gateYMax = 210;
+        this.gateYOpen = 170;
+        this.gateYStep = 1;
+        this.gateX = 250;
 
-    width: 400,
-    height: 300,
+        this.carWidth = 80;
+        this.carXMin = [-80, -480, -880, -1280];
+        this.carXMax = 421;
+        this.carXStop = 120;
+        this.carXStep = 2;
+        this.carY = 190;
+        this.carCount = 4;
 
-    onReset: function () {
+        this.width = 400;
+        this.height = 300;
+    }
+
+    onReset() {
         this.gateY = this.gateYMax;
         this.carX = this.carXMin.slice();
 
@@ -43,9 +48,9 @@ export const World = CoreWorld.create({
         this.gateForcedClosed = false;
         this.upAndDownAtTheSameTime = false;
         this.crush = false;
-    },
+    }
 
-    onStep: function () {
+    onStep() {
         // Update gate position according to open and close commands.
         // * The gate moves up when the Open command is on
         // * The gate moves down when the Close command is on and no car is passing
@@ -120,17 +125,17 @@ export const World = CoreWorld.create({
                 this.setSensorValue(3, "1");
             }
         }
-    },
+    }
 
-    problem: function () {
+    problem() {
         return this.gateOpeningBeforeButtonPressed ||
             this.gateForcedOpen ||
             this.gateForcedClosed ||
             this.upAndDownAtTheSameTime ||
             this.crush;
-    },
+    }
 
-    getStatus: function () {
+    getStatus() {
         if (this.crush) {
             return {done: true, status: "error", message: "Do not close the gate when a car is passing through."};
         }
@@ -155,4 +160,4 @@ export const World = CoreWorld.create({
             return {done: false};
         }
     }
-});
+}

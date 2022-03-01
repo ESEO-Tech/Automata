@@ -8,52 +8,48 @@ import {StateMachine} from "./StateMachine.js";
  *
  * @todo Add documentation
  */
-export const World = CoreObject.create({
-    timeStepMin: 1,
-    timeStepMax: 1000,
-    timeStep: 20,
+export class World extends CoreObject {
+    constructor() {
+        super();
+        this.stateMachine = new StateMachine(this);
+        this.timeStepMin  = 1;
+        this.timeStepMax  = 1000;
+        this.timeStep     = 20;
+        this.sensors      = [];
+        this.actuators    = [];
+    }
 
-    sensors: [],
-    actuators: [],
-
-    init: function () {
-        CoreObject.init.call(this);
-        this.stateMachine = StateMachine.create().init(this);
-        this.reset();
-        return this;
-    },
-
-    reset: function () {
+    reset() {
         this.sensorValues = this.sensors.map(function () { return "0"; });
         this.actuatorValues = this.actuators.map(function () { return "0"; });
         this.stateMachine.reset();
         this.onReset();
         this.fire("changed");
-    },
+    }
 
-    onReset: function () {
+    onReset() {
         // Abstract
-    },
+    }
 
-    getSensorValue: function (index) {
+    getSensorValue(index) {
         return this.sensorValues[index];
-    },
+    }
 
-    setSensorValue: function (index, value) {
+    setSensorValue(index, value) {
         this.sensorValues[index] = value;
         return this;
-    },
+    }
 
-    getActuatorValue: function (index) {
+    getActuatorValue(index) {
         return this.actuatorValues[index];
-    },
+    }
 
-    setActuatorValue: function (index, value) {
+    setActuatorValue(index, value) {
         this.actuatorValues[index] = value;
         return this;
-    },
+    }
 
-    start: function () {
+    start() {
         if (!this.stateMachine.currentState || this.getStatus().done) {
             this.reset();
         }
@@ -62,9 +58,9 @@ export const World = CoreObject.create({
             this.fire("start");
             this.step(this.timeStep);
         }
-    },
+    }
 
-    step: function (timeElapsed) {
+    step(timeElapsed) {
         while(timeElapsed >= this.timeStep && this.isRunning) {
             this.actuatorValues = this.stateMachine.step();
             this.onStep();
@@ -85,27 +81,27 @@ export const World = CoreObject.create({
                 self.step(Date.now() - refTime + timeElapsed);
             }, this.timeStep);
         }
-    },
+    }
 
-    pause: function () {
+    pause() {
         this.isRunning = false;
         clearTimeout(this.clock);
         this.fire("pause");
-    },
+    }
 
-    stop: function () {
+    stop() {
         this.isRunning = false;
         clearTimeout(this.clock);
         this.reset();
         this.fire("stop");
-    },
+    }
 
-    getStatus: function () {
+    getStatus() {
         // Abstract
         return {done: false};
-    },
+    }
 
-    onStep: function () {
+    onStep() {
         // Abstract
     }
-});
+}
