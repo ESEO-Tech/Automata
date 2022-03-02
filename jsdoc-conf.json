@@ -1,9 +1,0 @@
-{
-    "plugins": [ "plugins/markdown" ],
-    "markdown": {
-        "parser": "gfm"
-    },
-    "opts": {
-        "private": true
-    }
-}
