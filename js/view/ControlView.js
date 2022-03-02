@@ -15,13 +15,17 @@ export class ControlView extends View {
              .addListener("pause", this.pauseOrStop, this)
              .addListener("stop",  this.pauseOrStop, this);
 
-        this.panes = ["#world-view", "#table-view", "#diagram-view"];
+        this.panes = [
+            document.querySelector("#world-view"),
+            document.querySelector("#table-view"),
+            document.querySelector("#diagram-view")
+        ];
     }
 
     render() {
-        this.playButton = $("#control-play", this.container);
+        this.playButton = this.container.querySelector("#control-play");
 
-        this.playButton.click(() => {
+        this.playButton.addEventListener("click", () => {
             if (this.model.isRunning) {
                 this.model.pause();
             }
@@ -31,62 +35,52 @@ export class ControlView extends View {
             }
         });
 
-        $("#control-stop", this.container).click(() => {
-            this.model.stop();
-        });
+        this.container.querySelector("#control-stop").addEventListener("click", () => this.model.stop());
+        this.container.querySelector("#control-left").addEventListener("click", () => this.moveLeft());
+        this.container.querySelector("#control-right").addEventListener("click", () => this.moveRight());
 
-        $("#control-left", this.container).click(() => {
-            this.moveLeft();
-        });
+        this.speedInput = this.container.querySelector("#control-speed");
+        this.speedInput.value = 10 - 10 * (this.model.timeStep - this.model.timeStepMin) / (this.model.timeStepMax - this.model.timeStepMin);
+        this.speedInput.addEventListener("change", () => this.updateTimeStep());
 
-        $("#control-right", this.container).click(() => {
-            this.moveRight();
-        });
-
-        $("#control-speed", this.container)
-            .val(10 - 10 * (this.model.timeStep - this.model.timeStepMin) / (this.model.timeStepMax - this.model.timeStepMin))
-            .change(() => {
-                this.updateTimeStep();
-            });
-
-        $("#control-help", this.container).click(() => {
-            this.model.fire("help");
-        });
+        this.container.querySelector("#control-help").addEventListener("click", () => this.model.fire("help"));
     }
 
     start() {
-        this.playButton.addClass("running").html('<i class="fa fa-pause"></i>');
+        this.playButton.classList.add("running");
+        this.playButton.innerHTML = '<i class="fa fa-pause"></i>';
     }
 
     pauseOrStop() {
-        this.playButton.removeClass("running").html('<i class="fa fa-play"></i>');
+        this.playButton.classList.remove("running");
+        this.playButton.innerHTML = '<i class="fa fa-play"></i>';
     }
 
     updateTimeStep() {
-        const value = parseInt($("#control-speed", this.container).val());
+        const value = parseInt(this.speedInput.value);
         this.model.timeStep = this.model.timeStepMin + (this.model.timeStepMax - this.model.timeStepMin) * (10 - value) / 10 ;
     }
 
     moveLeft() {
         const entering = this.panes.pop();
-        $(entering).attr("class", "entering-left-pane");
+        entering.className = "entering-left-pane";
         this.panes.unshift(entering);
 
         setTimeout(() => {
-            $(this.panes[0]).attr("class", "left-pane");
-            $(this.panes[1]).attr("class", "right-pane");
-            $(this.panes[2]).attr("class", "leaving-right-pane");
+            this.panes[0].className = "left-pane";
+            this.panes[1].className = "right-pane";
+            this.panes[2].className = "leaving-right-pane";
         }, 20);
     }
 
     moveRight() {
-        $(this.panes[2]).attr("class", "entering-right-pane");
+        this.panes[2].className = "entering-right-pane";
         this.panes.push(this.panes.shift());
 
         setTimeout(() => {
-            $(this.panes[0]).attr("class", "left-pane");
-            $(this.panes[1]).attr("class", "right-pane");
-            $(this.panes[2]).attr("class", "leaving-left-pane");
+            this.panes[0].className = "left-pane";
+            this.panes[1].className = "right-pane";
+            this.panes[2].className = "leaving-left-pane";
         }, 20);
     }
 }
