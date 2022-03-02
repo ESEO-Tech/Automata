@@ -4,7 +4,7 @@ export class WorldView {
         this.world = world;
 
         this.paper = Snap();
-        container.append(this.paper.node);
+        container.appendChild(this.paper.node);
 
         this.paper.attr({
             viewBox: "0 0 " + world.width + " " + world.height,

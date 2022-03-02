@@ -4,7 +4,7 @@ export class WorldView {
         this.world = world;
 
         this.paper = Snap();
-        container.append(this.paper.node);
+        container.appendChild(this.paper.node);
 
         this.paper.attr({
             viewBox: "0 0 " + world.width + " " + world.height,
@@ -84,7 +84,7 @@ export class WorldView {
         for (let sensorIndex = 0; sensorIndex < this.sensorViews.length; sensorIndex ++) {
             this.sensorViews[sensorIndex].attr({"class": this.world.sensorValues[sensorIndex] === "1" ? "active" : "inactive"});
         }
-        
+
         for (let actuatorIndex = 0; actuatorIndex < this.actuatorViews.length; actuatorIndex ++) {
             this.actuatorViews[actuatorIndex].attr({"class": this.world.actuatorValues[actuatorIndex] === "1" ? "active" : "inactive"});
         }

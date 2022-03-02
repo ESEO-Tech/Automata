@@ -37,7 +37,7 @@ async function main(game) {
     // Load model and initialize views.
     const {WorldView, World} = await import(`../games/${sid}/${gid}/game.js`);
     const world       = new World(); world.reset();
-    const worldView   = new WorldView(world, $("#world-view"));
+    const worldView   = new WorldView(world, document.querySelector("#world-view"));
     const tableView   = new TransitionTable(world.stateMachine, document.querySelector("#table-view"));
     const controlView = new ControlView(world, document.querySelector("#control-view"));
     const diagramView = new Diagram(world.stateMachine, document.querySelector("#diagram-view"));
