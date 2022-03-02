@@ -294,7 +294,7 @@ export class Diagram extends View {
     }
 
     render() {
-        const fragment = Snap.parse(this.renderTemplate("Diagram-main.tpl.svg", this.model));
+        const fragment = Snap.parse(nunjucks.render("Diagram-main.tpl.svg", this.model));
         this.container.append(fragment.node);
         this.paper = Snap("svg.automata-Diagram");
         this.resetView = this.paper.select("#reset");

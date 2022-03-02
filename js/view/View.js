@@ -20,8 +20,4 @@ export class View extends CoreObject {
     render() {
         // Abstract
     }
-
-    renderTemplate(name, context) {
-        return nunjucks.render(`templates/${name}`, context);
-    }
 }

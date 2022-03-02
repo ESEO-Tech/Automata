@@ -16,7 +16,7 @@ export class ScoreView extends View {
 
     show(world, status) {
         this.container.empty();
-        $(this.renderTemplate("ScoreView-main.tpl.html", status)).appendTo(this.container);
+        $(nunjucks.render("ScoreView-main.tpl.html", status)).appendTo(this.container);
         this.container.attr("class", "visible");
 
         $("button", this.container).click(() => this.hide());

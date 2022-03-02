@@ -38,7 +38,7 @@ async function main(game) {
     const {WorldView, World} = await import(`../games/${sid}/${gid}/game.js`);
     const world       = new World(); world.reset();
     const worldView   = new WorldView(world, $("#world-view"));
-    const tableView   = new TransitionTable(world.stateMachine, $("#table-view"));
+    const tableView   = new TransitionTable(world.stateMachine, document.querySelector("#table-view"));
     const controlView = new ControlView(world, $("#control-view"));
     const diagramView = new Diagram(world.stateMachine, $("#diagram-view"));
     const helpView    = new HelpView(world, $("#help-view"));
