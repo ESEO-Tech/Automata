@@ -91,7 +91,7 @@ export class World extends CoreWorld {
         let carsMove = true;
 
         for (let index = 0; index < this.carX.length; index ++) {
-            const x = this.carX[index];
+            let x = this.carX[index];
 
             // Update car position. A car can move:
             // * before reaching the "Open" button (carXStop),

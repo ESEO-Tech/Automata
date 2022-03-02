@@ -449,7 +449,7 @@ export class Diagram extends View {
         const gy = this.y + (this.getHeight() / this.zoom - view.height) * Math.random();
         this.putStateView(state, gx, gy);
 
-        this.setDraggable(view, "group", function (x, y) {
+        this.setDraggable(view, "group", (x, y) => {
             this.putStateView(state, x, y);
             for (const t of state.outgoingTransitions) {
                 if (t.targetState === state) {
@@ -554,9 +554,7 @@ export class Diagram extends View {
         this.updateTransitionPath(transition);
 
         // Setup event handlers for transition
-        this.setDraggable(view, "handle", function (x, y) {
-            this.putTransitionHandle(transition, x, y);
-        });
+        this.setDraggable(view, "handle", (x, y) => this.putTransitionHandle(transition, x, y));
     }
 
     putTransitionHandle(transition, x, y) {
@@ -591,9 +589,7 @@ export class Diagram extends View {
     updateTransitionText(transition) {
         const view = this.transitionViewsById[transition.id];
 
-        view.text.selectAll("tspan.term").forEach(function (ts) {
-            ts.remove();
-        });
+        view.text.selectAll("tspan.term").forEach(ts => ts.remove());
 
         const sensors      = transition.sourceState.stateMachine.world.sensors;
         const actuators    = transition.sourceState.stateMachine.world.actuators;

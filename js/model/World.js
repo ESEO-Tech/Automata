@@ -20,8 +20,8 @@ export class World extends CoreObject {
     }
 
     reset() {
-        this.sensorValues = this.sensors.map(function () { return "0"; });
-        this.actuatorValues = this.actuators.map(function () { return "0"; });
+        this.sensorValues   = this.sensors  .map(() => "0");
+        this.actuatorValues = this.actuators.map(() => "0");
         this.stateMachine.reset();
         this.onReset();
         this.fire("changed");

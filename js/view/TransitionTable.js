@@ -25,16 +25,14 @@ export class TransitionTable extends View {
         this.root = $(this.renderTemplate("TransitionTable-main.tpl.html", this.model)).appendTo(this.container);
 
         const model = this.model;
-        $("button", this.root).click(function () {
-            model.createState();
-        });
+        $("button", this.root).click(() => model.createState());
     }
 
     scale() {
         // Adjust state name input width
         const stateNameInputs = $(".source-state-name input[type=text]", this.root);
         let size = -1;
-        stateNameInputs.each(function () {
+        stateNameInputs.each(() => {
             if (size < 0 || $(this).val().length > size) {
                 size = $(this).val().length;
             }
@@ -66,30 +64,19 @@ export class TransitionTable extends View {
         state.addListener("changed", this.updateState, this);
 
         // Update target state selectors
-        $("td.target-state-name select", this.root).each(function () {
-            $("<option>").val(state.id).text(state.name).insertBefore($("option:last()", $(this)));
-        });
+        $("td.target-state-name select", this.root).each(() =>
+            $("<option>").val(state.id).text(state.name).insertBefore($("option:last()", $(this)))
+        );
 
         // Create new row in the transition table
         const row = $(this.renderTemplate("TransitionTable-state.tpl.html", {state: state, model: model})).insertBefore($("tr", this.root).last());
 
-        $("td.remove-state button", row).click(function () {
-            model.removeState(state);
-        });
+        $("td.remove-state button", row).click(() => model.removeState(state));
+        $("td.source-state-name input[type=text]", row).change(() => state.setName($(this).val()));
+        $("td.create-transition button", row).click(() => model.createTransition(state, state));
 
-        $("td.source-state-name input[type=text]", row).change(function () {
-            state.setName($(this).val());
-        });
-
-        $("td.create-transition button", row).click(function () {
-            model.createTransition(state, state);
-        });
-
-        $("table.state-encoding input", row).each(function (index) {
-            $(this).click(function () {
-                const value = $(this).val() === "0" ? "1" : "0";
-                state.setEncoding(index, value);
-            });
+        $("table.state-encoding input", row).each(index => {
+            $(this).click(() => state.setEncoding(index, $(this).val() === "0" ? "1" : "0"));
         });
 
         this.scale();
@@ -113,9 +100,7 @@ export class TransitionTable extends View {
     updateState(state) {
         const rows = this.getRowsForState(state);
         $("td.source-state-name input[type=text]", rows).val(state.name);
-        $("table.state-encoding input", rows).each(function (index) {
-            $(this).val(state.encoding[index]);
-        });
+        $("table.state-encoding input", rows).each(index => $(this).val(state.encoding[index]));
         $("option[value='" + state.id + "']", this.root).text(state.name);
 
         this.scale();
@@ -134,13 +119,11 @@ export class TransitionTable extends View {
         tdnt.after(this.renderTemplate("TransitionTable-transition.tpl.html", {transition: transition, model: model}));
 
         // Add handler for the "Remove transition" button
-        $("td.remove-transition button", transitionRow).click(function () {
-            model.removeTransition(transition);
-        });
+        $("td.remove-transition button", transitionRow).click(() => model.removeTransition(transition));
 
         // Add handlers for boolean values
-        $("td.transition-input input", transitionRow).each(function (index) {
-            $(this).click(function () {
+        $("td.transition-input input", transitionRow).each(index => {
+            $(this).click(() => {
                 let value = "0";
                 switch ($(this).val()) {
                     case "0": value = "1"; break;
@@ -151,15 +134,12 @@ export class TransitionTable extends View {
             });
         });
 
-        $("td.transition-output input", transitionRow).each(function (index) {
-            $(this).click(function () {
-                const value = $(this).val() === "0" ? "1" : "0";
-                transition.setOutput(index, value);
-            });
+        $("td.transition-output input", transitionRow).each(index => {
+            $(this).click(() => transition.setOutput(index, $(this).val() === "0" ? "1" : "0"));
         });
 
         // Add handler for target state
-        $("td.target-state-name select", transitionRow).change(function () {
+        $("td.target-state-name select", transitionRow).change(() => {
             let targetId = $(this).val();
             if (targetId === "#NewState#") {
                 targetId = model.createState().id;
@@ -180,13 +160,9 @@ export class TransitionTable extends View {
     updateTransition(transition) {
         const index = transition.getIndex();
         const row = this.getRowsForState(transition.sourceState).slice(index, index + 1);
-        $("td.transition-input input", row).each(function (i) {
-            $(this).val(transition.inputs[i]);
-        });
+        $("td.transition-input input", row).each(i => $(this).val(transition.inputs[i]));
         $("option[value=" + transition.targetState.id + "]", row).prop("selected", true);
-        $("td.transition-output input", row).each(function (i) {
-            $(this).val(transition.outputs[i]);
-        });
+        $("td.transition-output input", row).each(i => $(this).val(transition.outputs[i]));
 
         this.showNonDeterministicTransitions(transition.sourceState);
         this.scale();

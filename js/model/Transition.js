@@ -16,8 +16,8 @@ export class Transition extends CoreObject {
         this.targetState = targetState;
 
         const world = sourceState.stateMachine.world;
-        this.inputs  = world.sensors  .map(function () { return "-"; });
-        this.outputs = world.actuators.map(function () { return "0"; });
+        this.inputs  = world.sensors  .map(() => "-");
+        this.outputs = world.actuators.map(() => "0");
 
         sourceState.addOutgoingTransition(this);
         targetState.addIncomingTransition(this);
@@ -89,13 +89,11 @@ export class Transition extends CoreObject {
     }
 
     isNonDeterministic() {
-        return this.sourceState.outgoingTransitions.some(function (transition) {
-            // TODO check if outputs and target state are different
-            return transition !== this && this.matchesPattern(transition.inputs) && (
-                this.targetState !== transition.targetState || this.outputs.some(function (value, index) {
-                    return value !== transition.outputs[index];
-                })
-            );
-        }, this);
+        return this.sourceState.outgoingTransitions.some(
+            t => t !== this &&
+                 this.matchesPattern(t.inputs) &&
+                 (this.targetState !== t.targetState ||
+                  this.outputs.some((value, index) => value !== t.outputs[index]))
+        );
     }
 }

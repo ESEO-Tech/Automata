@@ -34,12 +34,10 @@ export class State extends CoreObject {
         do {
             this.name = "State" + suffix;
             suffix ++;
-        } while(stateMachine.states.some(function (state) {
-            return state.name === this.name;
-        }, this));
+        } while(stateMachine.states.some(state => state.name === this.name));
 
         this.stateMachine = stateMachine;
-        this.encoding = stateMachine.getStateVars().map(function () { return "0"; });
+        this.encoding = stateMachine.getStateVars().map(() => "0");
 
         this.outgoingTransitions = [];
         this.incomingTransitions = [];
@@ -184,9 +182,7 @@ export class State extends CoreObject {
      * @return {Array.<automata.model.Transition>} The transitions found.
      */
     getTransitionsToState(state) {
-        return this.outgoingTransitions.filter(function (transition) {
-            return transition.targetState === state;
-        });
+        return this.outgoingTransitions.filter(t => t.targetState === state);
     }
 
     /**
@@ -203,23 +199,13 @@ export class State extends CoreObject {
      * @return {Array.<string>} An array of actuator names.
      */
     getMooreActions() {
-        if (this.outgoingTransitions.length) {
-            return this.stateMachine.world.actuators.filter(function (q, index) {
-                return this.outgoingTransitions.every(function (transition) {
-                    return transition.outputs[index] === "1";
-                }) ||  this.outgoingTransitions.some(function (transition) {
-                    return transition.outputs[index] === "1" &&
-                        transition.inputs.every(function (value) {
-                            return value === "-";
-                        });
-                });
-            }, this).map(function (q) {
-                return q.name;
-            }, this);
-        }
-        else {
+        if (!this.outgoingTransitions.length) {
             return [];
         }
+        return this.stateMachine.world.actuators.filter(
+            (q, index) => this.outgoingTransitions.every(t => t.outputs[index] === "1") ||
+                          this.outgoingTransitions.some(t => t.outputs[index] === "1" && t.inputs.every(v => v === "-"))
+        ).map(q => q.name);
     }
 
     /**

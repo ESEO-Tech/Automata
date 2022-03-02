@@ -63,10 +63,7 @@ export class StateMachine extends CoreObject {
         this.states.push(state);
         this.statesById[state.id] = state;
 
-        state.addListener("changed", function () {
-            this.fire("changed");
-        }, this);
-
+        state.addListener("changed", () => this.fire("changed"));
         this.fire("createState", state);
         this.fire("changed");
 
@@ -96,10 +93,7 @@ export class StateMachine extends CoreObject {
         this.transitions.push(transition);
         this.transitionsById[transition.id] = transition;
 
-        transition.addListener("changed", function () {
-            this.fire("changed");
-        }, this);
-
+        transition.addListener("changed", () => this.fire("changed"));
         this.fire("createTransition", transition);
         this.fire("changed");
 
