@@ -42,7 +42,7 @@ async function main(game) {
     const controlView = new ControlView(world, $("#control-view"));
     const diagramView = new Diagram(world.stateMachine, $("#diagram-view"));
     const helpView    = new HelpView(world, $("#help-view"));
-    const scoreView   = new ScoreView(world, $("#score-view"));
+    const scoreView   = new ScoreView(world, document.querySelector("#score-view"));
 
     // When the window is resized, scale the content of
     // the table view and update the diagram viewbox.

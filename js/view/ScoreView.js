@@ -15,14 +15,13 @@ export class ScoreView extends View {
     }
 
     show(world, status) {
-        this.container.empty();
-        $(nunjucks.render("ScoreView-main.tpl.html", status)).appendTo(this.container);
-        this.container.attr("class", "visible");
+        this.container.innerHTML = nunjucks.render("ScoreView-main.tpl.html", status);
+        this.container.classList.add("visible");
 
-        $("button", this.container).click(() => this.hide());
+        this.container.querySelector("button").addEventListener("click", () => this.hide());
     }
 
     hide() {
-        this.container.removeClass("visible");
+        this.container.classList.remove("visible");
     }
 }

@@ -16,7 +16,7 @@
 #score-view button {
     position: absolute;
     bottom: 0.5em;
-    left: 1em;
+    right: 1em;
 }
 
 #score-view .score-status {
