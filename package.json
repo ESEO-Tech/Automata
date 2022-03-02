@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "~5.15.4",
-    "jquery": "~2.1.1",
     "normalize.css": "~3.0.1",
     "nunjucks": "~3.2.1",
     "scroll-into-view-if-needed": "^2.2.29",
