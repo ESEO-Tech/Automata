@@ -41,7 +41,7 @@ async function main(game) {
     const tableView   = new TransitionTable(world.stateMachine, document.querySelector("#table-view"));
     const controlView = new ControlView(world, $("#control-view"));
     const diagramView = new Diagram(world.stateMachine, document.querySelector("#diagram-view"));
-    const helpView    = new HelpView(world, $("#help-view"));
+    const helpView    = new HelpView(world, document.querySelector("#help-view"));
     const scoreView   = new ScoreView(world, document.querySelector("#score-view"));
 
     // When the window is resized, scale the content of

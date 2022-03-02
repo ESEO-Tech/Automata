@@ -15,14 +15,14 @@ export class HelpView extends View {
     }
 
     render() {
-        $("button", this.container).click(() => this.hide());
+        this.container.querySelector("button").addEventListener("click", () => this.hide());
     }
 
     show() {
-        this.container.attr("class", "visible");
+        this.container.classList.add("visible");
     }
 
     hide() {
-        this.container.removeClass("visible");
+        this.container.classList.remove("visible");
     }
 }
