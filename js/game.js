@@ -40,7 +40,7 @@ async function main(game) {
     const worldView   = new WorldView(world, $("#world-view"));
     const tableView   = new TransitionTable(world.stateMachine, document.querySelector("#table-view"));
     const controlView = new ControlView(world, $("#control-view"));
-    const diagramView = new Diagram(world.stateMachine, $("#diagram-view"));
+    const diagramView = new Diagram(world.stateMachine, document.querySelector("#diagram-view"));
     const helpView    = new HelpView(world, $("#help-view"));
     const scoreView   = new ScoreView(world, document.querySelector("#score-view"));
 

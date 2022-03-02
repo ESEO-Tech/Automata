@@ -293,105 +293,107 @@ export class Diagram extends View {
         window.requestAnimationFrame(step);
     }
 
+    onMouseDown(evt) {
+        if (evt.button === 0) {
+            let startX = this.x;
+            let startY = this.y;
+            let startEvt = evt;
+
+            const mouseMoveHandler = evt => this.onMouseMove(evt, startX, startY, startEvt);
+            const mouseUpHandler   = evt => this.onMouseUp(evt, mouseMoveHandler, mouseUpHandler);
+
+            document.documentElement.addEventListener("mousemove", mouseMoveHandler);
+            document.documentElement.addEventListener("mouseup",   mouseUpHandler);
+
+            evt.preventDefault();
+            evt.stopPropagation();
+        }
+    }
+
+    onMouseMove(evt, startX, startY, startEvt) {
+        // The actual coordinates are computed each time the mouse moves
+        // in case the document has been tranformed in between.
+        this.x = startX - (evt.clientX - startEvt.clientX) / this.zoom;
+        this.y = startY - (evt.clientY - startEvt.clientY) / this.zoom;
+        this.updateViewbox();
+
+        evt.preventDefault();
+        evt.stopPropagation();
+    }
+
+    onMouseUp(evt, mouseMoveHandler, mouseUpHandler) {
+        if (evt.button === 0) {
+            this.fire("changed");
+
+            document.documentElement.removeEventListener("mouseup",   mouseUpHandler);
+            document.documentElement.removeEventListener("mousemove", mouseMoveHandler);
+
+            evt.preventDefault();
+            evt.stopPropagation();
+        }
+    }
+
+    onWheel(evt) {
+        if (!evt) {
+            evt = window.event;
+        }
+
+        let delta = 0;
+        if (evt.wheelDelta) { // IE and Opera
+            delta = evt.wheelDelta;
+        }
+        else if (evt.detail) { // Mozilla
+            delta = -evt.detail;
+        }
+
+        let f = 1;
+        if (delta > 0) {
+            f = 1/ZOOM_FACTOR;
+        }
+        else if (delta < 0) {
+            f = ZOOM_FACTOR;
+        }
+        this.zoom /= f;
+        this.x += this.getWidth()  * (1 - f) / 2;
+        this.y += this.getHeight() * (1 - f) / 2;
+        this.updateViewbox();
+
+        evt.stopPropagation();
+        evt.preventDefault();
+    }
+
+    onDoubleClick(evt) {
+        const w = this.getWidth();
+        const h = this.getHeight();
+        const bb = this.paper.node.getBBox();
+        this.zoom = Math.min(w / bb.width, h / bb.height);
+        this.x = bb.x - (w / this.zoom - bb.width) / 2;
+        this.y = bb.y - (h / this.zoom - bb.height) / 2;
+        this.updateViewbox();
+
+        evt.preventDefault();
+        evt.stopPropagation();
+    }
+
     render() {
         const fragment = Snap.parse(nunjucks.render("Diagram-main.tpl.svg", this.model));
-        this.container.append(fragment.node);
+        this.container.appendChild(fragment.node);
         this.paper = Snap("svg.automata-Diagram");
         this.resetView = this.paper.select("#reset");
         this.shadow = this.paper.select("#state-shadow");
 
-        let startX, startY, startEvt;
-
-        const onMouseDown = evt => {
-            if (evt.button === 0) {
-                startX = this.x;
-                startY = this.y;
-                startEvt = evt;
-
-                $(document.documentElement).mousemove(onMouseMove);
-                $(document.documentElement).mouseup(onMouseUp);
-
-                evt.preventDefault();
-                evt.stopPropagation();
-            }
-        }
-
-        const onMouseMove = evt => {
-            // The actual coordinates are computed each time the mouse moves
-            // in case the document has been tranformed in between.
-            this.x = startX - (evt.clientX - startEvt.clientX) / this.zoom;
-            this.y = startY - (evt.clientY - startEvt.clientY) / this.zoom;
-            this.updateViewbox();
-
-            evt.preventDefault();
-            evt.stopPropagation();
-        }
-
-        const onMouseUp = evt => {
-            if (evt.button === 0) {
-                this.fire("changed");
-
-                $(document.documentElement).off("mouseup", onMouseUp);
-                $(document.documentElement).off("mousemove", onMouseMove);
-
-                evt.preventDefault();
-                evt.stopPropagation();
-            }
-        }
-
-        const onWheel = evt => {
-            if (!evt) {
-                evt = window.event;
-            }
-
-            let delta = 0;
-            if (evt.wheelDelta) { // IE and Opera
-                delta = evt.wheelDelta;
-            }
-            else if (evt.detail) { // Mozilla
-                delta = -evt.detail;
-            }
-
-            let f = 1;
-            if (delta > 0) {
-                f = 1/ZOOM_FACTOR;
-            }
-            else if (delta < 0) {
-                f = ZOOM_FACTOR;
-            }
-            this.zoom /= f;
-            this.x += this.getWidth()  * (1 - f) / 2;
-            this.y += this.getHeight() * (1 - f) / 2;
-            this.updateViewbox();
-
-            evt.stopPropagation();
-            evt.preventDefault();
-        }
-
-        const onDoubleClick = evt => {
-            const w = this.getWidth();
-            const h = this.getHeight();
-            const bb = this.paper.node.getBBox();
-            this.zoom = Math.min(w / bb.width, h / bb.height);
-            this.x = bb.x - (w / this.zoom - bb.width) / 2;
-            this.y = bb.y - (h / this.zoom - bb.height) / 2;
-            this.updateViewbox();
-
-            evt.preventDefault();
-            evt.stopPropagation();
-        }
-
-        this.paper.mousedown(onMouseDown).dblclick(onDoubleClick);
-        this.paper.node.addEventListener("DOMMouseScroll", onWheel, false); // Mozilla
-        this.paper.node.onmousewheel = onWheel;
+        this.paper.mousedown(evt => this.onMouseDown(evt))
+                  .dblclick(evt => this.onDoubleClick(evt));
+        this.paper.node.addEventListener("DOMMouseScroll", evt => this.onWheel(evt), false); // Mozilla
+        this.paper.node.onmousewheel = evt => this.onWheel(evt);
     }
 
     getWidth() {
-        return this.container.width();
+        return this.container.clientWidth;
     }
 
     getHeight() {
-        return this.container.height();
+        return this.container.clientHeight;
     }
 
     updateViewbox() {
