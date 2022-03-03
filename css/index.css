@@ -1,0 +1,41 @@
+
+@import "main.css";
+@import "Control.css";
+
+#games-menu {
+    overflow-y: auto;
+    left: 0.5em;
+    width: calc(100% - 5em);
+    height: calc(100% - 5em);
+    padding: 1em 2em;
+}
+
+#games-menu h1 {
+    font-size: 120%;
+    font-weight: normal;
+}
+
+#games-menu ul {
+    list-style: none;
+}
+
+#games-menu ul li {
+    display: inline-block;
+    width: 128px;
+    margin: 0 0.5em 1em 0.5em;
+    vertical-align: top;
+    text-align: center;
+}
+
+#games-menu ul li a {
+    color: inherit;
+    text-decoration: none;
+}
+
+#games-menu ul li img {
+    width: 128px;
+    background: rgb(240, 240, 240);
+    border: none;
+    border-radius: 15%;
+    box-shadow: 0 2px 4px 0 rgb(128, 128, 128);
+}
