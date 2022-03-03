@@ -9,7 +9,7 @@
   "scripts": {
     "eslint": "./node_modules/.bin/eslint --config eslintrc.json js/ games/",
     "csslint": "./node_modules/.bin/csslint --config=csslintrc.json css/",
-    "build": "mkdir -p compiled ; ./node_modules/.bin/nunjucks-precompile --include '\\.html' --include '\\.svg' templates > compiled/index.js"
+    "build": "./node_modules/.bin/nunjucks-precompile --include '\\.html' --include '\\.svg' templates > compiled/index.js"
   },
   "devDependencies": {
     "csslint": "^1.0.5",
