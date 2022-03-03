@@ -1,23 +1,21 @@
 
-namespace("automata.games.robot", function (exports) {
-    "use strict";
+export {WorldView}           from "../WorldView.js";
+import {World as RobotWorld} from "../World.js";
 
-    exports.Diagonally = {
-        key: "automata.games.robot.Diagonally",
-        view: exports.WorldView,
+export class World extends RobotWorld {
+    constructor() {
+        super();
 
-        world: exports.World.create({
-            width: 600,
-            height: 600,
+        this.width = 600;
+        this.height = 600;
 
-            walls: [],
+        this.walls = [];
 
-            startX: 100,
-            startY: 100,
+        this.startX = 100;
+        this.startY = 100;
 
-            goalX: 490,
-            goalY: 500,
-            goalRadius: 15
-        })
-    };
-});
+        this.goalX = 490;
+        this.goalY = 500;
+        this.goalRadius = 15;
+    }
+}

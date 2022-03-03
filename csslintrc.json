@@ -1,0 +1,12 @@
+{
+    "ignore": [
+        "box-model",
+        "universal-selector",
+        "box-sizing",
+        "qualified-headings",
+        "adjoining-classes",
+        "order-alphabetical",
+        "fallback-colors",
+        "ids"
+    ]
+}

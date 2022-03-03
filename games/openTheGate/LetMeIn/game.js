@@ -1,12 +1,10 @@
 
-namespace("automata.games.openTheGate", function (exports) {
-    "use strict";
+export {WorldView}          from "../WorldView.js";
+import {World as GateWorld} from "../World.js";
 
-    exports.LetMeIn = {
-        key: "automata.games.openTheGate.LetMeIn",
-        view: exports.WorldView,
-        world: exports.World.create({
-            carCount: 1
-        })
-    };
-});
+export class World extends GateWorld {
+    constructor() {
+        super();
+        this.carCount = 1;
+    }
+}

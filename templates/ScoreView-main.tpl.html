@@ -1,8 +1,8 @@
 <div>
     <div class="score-status">
-        {%   if status == "success" %} <i class="fa fa-thumbs-up"></i>
-        {% elif status == "warning" %} <i class="fa fa-warning"></i>
-        {% elif status == "error"   %} <i class="fa fa-thumbs-down"></i>
+        {%   if status == "success" %} <i class="fas fa-thumbs-up"></i>
+        {% elif status == "warning" %} <i class="fas fa-exclamation-triangle"></i>
+        {% elif status == "error"   %} <i class="fas fa-thumbs-down"></i>
         {% endif %}
     </div>
     <div class="score-message">{{message}}</div>

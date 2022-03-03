@@ -2,26 +2,13 @@
 #help-view button {
     position: absolute;
     bottom: 0.5em;
-    left: 1em;
+    right: 1em;
 }
 
 #help-view > div {
     padding: 3em 2em 0 2em;
     height: calc(100% - 3em);
     overflow-y: auto;
-}
-
-#help-view > div:after {
-    position: absolute;
-    content: '';
-    left: 0;
-    bottom: 0;
-    height: 3em;
-    width: 100%;
-    background:         linear-gradient(rgba(255, 250, 240, 0), rgb(255, 250, 240) 3em);
-    background:    -moz-linear-gradient(rgba(255, 250, 240, 0), rgb(255, 250, 240) 3em);
-    background: -webkit-linear-gradient(rgba(255, 250, 240, 0), rgb(255, 250, 240) 3em);
-    pointer-events: none;
 }
 
 #help-view > div > div {

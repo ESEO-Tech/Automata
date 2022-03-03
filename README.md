@@ -10,34 +10,24 @@ This application is not actively developed. It depends on outdated libraries tha
 Dependencies
 ------------
 
-These libraries are installed as Bower components:
+These libraries are installed as Node modules:
 
 * [normalize.css](http://necolas.github.io/normalize.css/)
-* [jQuery](http://jquery.com/)
 * [Nunjucks](http://jlongster.github.io/nunjucks/)
 * [Snap.svg](http://snapsvg.io/)
+* [scroll-into-view-if-needed](https://github.com/stipsan/scroll-into-view-if-needed)
 
 Building
 --------
 
-These commands install the dependencies and build Automata into the `docs/` folder:
+These commands install the dependencies and build Automata:
 
 ```
-sudo npm install -g bower
-sudo npm install -g grunt-cli
 npm install
-bower install
-grunt
+npm run build
 ```
 
 Testing
 -------
 
-Run the local server:
-
-```
-grunt connect
-```
-
-Connect to http://localhost:8000
-The port can be changed in the ``connect`` task in ``Gruntfile.js``.
+Run a local server in the root folder.
