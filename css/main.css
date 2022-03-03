@@ -5,6 +5,9 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+}
+
+body * {
     font-size: large;
     font-family: Arsenal, sans-serif;
 }

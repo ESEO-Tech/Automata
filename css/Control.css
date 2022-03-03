@@ -1,8 +1,13 @@
 
 #control-view {
     padding: 0.5em 0;
-    color: white;
     display: table-row;
+}
+
+#control-view,
+#control-view .fa::before,
+#control-view .fas::before {
+    color:white;
 }
 
 #control-view a {
