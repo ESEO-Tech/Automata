@@ -11,13 +11,6 @@
     "csslint": "./node_modules/.bin/csslint --config=csslintrc.json css/",
     "build": "mkdir -p compiled ; ./node_modules/.bin/nunjucks-precompile --include '\\.html' --include '\\.svg' templates > compiled/index.js"
   },
-  "dependencies": {
-    "@fortawesome/fontawesome-free": "~5.15.4",
-    "normalize.css": "~3.0.1",
-    "nunjucks": "~3.2.1",
-    "scroll-into-view-if-needed": "^2.2.29",
-    "snapsvg": "~0.3.0"
-  },
   "devDependencies": {
     "csslint": "^1.0.5",
     "eslint": "^8.10.0",
