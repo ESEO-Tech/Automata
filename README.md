@@ -3,17 +3,15 @@ Automata
 
 A web-based game to learn finite-state machines.
 
-This application is not actively developed. It depends on outdated libraries that would deserve an upgrade.
-
-[Try the demo in your browser now](https://guillaume-savaton-eseo.github.io/Automata/).
+[Try it in your browser now](https://guillaume-savaton-eseo.github.io/Automata/).
 
 Dependencies
 ------------
 
-These libraries are installed as Node modules:
+These libraries are used via the CDN [unpkg](https://unpkg.com/):
 
 * [normalize.css](http://necolas.github.io/normalize.css/)
-* [Nunjucks](http://jlongster.github.io/nunjucks/)
+* [Nunjucks](https://mozilla.github.io/nunjucks/)
 * [Snap.svg](http://snapsvg.io/)
 * [scroll-into-view-if-needed](https://github.com/stipsan/scroll-into-view-if-needed)
 
