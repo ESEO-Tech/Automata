@@ -1,5 +1,5 @@
 
-import {World as CoreWorld} from "../../js/model/World.js";
+import {World as CoreWorld} from "../../lib/model/World.js";
 
 export class World extends CoreWorld {
     constructor() {

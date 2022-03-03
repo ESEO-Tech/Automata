@@ -9,7 +9,7 @@
   "scripts": {
     "eslint": "./node_modules/.bin/eslint --config eslintrc.json js/ games/",
     "csslint": "./node_modules/.bin/csslint --config=csslintrc.json css/",
-    "build": "./node_modules/.bin/nunjucks-precompile --include '\\.html' --include '\\.svg' templates > templates/index.js"
+    "build": "mkdir -p compiled ; ./node_modules/.bin/nunjucks-precompile --include '\\.html' --include '\\.svg' templates > compiled/index.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "~5.15.4",
