@@ -3,6 +3,7 @@
     "contents": [
         "LetMeIn",
         "ThenCloseTheGate",
-        "DontCrushTheFollower"
+        "DontCrushTheFollower",
+        "CloseAfterDelay"
     ]
 }
