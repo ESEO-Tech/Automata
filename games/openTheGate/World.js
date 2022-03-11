@@ -27,6 +27,7 @@ export class World extends CoreWorld {
 
         this.carWidth = 80;
         this.carXMin = [-80, -480, -880, -1280];
+        this.carSlow = [false, false, false, false];
         this.carXMax = 421;
         this.carXStop = 120;
         this.carXStep = 2;
@@ -102,7 +103,12 @@ export class World extends CoreWorld {
                     carsMove = false;
                 }
                 else if(x < this.carXMax) {
-                    this.carX[index] = x += this.carXStep;
+                    if (this.carSlow[index] && x > this.carXStop && x < this.gateX) {
+                        x += this.carXStep / 7.5;
+                    }
+                    else {
+                        x += this.carXStep;
+                    }
                     if (x >= this.carXMax) {
                         this.carsPassed ++;
                     }
@@ -124,6 +130,8 @@ export class World extends CoreWorld {
             if (x + this.carWidth >= this.gateX && x <= this.gateX + this.gateWidth) {
                 this.setSensorValue(3, "1");
             }
+
+            this.carX[index] = x;
         }
     }
 

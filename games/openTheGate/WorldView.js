@@ -6,8 +6,15 @@ export class WorldView {
         this.paper = Snap();
         container.appendChild(this.paper.node);
 
+        this.render();
+        this.update();
+
+        world.addListener("changed", this.update, this);
+    }
+
+    render() {
         this.paper.attr({
-            viewBox: "0 0 " + world.width + " " + world.height,
+            viewBox: "0 0 " + this.world.width + " " + this.world.height,
             preserveAspectRatio: "xMidYMid meet" // FIXME not supported by Snap.svg (see below)
         });
 
@@ -72,12 +79,6 @@ export class WorldView {
         // TODO: use a clip path
         this.paper.rect(-80, 0, 80, 300).attr({fill: "white"});
         this.paper.rect(420, 0, 500, 300).attr({fill: "white"});
-
-        this.update();
-
-        world.addListener("changed", this.update, this);
-
-        return this;
     }
 
     update() {
