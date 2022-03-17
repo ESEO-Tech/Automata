@@ -8,7 +8,7 @@
     -webkit-transform-origin: 0 0;
 }
 
-.automata-TransitionTable * {
+.automata-TransitionTable th {
     font-weight: normal;
 }
 
