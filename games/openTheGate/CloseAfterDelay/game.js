@@ -6,7 +6,7 @@ const COUNT_MAX = 150;
 export class World extends GateWorld {
     constructor() {
         super();
-        this.carSlow[1] = true;
+        this.maxCallCount = 2;
         this.sensors.push({name: "TO", desc: "Timeout"});
         this.actuators.push({name: "TR", desc: "Timer Reset"},
                             {name: "TE", desc: "Timer Enable"});
