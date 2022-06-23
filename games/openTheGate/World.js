@@ -27,12 +27,14 @@ export class World extends CoreWorld {
 
         this.carWidth = 80;
         this.carXMin = [-80, -480, -880, -1280];
-        this.carSlow = [false, false, false, false];
         this.carXMax = 421;
         this.carXStop = 120;
         this.carXStep = 2;
         this.carY = 190;
         this.carCount = 4;
+
+        this.maxCallCount = 1;
+        this.callCount = 0;
 
         this.width = 400;
         this.height = 300;
@@ -85,6 +87,9 @@ export class World extends CoreWorld {
         this.setSensorValue(1, (this.gateY <= this.gateYMin)? "1" : "0");
         this.setSensorValue(2, (this.gateY >= this.gateYMax)? "1" : "0");
 
+        // Save the state of the button.
+        const btnWasReleased = this.getSensorValue(0) === "0";
+
         // Reset button and vehicle sensor
         this.setSensorValue(0, "0");
         this.setSensorValue(3, "0");
@@ -100,14 +105,20 @@ export class World extends CoreWorld {
             // * after the gate.
             if (carsMove) {
                 if (x >= this.carXStop && x < this.gateX + this.gateWidth && this.gateY >= this.gateYOpen) {
+                    // If the current car is in front of the gate and it is not
+                    // sufficiently open, stop all cars.
+                    carsMove = false;
+                }
+                else if (x >= this.carXStop && x <= this.carXStop + this.carXStep && this.callCount < this.maxCallCount) {
+                    // If the current car is under the button, and the button
+                    // has not been pressed enough times, stop all cars.
                     carsMove = false;
                 }
                 else if(x < this.carXMax) {
-                    if (this.carSlow[index] && x > this.carXStop && x < this.gateX) {
-                        x += this.carXStep / 7.5;
-                    }
-                    else {
-                        x += this.carXStep;
+                    x += this.carXStep;
+                    if (x > this.carXStop + this.carXStep && x <= this.carXStop + 2 * this.carXStep) {
+                        // When moving past the button, reset the call counter.
+                        this.callCount = 0;
                     }
                     if (x >= this.carXMax) {
                         this.carsPassed ++;
@@ -117,6 +128,9 @@ export class World extends CoreWorld {
 
             // Push the button when the car is in front of the gate until the gate starts to open
             if(x >= this.carXStop && x <= this.carXStop + this.carXStep && this.gateY >= this.gateYOpen) {
+                if (btnWasReleased) {
+                    this.callCount ++;
+                }
                 this.setSensorValue(0, "1");
                 this.buttonHasBeenPressed = true;
             }
