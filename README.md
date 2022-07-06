@@ -3,7 +3,7 @@ Automata
 
 A web-based game to learn finite-state machines.
 
-[Try it in your browser now](https://guillaume-savaton-eseo.github.io/Automata/).
+[Try it in your browser now](https://eseo-tech.github.io/Automata/).
 
 Dependencies
 ------------
