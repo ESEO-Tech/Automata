@@ -1,0 +1,43 @@
+
+<p>Turn the light on or off when the button state changes.
+   Two scenarios can be considered:</p>
+
+<ul>
+    <li>Turn the light on when the button is pressed; turn the light off when the button is released.</li>
+    <li>Toggle the light when the button transitions from the <em>released</em> state to the <em>pressed</em> state.</li>
+</ul>
+
+<h2>Inputs</h2>
+
+<table>
+    <tr>
+        <th rowspan="2">
+            B<br>
+            (Button)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>The button is pressed</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>The button is released</td>
+    </tr>
+</table>
+
+<h2>Outputs</h2>
+
+<table>
+    <tr>
+        <th rowspan="2">
+            L<br>
+            (Light)
+        </th>
+        <td><span class="automata-bool-1">1</span></td>
+        <td>Turn on the light</td>
+    </tr>
+    <tr>
+        <td><span class="automata-bool-0">0</span></td>
+        <td>Turn off the light</td>
+    </tr>
+</table>
+
